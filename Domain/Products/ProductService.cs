@@ -22,8 +22,8 @@ namespace DDDSample1.Domain.Products
         public async Task<List<ProductDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
-            
-            List<ProductDto> listDto = list.ConvertAll<ProductDto>(prod => 
+
+            List<ProductDto> listDto = list.ConvertAll<ProductDto>(prod =>
                 new ProductDto(prod.Id.AsGuid(),prod.Description,prod.CategoryId));
 
             return listDto;
@@ -32,7 +32,7 @@ namespace DDDSample1.Domain.Products
         public async Task<ProductDto> GetByIdAsync(ProductId id)
         {
             var prod = await this._repo.GetByIdAsync(id);
-            
+
             if(prod == null)
                 return null;
 
@@ -54,29 +54,30 @@ namespace DDDSample1.Domain.Products
         public async Task<ProductDto> UpdateAsync(ProductDto dto)
         {
             await checkCategoryIdAsync(dto.CategoryId);
-            var product = await this._repo.GetByIdAsync(new ProductId(dto.Id)); 
+            var product = await this._repo.GetByIdAsync(new ProductId(dto.Id));
 
             if (product == null)
-                return null;   
+                return null;
 
             // change all fields
             product.ChangeDescription(dto.Description);
             product.ChangeCategoryId(dto.CategoryId);
-            
+
             await this._unitOfWork.CommitAsync();
 
-            return new ProductDto(product.Id.AsGuid(),product.Description,product.CategoryId);
+            return new ProductDto(product.Id.AsGuid(),product.Description,
+            product.CategoryId);
         }
 
         public async Task<ProductDto> InactivateAsync(ProductId id)
         {
-            var product = await this._repo.GetByIdAsync(id); 
+            var product = await this._repo.GetByIdAsync(id);
 
             if (product == null)
-                return null;   
+                return null;
 
             product.MarkAsInative();
-            
+
             await this._unitOfWork.CommitAsync();
 
             return new ProductDto(product.Id.AsGuid(),product.Description,product.CategoryId);
@@ -84,14 +85,14 @@ namespace DDDSample1.Domain.Products
 
         public async Task<ProductDto> DeleteAsync(ProductId id)
         {
-            var product = await this._repo.GetByIdAsync(id); 
+            var product = await this._repo.GetByIdAsync(id);
 
             if (product == null)
-                return null;   
+                return null;
 
             if (product.Active)
                 throw new BusinessRuleValidationException("It is not possible to delete an active product.");
-            
+
             this._repo.Remove(product);
             await this._unitOfWork.CommitAsync();
 

@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "sem5pi-24-25-3dk63": {
+    "DDDNetCore": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/values",
