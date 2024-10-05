@@ -1,0 +1,22 @@
+@startuml US1018_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Job Opening" as jobOpening {
+  usecase "Evaluate interviews" as Evaluate
+}
+
+CustomerManager --> (Evaluate)
+
+@enduml

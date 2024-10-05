@@ -1,0 +1,39 @@
+@startuml US2002_SSD
+
+autonumber
+
+actor Operator as "Operator"
+
+activate Operator
+
+Operator -> ":System" : requests to register application
+activate ":System"
+
+":System" --> Operator : prompts for the shared folder path
+deactivate ":System"
+
+Operator -> ":System" : inserts the requested path
+activate ":System"
+
+":System" --> Operator : asks to select the desired candidate's folder
+deactivate ":System"
+
+Operator -> ":System" : selects the folder
+activate ":System"
+
+alt Candidate Not Registered
+
+    ":System" --> Operator : imports candidate details from files
+    deactivate ":System"
+else Candidate Already Registered
+    ":System" --> Operator : candidate is already registered
+    activate ":System"
+end
+
+":System" --> Operator  : registers application
+":System" --> Operator : application registered successfully
+
+deactivate ":System"
+deactivate Operator
+
+@enduml

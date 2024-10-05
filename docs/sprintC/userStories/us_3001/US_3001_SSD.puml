@@ -1,0 +1,17 @@
+@startuml US3001_SSD
+
+autonumber
+
+actor Candidate as "Candidate"
+
+activate Candidate
+
+Candidate -> ":System" : asks the system to be notified when the state of one of his applications changes
+activate ":System"
+
+":System" --> Candidate : waits for changes in the applications and notifies the candidate if there are any changes.
+deactivate ":System"
+
+deactivate Candidate
+
+@enduml

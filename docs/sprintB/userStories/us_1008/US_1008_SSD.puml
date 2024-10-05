@@ -1,0 +1,29 @@
+@startuml US1008_SSD
+
+autonumber
+
+actor LE as "Language Engineer"
+
+activate LE
+
+LE -> ":System" : asks the system to import a plugin
+activate ":System"
+
+":System" --> LE : asks to import either a job requirement or an interview model plugin
+deactivate ":System"
+
+LE -> ":System" : selects which type of plugin to import
+activate ":System"
+
+":System" --> LE : shows the available plugins to import
+deactivate ":System"
+
+LE -> ":System" : selects the plugin
+activate ":System"
+
+":System" --> LE : informs operation success
+deactivate ":System"
+
+deactivate LE
+
+@enduml

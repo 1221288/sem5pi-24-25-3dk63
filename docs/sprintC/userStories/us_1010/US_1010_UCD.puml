@@ -1,0 +1,24 @@
+@startuml US1010_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+left to right direction
+
+rectangle "Job opening" as JobOpening {
+  usecase "Open phases of the process for a job opening." as openPhase
+  usecase "Close phases of the process for a job opening." as closePhase
+
+}
+
+CustomerManager --> (openPhase)
+CustomerManager --> (closePhase)
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml US1001_SD
+autonumber
+
+actor "CustomerManager" as CM
+participant "OrderedListOfCandidateUI" as UI <<presentation>>
+participant "OrderedListCandidateController" as CTRL <<application>>
+
+database CandidateRepository as CR <<repository>>
+
+activate CM
+
+CM -> UI : aks the system get an ordered list of candidates, using the job interview points (grades)
+activate UI
+
+    UI -> CTRL : listCandidates()
+    activate CTRL
+
+        CTRL -> CR : candidateRepository.findAll();
+        activate CR
+        deactivate CR
+
+    deactivate CTRL
+
+UI --> CM : shows all data and informs operation success
+
+deactivate UI
+
+deactivate CM
+
+@enduml

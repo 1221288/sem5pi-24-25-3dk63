@@ -1,0 +1,14 @@
+@startuml US1003_UCD
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Backoffice" {
+  usecase "As Customer Manager, I want to list job openings." as listJobOpenings
+}
+
+CustomerManager --> (listJobOpenings)
+
+@enduml

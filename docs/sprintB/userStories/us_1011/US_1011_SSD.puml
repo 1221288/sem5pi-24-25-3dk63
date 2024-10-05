@@ -1,0 +1,28 @@
+@startuml US1011_SSD
+
+autonumber
+
+actor CM as "Customer Manager"
+
+activate CM
+
+CM -> ":System" : asks to select an interview model for a job opening
+activate ":System"
+
+":System" --> CM : displays available job offers
+deactivate ":System"
+
+CM -> ":System" : selects job offer
+activate ":System"
+
+":System" --> CM : displays available interview models
+deactivate ":System"
+
+CM -> ":System" : selects interview model
+activate ":System"
+
+":System" --> CM : displays operation success
+deactivate ":System"
+deactivate CM
+
+@enduml

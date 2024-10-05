@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ListCandidatesUI{
+- theController
+- candidateDataWidget
++ doShow()
++ headline()
+}
+
+class ListCandidatesController{
+- authz
+- userSvc
++ listCandidatesUsers()
+}
+
+class AuthorizationService{
+- LOGGER
+- theSession
++ AuthorizationService()
++ createSessionForUser()
++ clearSession()
++ hasSession()
++ session()
++ isAuthenticatedUserAuthorizedTo()
++ ensureAuthenticatedUserHasAnyOf()
++ loggedinUserWithPermissions()
+}
+class UserManagementService{
+- userRepository
+- encoder
+- policy
++ UserManagementService()
++ registerNewUser()
++ registerNewUser()
++ registerUser()
++ activeUsers()
++ deactivatedUsers()
++ allUsers()
++ userOfIdentity()
++ deactivateUser()
++ activateUser()
+}
+interface UserRepository{
++ findByActive()
+}
+
+ListCandidatesUI --|> ListCandidatesController
+ListCandidatesController --|> AuthorizationService
+ListCandidatesController --|> UserManagementService
+UserManagementService --|> UserRepository
+
+@enduml

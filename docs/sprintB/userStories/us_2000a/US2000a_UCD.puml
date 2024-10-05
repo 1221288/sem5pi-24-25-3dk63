@@ -1,0 +1,22 @@
+@startuml US1000_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Operator: as Operator
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "As Operator, I want to register a candidate and create a corresponding user" as RegisterClient
+}
+
+Operator --> (RegisterClient)
+
+@enduml

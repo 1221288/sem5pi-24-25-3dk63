@@ -1,0 +1,81 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor "Operator" as O
+participant "AddCandidateUI" as UI <<presentation>>
+participant "CandidateDataWidget" as WI <<widget>>
+participant "AddcandidateController" as CTRL <<Aplication>>
+participant "AuthorizationService" as AUTH
+participant "PassWordGenerator" as PG <<generator>>
+participant "UserManagementService" as UMNG
+participant "SystemUser" as U <<domain>>
+participant "SystemUserBuilder" as B <<builder>>
+database UserRepository as REPU <<repository>>
+
+participant "EmailAddress" as E <<domain>>
+participant "PhoneNumber" as P <<domain>>
+
+participant "CandidateUser" as CU <<domain>>
+participant "CandidateUserService" as CUS <<candidate>>
+participant "CandidateUserBuilder" as CUB <<builder>>
+database "CandidateUserRepository" as CUR <<repository>>
+
+
+activate O
+O-> UI : asks to add new candidate
+activate UI
+UI -> WI: doShow()
+activate WI
+WI --> UI: show()
+UI --> O : requests data(name,email,phone number)
+O -> WI : inserts data
+WI --> UI : sends back data inserted by the user
+deactivate WI
+UI -> CTRL: addCandidate()
+activate CTRL
+CTRL -> AUTH: ensureAuthenticatedUserHasAnyOf()
+activate AUTH
+AUTH --> CTRL: returns confirmation that user is credited to perform the current operation
+deactivate AUTH
+CTRL -> PG: generatePassword();
+activate PG
+PG --> CTRL: returns generated Password
+deactivate PG
+CTRL -> UMNG: registerNewUser()
+activate UMNG
+UMNG -> B : with()
+activate B
+B -> B: build()
+B --> UMNG: returns new SystemUser
+deactivate B
+UMNG -> REPU: save()
+activate REPU
+REPU --> UMNG : returns saved user
+deactivate REPU
+UMNG --> CTRL : returns saved user
+deactivate UMNG
+CTRL -> E: valueOf()
+activate E
+E --> CTRL: returns new EmailAddress
+deactivate E
+CTRL -> P: valueOf()
+activate P
+P --> CTRL: returns new PhoneNumber
+deactivate P
+CTRL -> CUS : registerCandidate
+activate CUS
+CUS -> CUB: with()
+activate CUB
+CUB -> CUB: build()
+CUB -> CUR: save()
+activate CUR
+CUR --> CUB: returns saved CandidateUser
+deactivate CUR
+CUB --> CUS: returns saved CandidateUser
+deactivate CUB
+deactivate CUS
+CTRL --> UI: returns saved user
+deactivate CTRL
+UI --> O : returns operation success
+@enduml

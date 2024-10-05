@@ -1,0 +1,97 @@
+@startuml US1003_CD
+
+class ListJobOpeningsUI {
+    - ListJobOpeningController theController
+    - Scanner scanner
+    - String ACTIVE_JOB_OPENINGS
+    - String ALL_JOB_OPENINGS
+    - String CUSTOMER_JOB_OPENINGS
+    - String DATE_JOB_OPENINGS
+    + headline(): String
+    + emptyMessage(): String
+    + elements(): Iterable<jobOffer>
+    + askForDay(): LocalDateTime
+    + askForCompanyName(): String
+    + elementPrinter(): Visitor<jobOffer>
+    + elementName(): String
+    + listHeader(): String
+}
+
+class JobOfferPrinter {
+    + visit(visitee: jobOffer): void
+}
+
+class ListJobOpeningController {
+    - JobOfferRepository jobOfferRepository
+    - AuthorizationService authz
+    - String ACTIVE_JOB_OPENINGS
+    - String ALL_JOB_OPENINGS
+    - String CUSTOMER_JOB_OPENINGS
+    - String DATE_JOB_OPENINGS
+    + listJobOffers(option: String, companyName: String, day: LocalDateTime): Iterable<jobOffer>
+    - filterThroughJobOpenings(jobOffers: List<jobOffer>, emailAddress: EmailAddress): List<jobOffer>
+    - getActivateJobOpenings(jobOffers: List<jobOffer>): List<jobOffer>
+}
+
+class jobOffer {
+    - Long id
+    - Reference reference
+    - Configuration configuration
+    - Function function
+    - ContractType contractType
+    - Mode mode
+    - Address address
+    - Company company
+    - NumberOfVacancies nrOfVacancies
+    - Description description
+    - Requirements requirements
+    - JobOfferDate creationDate
+    - String managerEmail
+    + jobOffer(reference: Reference, function: Function, contractType: ContractType, mode: Mode, address: Address, company: Company, nrOfVacancies: NumberOfVacancies, description: Description, requirements: Requirements, managerEmail: String)
+    + jobOffer(reference: Reference, function: Function, contractType: ContractType, mode: Mode, address: Address, company: Company, nrOfVacancies: NumberOfVacancies, description: Description, requirements: Requirements, configuration: Configuration, managerEmail: String)
+    + sameAs(other: Object): boolean
+    + identity(): Reference
+    + getConfiguration(): Configuration
+    + setConfiguration(configuration: Configuration): void
+    + getReference(): Reference
+    + getFunction(): Function
+    + getContractType(): ContractType
+    + getMode(): Mode
+    + getAddress(): Address
+    + getCompany(): Company
+    + getNrOfVacancies(): NumberOfVacancies
+    + getDescription(): Description
+    + getRequirements(): Requirements
+    + getManagerEmail(): String
+    + getCreationDate(): JobOfferDate
+}
+
+interface JobOfferRepository {
+    + findAllByManager(managerEmail: String): Iterable<jobOffer>
+    + findByReference(reference: Reference): Iterable<jobOffer>
+    + findAllByCreationDate(creationDate: LocalDateTime): List<jobOffer>
+    + findAllByCompany(company: Company): List<jobOffer>
+}
+
+class InMemoryJobOfferRepository {
+    + findAllByManager(managerEmail: String): Iterable<jobOffer>
+    + findByReference(reference: Reference): Iterable<jobOffer>
+    + findAllByCreationDate(creationDate: LocalDateTime): List<jobOffer>
+    + findAllByCompany(company: Company): List<jobOffer>
+}
+
+class JpaJobOfferRepository {
+    + findAllByManager(managerEmail: String): Iterable<jobOffer>
+    + findByReference(reference: Reference): Iterable<jobOffer>
+    + findAllByCreationDate(creationDate: LocalDateTime): List<jobOffer>
+    + findAllByCompany(company: Company): List<jobOffer>
+}
+
+ListJobOpeningsUI --> ListJobOpeningController
+ListJobOpeningController --> JobOfferRepository
+ListJobOpeningController --> jobOffer
+JobOfferPrinter --> jobOffer
+JobOfferRepository <.. InMemoryJobOfferRepository
+JobOfferRepository <.. JpaJobOfferRepository
+
+@enduml

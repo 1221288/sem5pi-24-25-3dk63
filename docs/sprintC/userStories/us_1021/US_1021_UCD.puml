@@ -1,0 +1,22 @@
+@startuml US1021_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "Display all data of application" as displayAppplication
+}
+
+CustomerManager --> (displayAppplication)
+
+@enduml

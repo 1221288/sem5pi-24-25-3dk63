@@ -1,0 +1,26 @@
+@startuml US1012_SSD
+
+autonumber
+
+actor Manager as "Customer Manager"
+
+activate Manager
+
+Manager -> ":System" : asks the system to generate and export a template text file to help \n collect the candidate answers during the interviews.
+
+activate ":System"
+
+":System" --> Manager : requests data (job offer)
+deactivate ":System"
+
+Manager -> ":System" : types request data
+activate ":System"
+
+
+
+":System" --> Manager : informs operation success
+deactivate ":System"
+
+deactivate Manager
+
+@enduml

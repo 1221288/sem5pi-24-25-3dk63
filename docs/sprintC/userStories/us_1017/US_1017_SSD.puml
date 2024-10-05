@@ -1,0 +1,23 @@
+@startuml US1017_SSD
+
+autonumber
+
+actor Manager as "Customer Manager"
+
+activate Manager
+
+Manager -> ":System" : asks the system to upload a interview text file
+activate ":System"
+
+":System" --> Manager : requests the user to select a file to upload
+deactivate ":System"
+
+Manager -> ":System" : selects the text file to upload
+activate ":System"
+
+":System" --> Manager : informs operation success
+deactivate ":System"
+
+deactivate Manager
+
+@enduml

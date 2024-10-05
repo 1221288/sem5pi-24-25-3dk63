@@ -1,0 +1,22 @@
+@startuml US2003_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Operator: as Operator
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "As Operator, I want to generate and export a template text file to help collect data fields for candidates of a job opening (so the data is used to verify the requirements of the job opening)." as ExportFile
+}
+
+Operator --> (ExportFile)
+
+@enduml

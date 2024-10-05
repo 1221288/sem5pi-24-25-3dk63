@@ -1,0 +1,23 @@
+@startuml US_2001b_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Product Owner: as ProductOwner
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "Import the files produced by the Application File Bot." as UC1
+}
+ProductOwner --> (UC1)
+
+
+
+@enduml

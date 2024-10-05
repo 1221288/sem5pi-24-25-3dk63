@@ -1,0 +1,51 @@
+@startuml US1017_SD
+autonumber
+
+actor "CustomerManager" as CM
+participant "UploadInterviewTextFileUI" as UI <<presentation>>
+participant "UploadInterviewTextFileController" as CTRL <<application>>
+participant "UploadInterviewTextFileService" as SVC <<service>>
+
+database InterviewModelRepository as CR <<repository>>
+
+activate CM
+
+CM -> UI : asks the system to upload a interview text file
+activate UI
+
+UI --> CM : requests the user to select a file to upload
+deactivate UI
+
+CM -> UI : selects the text file to upload
+activate UI
+
+    UI -> CTRL : uploadInterviewTextFile(filepath)
+    activate CTRL
+
+        CTRL -> SVC : obtainFile(filepath)
+        activate SVC
+            SVC --> CTRL : file
+        deactivate SVC
+
+
+        CTRL -> SVC : convertFileContent(file)
+        activate SVC
+            SVC --> CTRL : interviewModel
+        deactivate SVC
+
+        CTRL -> SVC : saveInterviewModel(interviewModel)
+        deactivate CTRL
+        activate SVC
+            SVC -> CR : saveInterviewModel(interviewModel)
+            deactivate SVC
+            activate CR
+            deactivate CR
+
+
+UI --> CM : informs operation success
+
+deactivate UI
+
+deactivate CM
+
+@enduml

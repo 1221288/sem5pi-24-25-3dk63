@@ -1,0 +1,22 @@
+@startuml US1000_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "As Customer Manager, I want to display all the personal data of a candidate, including his/her application." as RegisterClient
+}
+
+CustomerManager --> (RegisterClient)
+
+@enduml

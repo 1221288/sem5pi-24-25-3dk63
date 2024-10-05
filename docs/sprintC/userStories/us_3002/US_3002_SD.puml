@@ -1,0 +1,66 @@
+@startuml US_3002_SD
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3002
+
+actor "Customer" as User
+participant "TcpCustomerUI" as UI
+participant "TcpSrv" as Server
+participant "ListJobOpeningController" as Controller
+
+participant "CustomerRepository" as CusRep
+participant "JobOpeningRepository" as Rep
+
+activate User
+
+User -> UI : asks to list Job Openings
+activate UI
+
+UI -> Server : write(username)
+activate Server
+
+Server -> Server : listCustomerJobOpenings(version, sIn, sOut)
+
+Server -> Server : read()
+activate Server
+
+Server -> Server : username
+deactivate Server
+
+Server -> Controller : create()
+
+Server -> Controller : allCustomerJobOpenings\nWithRecruitmentProcess(username)
+activate Controller
+
+Controller -> CusRep : findByUsername(username)
+activate CusRep
+
+CusRep --> Controller : customer
+deactivate CusRep
+
+Controller -> Rep : findCustomerJobOpeningsWithRecruitmentProcess(customer)
+activate Rep
+
+Rep --> Controller : customerJobOpenings
+deactivate Rep
+
+Controller --> Server : customerJobOpenings
+deactivate Controller
+
+loop for each jobOpening of customerJobOpenings
+
+Server --> UI : write(jobOpeningInfo)
+deactivate Server
+
+UI -> UI : read()
+activate UI
+
+UI --> UI : jobOpeningInfo
+deactivate UI
+
+UI --> User : shows operation success
+deactivate UI
+
+@enduml

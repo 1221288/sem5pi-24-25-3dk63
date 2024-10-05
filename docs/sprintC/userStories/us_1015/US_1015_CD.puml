@@ -1,0 +1,165 @@
+@startuml
+
+class EvaluateRequirementsUI {
+    - controller: AnswerEvaluatorController
+    - configurationRepository: ConfigurationRepository
+
+    + doShow(): boolean
+    + headline(): String
+    - listAndChooseJobOffer(): JobOffer
+}
+
+class AnswerEvaluatorController {
+    - jobOfferRepository: JobOfferRepository
+    - configurationRepository: ConfigurationRepository
+    - authorizationService: AuthorizationService
+    - applicationRepository: ApplicationRepository
+    - candidateRepository: CandidateRepository
+    - answerEvaluatorListener: AnswerEvaluatorListener
+
+    + getJobOffers(): List<JobOffer>
+    + getConfigurationFromJobOffer(jobOffer: JobOffer): Configuration
+    + checkIfRequirementIsOpen(configuration: Configuration): boolean
+    + getUsersWithApplications(reference: Reference): List<EmailAddress>
+    + getPaths(candidatesEmail: List<EmailAddress>): Map<EmailAddress, String>
+    + getRequirementsPath(jobOffer: JobOffer): String
+    + evaluate(requirementsPath: String, answersPath: String): String
+    + evaluateCandidates(requirementsPath: String, candidatePaths: Map<EmailAddress, String>, jobOffer: JobOffer): void
+    - updateScreeningPhaseResult(email: EmailAddress, jobOffer: JobOffer, evaluationResult: String): void
+}
+
+class AnswerEvaluatorListener {
+    - correctAnswers: Map<String, String>
+    - candidateAnswers: Map<String, String>
+    - parsingCorrectAnswers: boolean
+
+    + enterRequirement(ctx: FrontEndJuniorProgrammerRequirementsParser.RequirementContext): void
+    + evaluateCandidate(): String
+    - checkAnswer(expected: String, candidate: String): boolean
+}
+
+interface ApplicationRepository {
+    + findByReference(reference: Reference): Iterable<Application>
+    + findAllByEmail(email: EmailAddress): Iterable<Application>
+    + findByEmailAndReference(email: EmailAddress, reference: Reference): Optional<Application>
+    + findAll(): Iterable<Application>
+}
+
+interface ConfigurationRepository {
+    + findByReference(reference: Reference): Iterable<Configuration>
+}
+
+interface JobOfferRepository {
+    + findAllByManager(managerEmail: String): Iterable<JobOffer>
+    + findByReference(reference: Reference): Iterable<JobOffer>
+    + findAllByCreationDate(creationDate: LocalDateTime): List<JobOffer>
+    + findAllByCompany(company: Company): List<JobOffer>
+}
+
+interface CandidateRepository {
+    + findByUsername(name: Username): Optional<CandidateUser>
+    + findByEmail(email: EmailAddress): Optional<CandidateUser>
+    + findAllbyEmail(email: EmailAddress): Iterable<CandidateUser>
+    + findAllbyEmailStr(email: String): Iterable<CandidateUser>
+    + findAllActive(): Iterable<CandidateUser>
+    + findAllbyUserName(name: String): Iterable<CandidateUser>
+}
+
+class AuthorizationService {
+    - theSession: UserSession
+
+    + createSessionForUser(user: SystemUser): Optional<UserSession>
+    + clearSession(): Optional<UserSession>
+    + hasSession(): boolean
+    + session(): Optional<UserSession>
+    + isAuthenticatedUserAuthorizedTo(actions: Role...): boolean
+    + ensureAuthenticatedUserHasAnyOf(actions: Role...): void
+    + loggedinUserWithPermissions(actions: Role...): Optional<SystemUser>
+}
+
+class JpaCandidateUserRepository {
+    + JpaCandidateUserRepository(autoTx: TransactionalContext)
+    + JpaCandidateUserRepository(puname: String)
+    + findByUsername(name: Username): Optional<CandidateUser>
+    + findByEmail(email: EmailAddress): Optional<CandidateUser>
+    + findAllActive(): Iterable<CandidateUser>
+    + findAllbyUserName(name: String): Iterable<CandidateUser>
+    + findAllbyEmail(email: EmailAddress): Iterable<CandidateUser>
+    + findAllbyEmailStr(email: String): Iterable<CandidateUser>
+}
+
+class JpaJobOfferRepository {
+    + JpaJobOfferRepository(autoTx: TransactionalContext)
+    + JpaJobOfferRepository(puname: String)
+    + findAllByManager(managerEmail: String): Iterable<JobOffer>
+    + findByReference(reference: Reference): Iterable<JobOffer>
+    + findAllByCreationDate(creationDate: LocalDateTime): List<JobOffer>
+    + findAllByCompany(company: Company): List<JobOffer>
+}
+
+class JpaApplicationRepository {
+    + JpaApplicationRepository(autoTx: TransactionalContext)
+    + JpaApplicationRepository(puname: String)
+    + findByEmailAndReference(email: EmailAddress, reference: Reference): Optional<Application>
+    + findByReference(reference: Reference): Iterable<Application>
+    + findAllByEmail(email: EmailAddress): Iterable<Application>
+    + findUnprocessedApplications(): Iterable<Application>
+    + findApprovedApplicationsToPublish(): Iterable<Application>
+    + findNotApprovedApplicationsToPublish(): Iterable<Application>
+}
+
+class JpaConfigurationRepository {
+    + JpaConfigurationRepository(autoTx: TransactionalContext)
+    + JpaConfigurationRepository(puname: String)
+    + findByReference(reference: Reference): Iterable<Configuration>
+}
+
+class Application {
+    + Application(applicationReference: ApplicationReference, reference: Reference, email: EmailAddress, date: ApplicationDate, applicationFiles: List<ApplicationFile>)
+    + addInterview(interviewValue: InterviewValue): void
+    + markAsNotified(): void
+    + markResultAsNotified(): void
+    + markAsReadyToPublishResults(): void
+    + markAsAlreadyPublished(): void
+    + updateResult(newResult: STATUS): void
+    + updateScreeningPhaseResult(newResult: STATUS): void
+    + updateGrade(grade: double): void
+    + email(): EmailAddress
+    + date(): ApplicationDate
+    + reference(): Reference
+    + status(): STATUS
+    + files(): List<ApplicationFile>
+    + equals(o: Object): boolean
+    + hashCode(): int
+    + sameAs(other: Object): boolean
+
+    - applicationReference: ApplicationReference
+    - reference: Reference
+    - email: EmailAddress
+    - date: ApplicationDate
+    - result: STATUS
+    - previousState: STATUS
+    - notificationSent: boolean
+    - emailScreeningSent: boolean
+    - resultNotify: boolean
+    - readyToPublishResults: int
+    - screeningPhaseResult: STATUS
+    - interviewValue: InterviewValue
+    - grade: double
+    - applicationFiles: List<ApplicationFile>
+}
+
+EvaluateRequirementsUI "uses" --> AnswerEvaluatorController
+AnswerEvaluatorController "uses" --> ApplicationRepository
+AnswerEvaluatorController "uses" --> ConfigurationRepository
+AnswerEvaluatorController "uses" --> JobOfferRepository
+AnswerEvaluatorController "uses" --> CandidateRepository
+AnswerEvaluatorController "uses" --> AuthorizationService
+AnswerEvaluatorController "uses" --> AnswerEvaluatorListener
+AnswerEvaluatorController "updates" --> Application
+JpaCandidateUserRepository "implements" -u-> CandidateRepository
+JpaJobOfferRepository "implements" -u-> JobOfferRepository
+JpaApplicationRepository "implements" -u-> ApplicationRepository
+JpaConfigurationRepository "implements" -u-> ConfigurationRepository
+
+@enduml

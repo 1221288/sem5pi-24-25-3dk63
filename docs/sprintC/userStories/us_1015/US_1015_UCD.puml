@@ -1,0 +1,22 @@
+@startuml US1015_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Job requirement" as jobRequirement {
+  usecase "Execute the process of verification of requirements of applications for a job opening." as executeProcess
+}
+
+CustomerManager --> (executeProcess)
+
+@enduml

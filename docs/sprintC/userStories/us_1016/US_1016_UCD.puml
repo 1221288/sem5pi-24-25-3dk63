@@ -1,0 +1,23 @@
+@startuml US_1016_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Customer Manager: as CustomerManager
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "I want to notify candidates, by email, of the result of the verification process." as UC1
+}
+
+CustomerManager --> (UC1)
+
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml US2003_SSD
+
+autonumber
+
+actor O as "Operator"
+
+activate O
+
+O -> ":System" : asks the system to generate and export job requirement
+activate ":System"
+
+":System" --> O : shows all job openings
+deactivate ":System"
+
+O -> ":System" : selects a job opening that has a job requirement
+activate ":System"
+
+":System" --> O : informs operation success and shows the export file
+deactivate ":System"
+
+deactivate O
+
+@enduml

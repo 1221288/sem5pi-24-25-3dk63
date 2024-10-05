@@ -1,0 +1,48 @@
+@startuml US_2002_CD
+
+class Application {
+    - ApplicationReference applicationReference
+    - Reference reference
+    - EmailAddress email
+    - ApplicationDate date
+    - STATUS result
+    - InterviewValue interviewValue
+    - List<ApplicationFile> applicationFiles
+
+    + Application(ApplicationReference, Reference, EmailAddress, ApplicationDate, List<ApplicationFile>)
+    + addInterview(InterviewValue): void
+    + identity(): ApplicationReference
+    + email(): EmailAddress
+    + reference(): Reference
+    + files(): List<ApplicationFile>
+    + equals(Object): boolean
+    + hashCode(): int
+    + sameAs(Object): boolean
+}
+
+Application "1" --> "1" ApplicationBuilder : builds
+Application "1" --> "*" ApplicationFile : contains
+Application "1" --> "1" ApplicationReference : has
+Application "1" --> "1" ApplicationDate : has
+Application "1" --> "1" InterviewValue : has
+Application "1" --> "1" STATUS : has
+
+Application "1" --> "*" ApplicationRepository : stored in
+
+ApplicationRegistrationController "1" --> "1" ApplicationRepository : uses
+ApplicationRegistrationController "1" --> "1" FileManagerService : uses
+ApplicationRegistrationController "1" --> "1" CandidateRegistrationService : uses
+ApplicationRegistrationController "1" --> "1" JobOfferManagementService : uses
+
+RegisterApplicationUI "1" --> "1" ApplicationRegistrationController : uses
+
+CandidateRegistrationService "1" --> "1" CandidateRepository : uses
+CandidateRegistrationService "1" --> "1" AuthorizationService : uses
+CandidateRegistrationService "1" --> "1" UserManagementService : uses
+
+JobOfferManagementService "1" --> "1" JobOfferRepository : uses
+
+ApplicationRepository <|.. InMemoryApplicationRepository
+ApplicationRepository <|.. JpaApplicationRepository
+
+@enduml

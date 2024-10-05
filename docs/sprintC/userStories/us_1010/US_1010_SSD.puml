@@ -1,0 +1,29 @@
+@startuml US1010_SSD
+
+autonumber
+
+actor CustomerManager as "Customer Manager"
+
+activate CustomerManager
+
+CustomerManager -> ":System" : asks the system to open or close a phase of an job opening
+activate ":System"
+
+":System" --> CustomerManager : asks the user to select the job opening
+deactivate ":System"
+
+CustomerManager -> ":System" : selects the desired job opening
+activate ":System"
+
+":System" --> CustomerManager : asks the user to select the phase that he wishes to open or close
+deactivate ":System"
+
+CustomerManager -> ":System" : selects the phase and opens or closes it
+activate ":System"
+
+":System" --> CustomerManager : displays operation success
+deactivate ":System"
+
+deactivate CustomerManager
+
+@enduml

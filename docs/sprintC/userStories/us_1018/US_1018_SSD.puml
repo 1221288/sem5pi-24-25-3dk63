@@ -1,0 +1,25 @@
+@startuml US1002_SSD
+
+autonumber
+
+actor Manager as "Customer Manager"
+
+activate Manager
+
+Manager -> ":System" : asks the system to evaluate interviews for one job opening
+activate ":System"
+
+":System" --> Manager : requests data (Reference)
+deactivate ":System"
+
+Manager -> ":System" : types request data
+activate ":System"
+
+
+
+":System" --> Manager : shows all data and informs operation success
+deactivate ":System"
+
+deactivate Manager
+
+@enduml

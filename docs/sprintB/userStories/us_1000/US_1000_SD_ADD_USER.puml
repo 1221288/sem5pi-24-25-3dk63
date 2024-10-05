@@ -1,0 +1,68 @@
+@startuml US_1000_SD_ADD_USER
+
+actor Administrator as A
+participant "Backoffice UI" as UI <<presentation>>
+participant "Admin Menu" as Menu <<application>>
+participant "Add User UI" as AddUI <<presentation>>
+participant "User Data Widget" as DataWidget <<presentation>>
+participant "Add User Controller" as AddController <<application>>
+participant "User Management Service" as UserService <<service>>
+database "User Repository" as REPO <<repository>>
+
+activate A
+
+A -> UI : Access backoffice UI
+activate UI
+
+UI -> Menu : Show Admin Menu
+activate Menu
+
+Menu -> UI : Display menu options
+
+deactivate Menu
+UI -> A : Display menu options
+deactivate UI
+
+A -> Menu : Select Add User option
+
+activate Menu
+
+Menu -> AddUI : Shows Add User UI
+activate AddUI
+
+AddUI -> DataWidget : Request signup data
+activate DataWidget
+
+DataWidget -> AddUI : Request signup data
+deactivate DataWidget
+
+AddUI --> Menu : User signup data entered
+deactivate AddUI
+
+Menu -> AddController : Call Add User method
+activate AddController
+
+AddController -> UserService : Add User
+activate UserService
+
+UserService -> REPO : Save User
+activate REPO
+REPO --> UserService : User Saved
+deactivate REPO
+
+UserService --> AddController: Confirmation: User Added
+deactivate UserService
+
+activate AddUI
+AddController --> AddUI : Confirmation: User Added
+AddUI --> Menu : Confirmation: User Added
+deactivate AddUI
+
+deactivate AddController
+
+Menu --> A : Return to Main Menu
+deactivate Menu
+
+deactivate A
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml US_1019_SSD
+
+autonumber
+
+actor CustomerManager as "Customer Manager"
+
+activate CustomerManager
+
+CustomerManager -> ":System" : aks the system get an ordered list of candidates, using the job interview points (grades)
+activate ":System"
+
+":System" --> CustomerManager : shows all data and informs operation success
+deactivate ":System"
+
+deactivate CustomerManager
+
+@enduml

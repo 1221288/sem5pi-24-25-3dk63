@@ -1,0 +1,30 @@
+@startuml US1007_SSD
+
+autonumber
+
+actor Manager as "Customer Manager"
+
+activate Manager
+
+Manager -> ":System" : asks the system to setup the phases of the process for a job opening
+activate ":System"
+
+":System" --> Manager : shows job references adn asks to select one
+deactivate ":System"
+
+Manager -> ":System" : selects a job reference
+activate ":System"
+
+":System" --> Manager : requests data (Job Reference, Application Phase, Interview Phase, Screening Phase,\n Result Phase, Analysis Phase, Periods, Interview Model, Questions, Values)
+deactivate ":System"
+
+Manager -> ":System" : types request data
+activate ":System"
+
+
+":System" --> Manager : shows all data and informs operation success
+deactivate ":System"
+
+deactivate Manager
+
+@enduml

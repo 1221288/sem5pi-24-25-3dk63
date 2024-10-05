@@ -1,0 +1,22 @@
+@startuml US_3002_SSD
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3002
+
+autonumber
+
+actor "Customer" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to list Job Openings
+        activate System
+
+    System--> User : shows operation success
+        deactivate System
+
+
+@enduml

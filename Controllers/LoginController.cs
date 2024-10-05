@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
 {
-    [Route("[controller]")]
     public class LoginController : Controller
     {
-        
-        [HttpGet("login")]
+
+        [HttpGet("api/login")]
         public async Task<IActionResult> Login()
         {
             var properties = new AuthenticationProperties
@@ -23,7 +22,7 @@ namespace DDDSample1.Controllers
         }
 
         // Distinct route for Google response action
-        [HttpGet("google-response")]
+        [HttpGet("api/google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);

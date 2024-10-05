@@ -1,0 +1,64 @@
+@startuml US1001_SD
+autonumber
+
+actor "CustomerManager" as CM
+participant "SetupConfigurationUI" as UI <<presentation>>
+participant "SetupConfigurationController" as CTRL <<application>>
+participant "ConfigurationBuilder" as CB <<builder>>
+
+database ConfigurationRepository as CR <<repository>>
+database JobOfferRepository as JR <<repository>>
+
+activate CM
+
+CM -> UI : asks the system to setup a new configuration
+activate UI
+
+UI  -> CTRL : showJobOffers()
+
+activate CTRL
+
+CTRL -> JR : getJobOffers()
+activate JR
+
+JR --> CTRL : returns list of jobOffers
+
+deactivate JR
+
+CTRL --> UI : returns list of jobOffers
+deactivate CTRL
+UI --> CM : asks to select a jobOffer
+deactivate UI
+
+CM -> UI : select jobOffer
+
+activate UI
+
+UI --> CM : requests data (ApplicationPhase, AnalysisPhase, InterviewPhase, ResultPhase, ScreeningPhase)
+deactivate UI
+
+CM -> UI : types request data
+activate UI
+
+    UI -> CTRL : SetupConfiguration
+    activate CTRL
+
+        CTRL -> CB : ConfigurationBuilder().build()
+        activate CB
+        deactivate CB
+
+
+        CTRL -> CR : saveConfiguration()
+        deactivate CTRL
+        activate CR
+        deactivate CR
+
+    deactivate CTRL
+
+UI --> CM : informs operation success
+
+deactivate UI
+
+deactivate CM
+
+@enduml

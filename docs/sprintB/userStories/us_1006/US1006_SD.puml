@@ -1,0 +1,76 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor "Operator" as O
+participant "ListCandidateInfoUI" as UI <<presentation>>
+participant "ListCandidateInfoControllerr" as CICTRL <<Aplication>>
+participant "ListCandidatesController" as CCTRL
+participant "AuthorizationService" as AUTH
+participant "UserManagementService" as UMNG
+database UserRepository as REPU <<repository>>
+
+
+
+activate O
+O-> UI : asks to list all personal info of a candidate
+activate UI
+UI --> O: asks what method of search to use
+O -> UI: selects search method
+alt list
+    UI -> CCTRL: listCandidatesUsers()
+    activate CCTRL
+    CCTRL -> AUTH: ensureAuthenticatedUserHasAnyOf()
+    activate AUTH
+    AUTH --> CCTRL: returns confirmation that user is credited to perform the current operation
+    deactivate AUTH
+    CCTRL -> UMNG: allUsers()
+    activate UMNG
+    UMNG -> REPU: findAll()
+    activate REPU
+    REPU --> UMNG : returns Iterable of all users
+    deactivate REPU
+    UMNG --> CCTRL : returns only the candidates as a sorted list
+    deactivate UMNG
+    CCTRL --> UI: returns list
+    deactivate CCTRL
+    UI --> O : displays all users
+    O -> UI: Selects user
+    UI -> CICTRL: getCandidateByName()
+    activate CICTRL
+    CICTRL -> AUTH: ensureAuthenticatedUserHasAnyOf()
+    activate AUTH
+    AUTH --> CICTRL: returns confirmation that user is credited to perform the current operation
+    deactivate AUTH
+    CICTRL -> UMNG: allUsers()
+    activate UMNG
+    UMNG -> REPU: findAll()
+    activate REPU
+    REPU --> UMNG : returns Iterable of all users
+    deactivate REPU
+    UMNG --> CICTRL : returns only the candidates as a sorted list
+    deactivate UMNG
+    CICTRL --> UI: returns Candidate with the same name as the one provided
+    deactivate CICTRL
+else individual
+    UI -> CICTRL: getCandidateByName()
+    activate CICTRL
+    CICTRL -> AUTH: ensureAuthenticatedUserHasAnyOf()
+    activate AUTH
+    AUTH --> CICTRL: returns confirmation that user is credited to perform the current operation
+    deactivate AUTH
+    CICTRL -> UMNG: allUsers()
+    activate UMNG
+    UMNG -> REPU: findAll()
+    activate REPU
+    REPU --> UMNG : returns Iterable of all users
+    deactivate REPU
+    UMNG --> CICTRL : returns only the candidates as a sorted list
+    deactivate UMNG
+    CICTRL --> UI: returns Candidate with the same name as the one provided
+    deactivate CICTRL
+end
+    UI --> O: Displays candidate information
+    deactivate UI
+    deactivate O
+@enduml

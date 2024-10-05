@@ -1,0 +1,14 @@
+@startuml US1003_UCD
+
+:Operator: as op
+
+
+left to right direction
+
+rectangle "Backoffice" {
+  usecase "As Operator, I want to register an application of a candidate for a job opening and import all files received." as registerAndImport
+}
+
+op --> (registerAndImport)
+
+@enduml

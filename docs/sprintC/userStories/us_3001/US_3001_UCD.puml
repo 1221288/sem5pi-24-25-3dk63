@@ -1,0 +1,21 @@
+@startuml US3001_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Candidate: as Candidate
+
+left to right direction
+
+rectangle "Notification" as notification {
+  usecase "Be notified, in the application, when the state of one of my applications changes." as beNotified
+}
+
+Candidate --> (beNotified)
+
+@enduml

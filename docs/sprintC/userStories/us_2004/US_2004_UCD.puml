@@ -1,0 +1,23 @@
+@startuml US_2004_UCD
+'https://plantuml.com/use-case-diagram
+
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+    FontStyle Bold
+}
+
+:Operator : as Operator
+
+
+left to right direction
+
+rectangle "Backoffice" as backoffice {
+  usecase "Upload a text file with the data fields (requirements ) of a  candidate" as UC1
+}
+Operator --> (UC1)
+
+
+
+@enduml
