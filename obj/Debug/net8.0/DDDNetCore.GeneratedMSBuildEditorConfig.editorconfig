@@ -9,19 +9,19 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = DDDNetCore
 build_property.RootNamespace = DDDNetCore
-build_property.ProjectDir = C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\
+build_property.ProjectDir = C:\Users\Utilizador\Desktop\Projeto\sem5pi-24-25-3dk63\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\gonca\Desktop\sem5pi-24-25-3dk63
+build_property.MSBuildProjectDirectory = C:\Users\Utilizador\Desktop\Projeto\sem5pi-24-25-3dk63
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/gonca/Desktop/sem5pi-24-25-3dk63/Views/Home/Index.cshtml]
+[C:/Users/Utilizador/Desktop/Projeto/sem5pi-24-25-3dk63/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/gonca/Desktop/sem5pi-24-25-3dk63/Views/Login/UserInfo.cshtml]
+[C:/Users/Utilizador/Desktop/Projeto/sem5pi-24-25-3dk63/Views/Login/UserInfo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cVXNlckluZm8uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
