@@ -1426,20 +1426,20 @@
     "C:\\Users\\gonca\\.nuget\\packages\\": {}
   },
   "project": {
-    "version": "1.0.0",
-    "restore": {
-      "projectUniqueName": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj",
-      "projectName": "DDDNetCore",
-      "projectPath": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj",
-      "packagesPath": "C:\\Users\\gonca\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\obj\\",
-      "projectStyle": "PackageReference",
-      "configFilePaths": [
-        "C:\\Users\\gonca\\AppData\\Roaming\\NuGet\\NuGet.Config"
-      ],
-      "originalTargetFrameworks": [
-        "net8.0"
-      ],
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "./DDDNetCore.csproj",
+        "projectName": "DDDNetCore",
+        "projectPath": "./DDDNetCore.csproj",
+        "packagesPath": "./.nuget/packages/",
+        "outputPath": "./obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "./AppData/Roaming/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
