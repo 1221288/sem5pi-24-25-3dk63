@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "./DDDNetCore.csproj": {}
+    "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj": {}
   },
   "projects": {
-    "./DDDNetCore.csproj": {
+    "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "./DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "./DDDNetCore.csproj",
-        "packagesPath": "./.nuget/packages/",
-        "outputPath": "./obj/",
+        "projectPath": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\gonca\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\gonca\\Desktop\\sem5pi-24-25-3dk63\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "./AppData/Roaming/NuGet/NuGet.Config"
+          "C:\\Users\\gonca\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -103,7 +103,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "./PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
