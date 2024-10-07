@@ -49,5 +49,6 @@ C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\bin\Debug\net8.0\Google.Apis.Core.dll
 C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\bin\Debug\net8.0\System.CodeDom.dll
 C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\bin\Debug\net8.0\System.Management.dll
 C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
+C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\bin\Debug\net8.0\DDDNetCore.staticwebassets.runtime.json
 C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\obj\Debug\net8.0\DDDNetCore.RazorAssemblyInfo.cache
 C:\Users\gonca\Desktop\sem5pi-24-25-3dk63\obj\Debug\net8.0\DDDNetCore.RazorAssemblyInfo.cs

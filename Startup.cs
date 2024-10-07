@@ -47,6 +47,8 @@ namespace DDDSample1
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -59,5 +61,10 @@ namespace DDDSample1
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+
+
+
+
     }
 }
