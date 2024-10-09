@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Categories;
 using DDDSample1.Domain.Products;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace DDDSample1.Controllers
@@ -21,7 +22,7 @@ namespace DDDSample1.Controllers
         }
 
         // GET: api/Products
-        [HttpGet]
+    
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
             return await _service.GetAllAsync();
@@ -57,7 +58,7 @@ namespace DDDSample1.Controllers
             }
         }
 
-        
+
         // PUT: api/Products/5
         [HttpPut("{id}")]
         public async Task<ActionResult<ProductDto>> Update(Guid id, ProductDto dto)
@@ -70,7 +71,7 @@ namespace DDDSample1.Controllers
             try
             {
                 var prod = await _service.UpdateAsync(dto);
-                
+
                 if (prod == null)
                 {
                     return NotFound();
@@ -96,7 +97,7 @@ namespace DDDSample1.Controllers
 
             return Ok(prod);
         }
-        
+
         // DELETE: api/Products/5
         [HttpDelete("{id}/hard")]
         public async Task<ActionResult<ProductDto>> HardDelete(Guid id)

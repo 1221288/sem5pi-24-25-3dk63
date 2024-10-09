@@ -1,0 +1,100 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
+using DDDSample1.Domain.Users;
+using DDDSample1.Domain.Shared;
+using Microsoft.AspNetCore.Authorization;
+using DDDSample1.Users;
+
+namespace DDDSample1.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly UserService _service;
+
+        public UsersController(UserService service)
+        {
+            _service = service;
+        }
+
+        // GET: api/Users
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
+        {
+            return await _service.GetAllAsync();
+        }
+
+        // GET: api/Users/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserDTO>> GetById(Guid id)
+        {
+            var user = await _service.GetByIdAsync(new UserId(id));
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        // POST: api/Users
+        [HttpPost]
+        public async Task<ActionResult<UserDTO>> Create(CreatingUserDto dto)
+        {
+            var user = await _service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        }
+
+        // PUT: api/Users/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDTO>> Update(Guid id, UserDTO dto)
+        {
+            if (id != dto.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var user = await _service.UpdateAsync(dto);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        // DELETE: api/Users/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserDTO>> SoftDelete(Guid id)
+        {
+            try
+            {
+                var user = await _service.DeleteAsync(new UserId(id));
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+    }
+}

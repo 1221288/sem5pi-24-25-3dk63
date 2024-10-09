@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>bd63db96-a1d3-4d02-b56c-5234ac99abf9</UserSecretsId>
-
+    <DisableStaticWebAssets>true</DisableStaticWebAssets> <!-- Adicionando esta linha -->
   </PropertyGroup>
 
   <ItemGroup>

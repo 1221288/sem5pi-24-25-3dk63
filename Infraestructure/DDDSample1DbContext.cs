@@ -4,6 +4,7 @@ using DDDSample1.Domain.Products;
 using DDDSample1.Domain.Families;
 using DDDSample1.Infrastructure.Categories;
 using DDDSample1.Infrastructure.Products;
+using DDDSample1.Domain;
 
 namespace DDDSample1.Infrastructure
 {
@@ -14,6 +15,8 @@ namespace DDDSample1.Infrastructure
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Family> Families { get; set; }
+
+        public DbSet<User> Users { get; set; }
 
         public DDDSample1DbContext(DbContextOptions options) : base(options)
         {

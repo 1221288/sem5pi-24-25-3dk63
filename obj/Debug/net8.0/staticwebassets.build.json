@@ -1,58 +1,11 @@
 {
   "Version": 1,
-  "Hash": "JHf1588+e/weB9Su6c/mTRbiiQFGozaaV0rgWsJkjvE=",
+  "Hash": "/LNnhOdMcxPDV9/bcJl+vxAFuI00O4PCcKYFzApaSYI=",
   "Source": "DDDNetCore",
   "BasePath": "_content/DDDNetCore",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [
-    {
-      "Name": "DDDNetCore/wwwroot",
-      "Source": "DDDNetCore",
-      "ContentRoot": "wwwroot/",
-      "BasePath": "_content/DDDNetCore",
-      "Pattern": "**"
-    }
-  ],
-  "Assets": [
-    {
-      "Identity": "wwwroot/css/site.css",
-      "SourceId": "DDDNetCore",
-      "SourceType": "Discovered",
-      "ContentRoot": "wwwroot/",
-      "BasePath": "_content/DDDNetCore",
-      "RelativePath": "css/site.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/css/site.css"
-    },
-    {
-      "Identity": "wwwroot/js/site.js",
-      "SourceId": "DDDNetCore",
-      "SourceType": "Discovered",
-      "ContentRoot": "wwwroot/",
-      "BasePath": "_content/DDDNetCore",
-      "RelativePath": "js/site.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/js/site.js"
-    }
-  ]
+  "DiscoveryPatterns": [],
+  "Assets": []
 }
