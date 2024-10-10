@@ -10,9 +10,9 @@ namespace DDDSample1.Domain
 
         public class User : Entity<UserId>,IAggregateRoot{
 
-            public string Username { get; private set; }
-            public string Role { get; private set; }
-            public string Email { get; private set; }
+            public Username Username { get; private set; }
+            public Role Role { get; private set; }
+            public Email Email { get; private set; }
 
             public bool Active { get; private set; }
 
@@ -22,7 +22,7 @@ namespace DDDSample1.Domain
              }
 
 
-            public User(string username, string role, string email) {
+            public User(Username username, Role role, Email email) {
                 this.Id = new UserId(Guid.NewGuid());
                 this.Role = role;
                 this.Username = username;
@@ -30,18 +30,18 @@ namespace DDDSample1.Domain
             }
 
 
-            public void ChangeRole(string role) {
+            public void ChangeRole(Role role) {
                 if(!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
                 this.Role = role;
             }
 
 
-            public void ChangeUsername(string username) {
+            public void ChangeUsername(Username username) {
                 if(!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
                 this.Username = username;
             }
 
-            public void ChangeEmail(string email) {
+            public void ChangeEmail(Email email) {
                 if(!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
                 this.Email = email;
             }
