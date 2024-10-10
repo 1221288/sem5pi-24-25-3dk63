@@ -65,7 +65,7 @@ namespace DDDSample1
 
             ConfigureMyServices(services);
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
         }
 
 

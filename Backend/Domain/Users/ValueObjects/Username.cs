@@ -13,7 +13,7 @@ namespace DDDSample1.Domain.Users
             {
                 throw new BusinessRuleValidationException("Username cannot be empty.");
             }
-            Value = value;
+            this.Value = value;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

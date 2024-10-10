@@ -21,7 +21,7 @@ namespace DDDSample1.Domain.Users
             throw new BusinessRuleValidationException("Invalid email format.");
         }
 
-        Value = value;
+            this.Value = value;
     }
 
     private bool IsValidEmail(string email)

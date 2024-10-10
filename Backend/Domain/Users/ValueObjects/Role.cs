@@ -16,7 +16,7 @@ namespace DDDSample1.Domain.Users
             {
                 throw new BusinessRuleValidationException($"Invalid role: {value}. Must be one of: {string.Join(", ", ValidRoles)}");
             }
-            Value = value;
+            this.Value = value;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
