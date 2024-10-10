@@ -1,21 +1,23 @@
 using DDDSample1.Domain.Shared;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DDDSample1.Domain.Users
 {
+    public enum RoleType
+    {
+        Admin,
+        Doctor,
+        Nurse,
+        Technician,
+        Patient
+    }
+
     public class Role : ValueObject
     {
-        public string Value { get; private set; }
+        public RoleType Value { get; private set; }
 
-        private static readonly string[] ValidRoles = { "Admin", "Doctor", "Nurse", "Technician", "Patient" };
-
-        public Role(string value)
+        public Role(RoleType value)
         {
-            if (!ValidRoles.Contains(value))
-            {
-                throw new BusinessRuleValidationException($"Invalid role: {value}. Must be one of: {string.Join(", ", ValidRoles)}");
-            }
             this.Value = value;
         }
 
@@ -24,6 +26,15 @@ namespace DDDSample1.Domain.Users
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString() => Value.ToString();
+    }
+
+    public static class Roles
+    {
+        public static Role Admin => new Role(RoleType.Admin);
+        public static Role Doctor => new Role(RoleType.Doctor);
+        public static Role Nurse => new Role(RoleType.Nurse);
+        public static Role Technician => new Role(RoleType.Technician);
+        public static Role Patient => new Role(RoleType.Patient);
     }
 }

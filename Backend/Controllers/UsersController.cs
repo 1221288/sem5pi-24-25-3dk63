@@ -23,6 +23,7 @@ namespace DDDSample1.Controllers
         // GET: api/Users
         [HttpGet]
         [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
         {
             return await _service.GetAllAsync();

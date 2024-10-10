@@ -45,14 +45,16 @@ namespace DDDSample1.Infrastructure
                         emailString => new Email(emailString))
                     .IsRequired();
 
-                // Assuming Role is also a value object
+                // Update the Role conversion
                 entity.Property(u => u.Role)
                     .HasConversion(
                         role => role.ToString(),
-                        roleString => new Role(roleString))
+                        roleString => new Role(Enum.Parse<RoleType>(roleString))) // Convert string to RoleType
                     .IsRequired();
 
                 entity.Property(u => u.Active).IsRequired();
+                entity.Property(u => u.SequentialNumber).IsRequired();
+
             });
         }
     }

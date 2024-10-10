@@ -6,9 +6,11 @@ using DDDSample1.Domain.Users;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain;
 
-namespace DDDSample1.Users
+
+namespace DDDSample1.Domain.Users
 {
-    public interface IUserRepository : IRepository<User,UserId>
+    public interface IUserRepository : IRepository<User, UserId>
     {
+        Task<int> GetNextSequentialNumberAsync();
     }
 }
