@@ -18,6 +18,8 @@ using DDDSample1.Domain.Products;
 using DDDSample1.Domain.Families;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DDDSample1.Users;
+using DDDSample1.Infraestructure.Users;
 
 
 namespace DDDSample1
@@ -106,6 +108,9 @@ namespace DDDSample1
 
             services.AddTransient<IFamilyRepository, FamilyRepository>();
             services.AddTransient<FamilyService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<UserService>();
         }
     }
 }
