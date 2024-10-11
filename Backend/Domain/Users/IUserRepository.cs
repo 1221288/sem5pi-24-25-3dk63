@@ -12,5 +12,7 @@ namespace DDDSample1.Domain.Users
     public interface IUserRepository : IRepository<User, UserId>
     {
         Task<int> GetNextSequentialNumberAsync();
+        Task<User> FindByEmailAsync(Email emai);
+
     }
 }

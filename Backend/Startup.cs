@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using DDDSample1.Infrastructure;
 using DDDSample1.Infrastructure.Categories;
 using DDDSample1.Infrastructure.Products;
@@ -16,11 +18,10 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Categories;
 using DDDSample1.Domain.Products;
 using DDDSample1.Domain.Families;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using DDDSample1.Users;
 using DDDSample1.Infrastructure.Users;
-using DDDSample1.Domain.Users; // Corrigido o namespace
+using DDDSample1.Domain.Users;
+using Microsoft.AspNetCore.Authentication;
 
 namespace DDDSample1
 {
@@ -35,13 +36,11 @@ namespace DDDSample1
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<DDDSample1DbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MySqlConnection"),
-                    new MySqlServerVersion(new Version(8, 0, 0))
-                ).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+                    new MySqlServerVersion(new Version(8, 0, 0)))
+                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
-            
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -53,23 +52,39 @@ namespace DDDSample1
                 options.ClientId = Configuration.GetValue<string>("GoogleKeys:ClientId");
                 options.ClientSecret = Configuration.GetValue<string>("GoogleKeys:ClientSecret");
 
-                options.Events.OnCreatingTicket = context =>
+                options.Events.OnCreatingTicket = async context =>
                 {
+                    var email = context.Principal.FindFirstValue(ClaimTypes.Email);
+
+                    var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
+                    var user = await userService.FindByEmailAsync(email);
+
+                    if (user == null)
+                    {
+                        Console.WriteLine("Login falhou: email não encontrado.");
+
+                        await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        context.Fail("Este email não está registrado no sistema.");
+                        context.Response.StatusCode = 302;
+                        context.Response.Headers["Location"] = "/api/login";
+                        await context.Response.CompleteAsync();
+
+                        return;
+                    }else{
+
+                        Console.WriteLine("Login bem-sucedido: email encontrado.");
+                    }
+
                     var identity = (ClaimsIdentity)context.Principal.Identity;
                     identity.AddClaim(new Claim("urn:google:access_token", context.AccessToken));
                     identity.AddClaim(new Claim("urn:google:expires_in", context.ExpiresIn.ToString()));
-                    identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-
-                    return Task.CompletedTask;
+                    identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
                 };
             });
-
-            // Registro dos serviços e repositórios
             ConfigureMyServices(services);
 
             services.AddControllers().AddNewtonsoftJson();
         }
-
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -91,14 +106,12 @@ namespace DDDSample1
 
             app.UseEndpoints(endpoints =>
             {
-                // Definir a rota padrão
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 
-        // Configuração dos serviços customizados
         public void ConfigureMyServices(IServiceCollection services)
         {
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -112,11 +125,8 @@ namespace DDDSample1
             services.AddTransient<IFamilyRepository, FamilyRepository>();
             services.AddTransient<FamilyService>();
 
-            // Registro do UserRepository e UserService
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
-
-
         }
     }
 }

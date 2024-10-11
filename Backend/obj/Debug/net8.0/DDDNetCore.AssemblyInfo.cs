@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DDDNetCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49d8fe2280a0417ff570d2a15f6549b9cb40825e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e11754b2f8a08db4805eec69571b891aac0c1e31")]
 [assembly: System.Reflection.AssemblyProductAttribute("DDDNetCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DDDNetCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -21,12 +21,16 @@ namespace DDDSample1.Infrastructure.Users
 
         public async Task<int> GetNextSequentialNumberAsync()
         {
-            // Obtém o maior número sequencial atual, ou retorna 1 se não houver usuários
             var lastUser = await _context.Users
                 .OrderByDescending(u => u.SequentialNumber)
                 .FirstOrDefaultAsync();
 
             return lastUser != null ? lastUser.SequentialNumber + 1 : 1;
+        }
+
+        public async Task<User> FindByEmailAsync(Email email)
+        {
+            return await _context.Users .FirstOrDefaultAsync(u => u.Email.Equals(email));
         }
     }
 }
