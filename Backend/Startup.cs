@@ -35,12 +35,13 @@ namespace DDDSample1
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Configuração do Entity Framework Core com banco de dados em memória
-            services.AddDbContext<DDDSample1DbContext>(opt =>
-                opt.UseInMemoryDatabase("DDDSample1DB")
-                   .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
-            // Configuração da autenticação com Google e cookies
+            services.AddDbContext<DDDSample1DbContext>(options =>
+                options.UseMySql(Configuration.GetConnectionString("MySqlConnection"),
+                    new MySqlServerVersion(new Version(8, 0, 0))
+                ).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -66,9 +67,9 @@ namespace DDDSample1
             // Registro dos serviços e repositórios
             ConfigureMyServices(services);
 
-            // Adiciona suporte para JSON e controllers
             services.AddControllers().AddNewtonsoftJson();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
