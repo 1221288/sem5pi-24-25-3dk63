@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
@@ -51,10 +52,8 @@ namespace DDDSample1.Users
             };
         }
 
-
         public async Task<UserDTO> AddAsync(CreatingUserDto dto)
         {
-
             int sequentialNumber = await this._userRepository.GetNextSequentialNumberAsync();
 
             string domain = _configuration["DNS_DOMAIN"];
@@ -63,17 +62,24 @@ namespace DDDSample1.Users
                 throw new BusinessRuleValidationException("O domínio DNS não está configurado corretamente.");
             }
 
-
             int recruitmentYear = DateTime.Now.Year;
             var role = new Role(dto.Role.Value);
-            var user = new User(role, new Email(dto.Email.Value), recruitmentYear, domain, sequentialNumber);
-
+            var name = new Name(dto.FirstName, dto.LastName);  
+            var user = new User(role, new Email(dto.Email.Value), name, recruitmentYear, domain, sequentialNumber);
 
             await this._userRepository.AddAsync(user);
             await this._unitOfWork.CommitAsync();
 
-            return new UserDTO { Id = user.Id.AsGuid(), Role = user.Role, Username = user.Username, Email = user.Email };
+            return new UserDTO
+            {
+                Id = user.Id.AsGuid(),
+                Role = user.Role,
+                Username = user.Username,
+                Email = user.Email,
+                Name = user.Name
+            };
         }
+
 
 
         public async Task<UserDTO> UpdateAsync(UserDTO dto)
@@ -97,7 +103,7 @@ namespace DDDSample1.Users
             };
         }
 
-        
+
         public async Task<UserDTO> DeleteAsync(UserId id)
         {
             var user = await this._userRepository.GetByIdAsync(id);

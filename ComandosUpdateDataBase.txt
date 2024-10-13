@@ -1,0 +1,3 @@
+dotnet ef migrations add NomeDaMigraçao
+
+dotnet ef database update

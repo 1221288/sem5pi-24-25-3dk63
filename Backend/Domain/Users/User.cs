@@ -1,4 +1,5 @@
 using System;
+using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 using Microsoft.Extensions.Configuration;
@@ -10,27 +11,28 @@ namespace DDDSample1.Domain
         public Username Username { get; private set; }
         public Role Role { get; private set; }
         public Email Email { get; private set; }
+        public Name Name { get; private set; }
         public bool Active { get; private set; }
 
         public int SequentialNumber { get; private set; }
-
 
         private User()
         {
             this.Active = true;
         }
 
-        public User(Role role, Email email, int recruitmentYear,string domain, int sequentialNumber)
+        public User(Role role, Email email, Name name, int recruitmentYear, string domain, int sequentialNumber)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Active = true;
             this.Email = email;
             this.Role = role;
+            this.Name = name;
             this.SequentialNumber = sequentialNumber;
-            this.Username = GenerateUsername(role.Value, recruitmentYear,domain,sequentialNumber);
+            this.Username = GenerateUsername(role.Value, recruitmentYear, domain, sequentialNumber);
         }
 
-        private Username GenerateUsername(RoleType roleType, int recruitmentYear,string domain,int sequentialNumber)
+        private Username GenerateUsername(RoleType roleType, int recruitmentYear, string domain, int sequentialNumber)
         {
             string prefix;
 
@@ -73,6 +75,12 @@ namespace DDDSample1.Domain
         {
             if (!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
             this.Email = email;
+        }
+
+        public void ChangeName(Name name)
+        {
+            if (!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
+            this.Name = name;
         }
     }
 }
