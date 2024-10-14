@@ -6,9 +6,9 @@ namespace DDDSample1.Domain.OperationsType
     {
         public int Value { get; private set; }
 
-        public Duration(int value)
+        public Duration(int durationValue)
         {
-            this.Value = value;
+            this.Value = durationValue;
         }
         protected override IEnumerable<object> GetEqualityComponents()
         {
