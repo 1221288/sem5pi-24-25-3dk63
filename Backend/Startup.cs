@@ -21,6 +21,9 @@ using DDDSample1.Domain.Families;
 using DDDSample1.Users;
 using DDDSample1.Infrastructure.Users;
 using DDDSample1.Domain.Users;
+using DDDSample1.OperationsType;
+using DDDSample1.Infrastructure.OperationsType;
+using DDDSample1.Domain.OperationsType;
 using Microsoft.AspNetCore.Authentication;
 
 namespace DDDSample1
@@ -127,6 +130,10 @@ namespace DDDSample1
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
+            services.AddTransient<OperationTypeService>();
+            
         }
     }
 }
