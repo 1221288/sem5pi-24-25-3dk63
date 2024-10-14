@@ -127,6 +127,7 @@ namespace DDDSample1
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
+            
         }
     }
 }
