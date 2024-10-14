@@ -15,33 +15,26 @@ namespace DDDSample1.Infraestructure.Users
         {
             // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
 
-            // Configure the User entity
+            builder.HasKey(u => u.Id);
 
-                // Set the key
-                builder.HasKey(u => u.Id);
-
-            // Configure the Username
             builder.Property(u => u.Username)
                     .HasConversion(
                         username => username.ToString(),
                         usernameString => new Username(usernameString))
                     .IsRequired();
 
-            // Configure the Email
             builder.Property(u => u.Email)
                     .HasConversion(
                         email => email.ToString(),
                         emailString => new Email(emailString))
                     .IsRequired();
 
-            // Configure the Role
             builder.Property(u => u.Role)
                     .HasConversion(
                         role => role.ToString(),
                         roleString => new Role(Enum.Parse<RoleType>(roleString)))
                     .IsRequired();
 
-            // Configure the Name Value Object
             builder.OwnsOne(u => u.Name, name =>
                 {
                     name.Property(n => n.FirstName)
@@ -58,6 +51,5 @@ namespace DDDSample1.Infraestructure.Users
             builder.Property(u => u.Active).IsRequired();
             builder.Property(u => u.SequentialNumber).IsRequired();
             }
-
     }
 }

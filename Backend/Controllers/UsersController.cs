@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 using DDDSample1.Domain.Users;
 using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +19,6 @@ namespace DDDSample1.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
