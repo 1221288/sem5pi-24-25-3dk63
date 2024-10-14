@@ -1,8 +1,6 @@
-using System;
 using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
-using Microsoft.Extensions.Configuration;
 
 namespace DDDSample1.Domain
 {

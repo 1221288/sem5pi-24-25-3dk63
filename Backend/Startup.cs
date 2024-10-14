@@ -117,6 +117,9 @@ namespace DDDSample1
 
         public void ConfigureMyServices(IServiceCollection services)
         {
+
+            services.AddAutoMapper(typeof(UserMappingProfile));
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
@@ -133,7 +136,7 @@ namespace DDDSample1
 
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
             services.AddTransient<OperationTypeService>();
-            
+
         }
     }
 }
