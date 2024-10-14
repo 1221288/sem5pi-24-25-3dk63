@@ -26,7 +26,6 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new CategoryEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ProductEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new FamilyEntityTypeConfiguration());
-
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
 
 
