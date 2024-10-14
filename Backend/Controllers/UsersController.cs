@@ -78,7 +78,9 @@ namespace DDDSample1.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
+
         public async Task<ActionResult<UserDTO>> SoftDelete(Guid id)
         {
             try

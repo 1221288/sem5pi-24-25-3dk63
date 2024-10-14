@@ -6,6 +6,7 @@ using DDDSample1.Domain.Users;
 using DDDSample1.Infrastructure.Categories;
 using DDDSample1.Infrastructure.Products;
 using DDDSample1.Domain;
+using DDDSample1.Infraestructure.Users;
 
 namespace DDDSample1.Infrastructure
 {
@@ -26,50 +27,9 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new ProductEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new FamilyEntityTypeConfiguration());
 
-            // Configure the User entity
-            modelBuilder.Entity<User>(entity =>
-            {
-                // Set the key
-                entity.HasKey(u => u.Id);
+            modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
 
-                // Configure the Username
-                entity.Property(u => u.Username)
-                    .HasConversion(
-                        username => username.ToString(),
-                        usernameString => new Username(usernameString))
-                    .IsRequired();
 
-                // Configure the Email
-                entity.Property(u => u.Email)
-                    .HasConversion(
-                        email => email.ToString(),
-                        emailString => new Email(emailString))
-                    .IsRequired();
-
-                // Configure the Role
-                entity.Property(u => u.Role)
-                    .HasConversion(
-                        role => role.ToString(),
-                        roleString => new Role(Enum.Parse<RoleType>(roleString)))
-                    .IsRequired();
-
-                // Configure the Name Value Object
-                entity.OwnsOne(u => u.Name, name =>
-                {
-                    name.Property(n => n.FirstName)
-                        .HasColumnName("FirstName")
-                        .IsRequired();
-
-                    name.Property(n => n.LastName)
-                        .HasColumnName("LastName")
-                        .IsRequired();
-
-                    name.Ignore(n => n.FullName); 
-                });
-
-                entity.Property(u => u.Active).IsRequired();
-                entity.Property(u => u.SequentialNumber).IsRequired();
-            });
         }
     }
 }
