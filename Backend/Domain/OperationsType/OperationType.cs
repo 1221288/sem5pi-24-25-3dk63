@@ -20,6 +20,7 @@ namespace DDDSample1.Domain
 
     public OperationType(Name name, Duration duration, RequiredStaff requiredStaff)
     {
+        this.Id = new OperationTypeId(Guid.NewGuid());
         this.Active = true;
         this.Name = name;
         this.Duration = duration;
