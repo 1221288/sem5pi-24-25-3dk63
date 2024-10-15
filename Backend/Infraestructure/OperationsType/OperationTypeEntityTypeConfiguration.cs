@@ -27,8 +27,9 @@ namespace DDDSample1.Infraestructure.OperationTypes
             builder.OwnsOne(o => o.Duration, duration =>
             {
                 duration.Property(d => d.Value)
-                    .HasColumnName("OperationDuration")
+                    .HasColumnName("Duration")
                     .IsRequired();
+                    
             });
 
             // Configura a propriedade RequiredStaff (associada ao Value Object RequiredStaffBySpecialization)
