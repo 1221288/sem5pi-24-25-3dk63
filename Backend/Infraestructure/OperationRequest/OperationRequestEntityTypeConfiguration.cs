@@ -11,61 +11,44 @@ namespace DDDSample1.Infraestructure.OperationTypes
             // Define a chave primária
             builder.HasKey(o => o.Id);
 
-            // Configura a propriedade pRIOridade (associada ao Value Object Name)
-        
+            // Configura a propriedade Priority (associada ao Value Object Priority)
             builder.OwnsOne(o => o.priority, priority =>
             {
                 priority.Property(p => p.Value)
-
                     .HasColumnName("Priority")
-
                     .IsRequired();
             });
 
-            // Configura a propriedade Deadline (associada ao Value Object Duration)
+            // Configura a propriedade Deadline (associada ao Value Object Deadline)
             builder.OwnsOne(o => o.deadline, deadline =>
             {
                 deadline.Property(d => d.Value)
-
                     .HasColumnName("Deadline")
-
                     .IsRequired();
-
             });
 
-            // Configura a propriedade LicenseNumber (associada ao Value Object RequiredStaffBySpecialization)
+            // Configura a propriedade LicenseNumber (associada ao Value Object LicenseNumber)
             builder.OwnsOne(o => o.licenseNumber, licenseNumber =>
             {
-                licenseNumber.Property(l => l.Value) // Aqui, depende de como RequiredStaff foi implementado.
-
+                licenseNumber.Property(l => l.Value)
                     .HasColumnName("LicenseNumber")
-
                     .IsRequired();
             });
 
-            // Configura a propriedade OperationTypeId (associada ao Value Object RequiredStaffBySpecialization)
-            builder.OwnsOne(o => o.operationTypeId, operationTypeId =>
-            {
-                operationTypeId.Property(o => o.Value) // Aqui, depende de como RequiredStaff foi implementado.
+            // Configura a propriedade OperationTypeId (que é uma referência a outra entidade)
+            builder.Property(o => o.operationTypeId)
+                .HasColumnName("OperationTypeId")
+                .IsRequired();
 
-
-                    .HasColumnName("OperationTypeId")
-
-                    .IsRequired();
-            });
-
-            // Configura a propriedade MedicalRecordNumber (associada ao Value Object RequiredStaffBySpecialization)
+            // Configura a propriedade MedicalRecordNumber (número simples, não um Value Object)
             builder.Property(o => o.medicalRecordNumber)
                 .IsRequired();
 
-
-                
-
-            // Configura o campo Active
+            // Configura a propriedade Active (simples, bool)
             builder.Property(o => o.Active)
                 .IsRequired();
 
-            // Define o nome da tabela no banco de dados (opcional)
+            // Define o nome da tabela no banco de dados
             builder.ToTable("OperationRequests");
         }
     }

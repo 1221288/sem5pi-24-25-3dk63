@@ -28,9 +28,7 @@ namespace DDDSample1.Infrastructure.OperationRequests
         {
             return await _context.OperationRequests
                 .Where(x => x.priority == priority)
-                .ToListAsync();
-
-
+                .ToListAsync(); 
 
         }
     }
