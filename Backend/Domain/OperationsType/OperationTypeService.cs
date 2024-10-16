@@ -19,7 +19,7 @@ namespace DDDSample1.OperationsType
             _configuration = configuration;
         }
 
-         // Obtém todos os usuários
+         // Obtém todos os tipos de operações
         public async Task<List<OperationTypeDTO>> GetAllAsync()
         {
             var list = await this._operationTypeRepository.GetAllAsync();

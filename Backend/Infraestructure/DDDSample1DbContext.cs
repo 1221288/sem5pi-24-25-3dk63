@@ -17,7 +17,9 @@ namespace DDDSample1.Infrastructure
         public DbSet<Product> Products { get; set; }
         public DbSet<Family> Families { get; set; }
         public DbSet<User> Users { get; set; }
-         public DbSet<OperationType> OperationsTypes { get; set; }
+        public DbSet<OperationType> OperationsTypes { get; set; }
+
+        public DbSet<OperationRequest> OperationRequests { get; set; }
 
         public DDDSample1DbContext(DbContextOptions<DDDSample1DbContext> options) : base(options)
         {
@@ -30,6 +32,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new FamilyEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());
         }
     }
 }

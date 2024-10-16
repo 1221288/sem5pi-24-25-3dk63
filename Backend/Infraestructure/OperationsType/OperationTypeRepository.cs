@@ -1,12 +1,8 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using DDDSample1.Domain;
 using DDDSample1.Domain.OperationsType;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
-using DDDSample1.OperationsType;
 using Backend.Domain.Users.ValueObjects;
 
 namespace DDDSample1.Infrastructure.OperationsType

@@ -25,6 +25,9 @@ using DDDSample1.OperationsType;
 using DDDSample1.Infrastructure.OperationsType;
 using DDDSample1.Domain.OperationsType;
 using Microsoft.AspNetCore.Authentication;
+using DDDSample1.Domain.OperationRequests;
+using DDDSample1.Infrastructure.OperationRequests;
+using DDDSample1.OperationRequests;
 
 namespace DDDSample1
 {
@@ -136,6 +139,9 @@ namespace DDDSample1
 
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
             services.AddTransient<OperationTypeService>();
+
+            services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+            services.AddTransient<OperationRequestService>();
 
         }
     }
