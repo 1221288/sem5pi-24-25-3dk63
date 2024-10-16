@@ -41,5 +41,6 @@ namespace DDDSample1.Domain.Staff
         {
             return (string)base.ObjValue;
         }
+        
     }
 }

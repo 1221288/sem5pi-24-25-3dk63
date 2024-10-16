@@ -1,6 +1,8 @@
 using Backend.Domain.Staff.ValueObjects;
 using DDDSample1.Domain.Shared;
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -9,7 +11,6 @@ namespace DDDSample1.Domain.Staff
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStaffRepository _staffRepository;
         private readonly IConfiguration _configuration;
-        private static int _lastIssuedLicenseNumber = 0;
 
         public StaffService(IUnitOfWork unitOfWork, IStaffRepository staffRepository, IConfiguration configuration)
         {
@@ -21,16 +22,13 @@ namespace DDDSample1.Domain.Staff
         public async Task<List<StaffDTO>> GetAllAsync()
         {
             var staffList = await _staffRepository.GetAllAsync();
-            var staffDtoList = staffList.Select(staff => CreatingStaffDTO.CreateFromDomain(staff)).ToList();
-            return staffDtoList;
+            return staffList.Select(staff => CreatingStaffDTO.CreateFromDomain(staff)).ToList();
         }
 
         public async Task<StaffDTO?> GetByLicenseNumberAsync(LicenseNumber licenseNumber)
         {
             var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
-            if (staff == null) return null;
-
-            return CreatingStaffDTO.CreateFromDomain(staff);
+            return staff == null ? null : CreatingStaffDTO.CreateFromDomain(staff);
         }
 
         public async Task<StaffDTO> AddAsync(CreatingStaffDTO dto)
@@ -47,16 +45,7 @@ namespace DDDSample1.Domain.Staff
             await _staffRepository.AddAsync(staff);
             await _unitOfWork.CommitAsync();
 
-            return new StaffDTO
-            {
-                LicenseNumber = staff.LicenseNumber,
-                AvailabilitySlots = staff.AvailabilitySlots.Slots
-                    .Select(slot => new AvailabilitySlotDTO
-                    {
-                        Start = slot.Start,
-                        End = slot.End
-                    }).ToList()
-            };
+            return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
         private LicenseNumber GenerateNextLicenseNumber(LicenseNumber lastIssued)
@@ -69,20 +58,13 @@ namespace DDDSample1.Domain.Staff
         private async Task<LicenseNumber> GetNextLicenseNumberAsync()
         {
             LicenseNumber? lastLicenseNumber = await _staffRepository.GetLastIssuedLicenseNumberAsync();
-    
-            if (lastLicenseNumber == null)
-            {
-                return new LicenseNumber("1");
-            }
-
-            var newLicenseNumber = GenerateNextLicenseNumber(lastLicenseNumber);
-            return newLicenseNumber;
+            return lastLicenseNumber == null ? new LicenseNumber("1") : GenerateNextLicenseNumber(lastLicenseNumber);
         }
-
 
         public async Task<StaffDTO> UpdateAsync(StaffDTO dto)
         {
-            var staff = await _staffRepository.GetByLicenseNumberAsync(dto.LicenseNumber);
+            var licenseNumber = new LicenseNumber(dto.LicenseNumber.Value);
+            var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
             if (staff == null) return null;
 
             var updatedAvailabilitySlots = new AvailabilitySlots();
@@ -92,11 +74,11 @@ namespace DDDSample1.Domain.Staff
             }
 
             staff.UpdateAvailabilitySlots(updatedAvailabilitySlots);
-
             await _unitOfWork.CommitAsync();
 
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
+
 
         public async Task<StaffDTO> DeleteAsync(LicenseNumber licenseNumber)
         {
@@ -112,9 +94,7 @@ namespace DDDSample1.Domain.Staff
         public async Task<StaffDTO> FindByLicenseNumberAsync(string licenseNumber)
         {
             var staff = await _staffRepository.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
-            if (staff == null) return null;
-
-            return CreatingStaffDTO.CreateFromDomain(staff);
+            return staff == null ? null : CreatingStaffDTO.CreateFromDomain(staff);
         }
     }
 }
