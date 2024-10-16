@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DDDSample1.Domain.Shared;
-namespace Domain.Staff.ValueObjects
+namespace Backend.Domain.Staff.ValueObjects
 {
     public class AvailabilitySlots : ValueObject
     {
