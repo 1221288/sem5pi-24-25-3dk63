@@ -28,6 +28,9 @@ using Microsoft.AspNetCore.Authentication;
 using DDDSample1.Domain.OperationRequests;
 using DDDSample1.Infrastructure.OperationRequests;
 using DDDSample1.OperationRequests;
+using DDDSample1.Domain.Appointments;
+using DDDSample1.Infrastructure.Appointments;
+using DDDSample1.Appointments;
 
 namespace DDDSample1
 {
@@ -142,6 +145,9 @@ namespace DDDSample1
 
             services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
             services.AddTransient<OperationRequestService>();
+
+            services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+            services.AddTransient<AppointmentService>();
 
         }
     }

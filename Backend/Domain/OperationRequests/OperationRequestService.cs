@@ -112,7 +112,7 @@ namespace DDDSample1.OperationRequests
             var operationRequest = await this._operationRequestRepository.GetByIdAsync(id);
             if (operationRequest == null) return null;
             
-            if (operationRequest.Active) throw new BusinessRuleValidationException("Não é possível excluir um tipo de operação ativo.");
+            if (operationRequest.Active) throw new BusinessRuleValidationException("Não é possível excluir um pedido operação ativo.");
 
             this._operationRequestRepository.Remove(operationRequest);
             await this._unitOfWork.CommitAsync();
