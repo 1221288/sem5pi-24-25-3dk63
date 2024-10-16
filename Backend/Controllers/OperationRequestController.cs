@@ -2,34 +2,34 @@ using Microsoft.AspNetCore.Mvc;
 using DDDSample1.Domain.OperationsType;
 using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
-using DDDSample1.Users;
-using DDDSample1.OperationsType;
+using DDDSample1.OperationRequests;
+using DDDSample1.Domain.OperationRequests;
 
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OperationTypeController : ControllerBase
+    public class OperationRequestController : ControllerBase
     {
-        private readonly OperationTypeService _service;
+        private readonly OperationRequestService _service;
 
-        public OperationTypeController(OperationTypeService service)
+        public OperationRequestController(OperationRequestService service)
         {
             _service = service;
         }
 
-        // GET: api/OperationType
+        // GET: api/OperationRequest
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationTypeDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<OperationRequestDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
-        // GET: api/OperationType/5
+        // GET: api/OperationRequest/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OperationTypeDTO>> GetById(Guid id)
+        public async Task<ActionResult<OperationRequestDTO>> GetById(Guid id)
         {
-            var user = await _service.GetByIdAsync(new OperationTypeId(id));
+            var user = await _service.GetByIdAsync(new OperationRequestId(id));
 
             if (user == null)
             {
@@ -39,17 +39,17 @@ namespace DDDSample1.Controllers
             return user;
         }
 
-        // POST: api/OperationType
+        // POST: api/OperationRequest
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDTO>> Create(CreatingOperationTypeDTO dto)
+        public async Task<ActionResult<OperationRequestDTO>> Create(CreatingOperationRequestDTO dto)
         {
             var user = await _service.AddAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // PUT: api/OperationType/5
+        // PUT: api/OperationRequest/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<OperationTypeDTO>> Update(Guid id, OperationTypeDTO dto)
+        public async Task<ActionResult<OperationRequestDTO>> Update(Guid id, OperationRequestDTO dto)
         {
             if (id != dto.Id)
             {
@@ -73,15 +73,15 @@ namespace DDDSample1.Controllers
             }
         }
 
-        // DELETE: api/OperationType/5
+        // DELETE: api/OperationRequest/5
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
 
-        public async Task<ActionResult<OperationTypeDTO>> SoftDelete(Guid id)
+        public async Task<ActionResult<OperationRequestDTO>> SoftDelete(Guid id)
         {
             try
             {
-                var operation = await _service.DeleteAsync(new OperationTypeId(id));
+                var operation = await _service.DeleteAsync(new OperationRequestId(id));
 
                 if (operation == null)
                 {

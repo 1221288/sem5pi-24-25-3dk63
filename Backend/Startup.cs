@@ -25,8 +25,16 @@ using DDDSample1.OperationsType;
 using DDDSample1.Infrastructure.OperationsType;
 using DDDSample1.Domain.OperationsType;
 using Microsoft.AspNetCore.Authentication;
+
 using Backend.Domain.SurgeryRoom;
 using Backend.Infraestructure.SurgeryRoom;
+
+using DDDSample1.Domain.OperationRequests;
+using DDDSample1.Infrastructure.OperationRequests;
+using DDDSample1.OperationRequests;
+using DDDSample1.Domain.Appointments;
+using DDDSample1.Infrastructure.Appointments;
+using DDDSample1.Appointments;
 
 namespace DDDSample1
 {
@@ -146,10 +154,16 @@ namespace DDDSample1
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
             services.AddTransient<OperationTypeService>();
 
+
             // Surgery Room Services
             services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
             services.AddTransient<SurgeryRoomService>();
 
+            services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+            services.AddTransient<OperationRequestService>();
+
+            services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+            services.AddTransient<AppointmentService>();
         }
 
 

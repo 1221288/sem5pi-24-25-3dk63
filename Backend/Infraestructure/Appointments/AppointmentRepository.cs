@@ -1,17 +1,16 @@
 using DDDSample1.Domain;
-using DDDSample1.Domain.OperationsType;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
-using Backend.Domain.Users.ValueObjects;
+using DDDSample1.Domain.Appointments;
 
-namespace DDDSample1.Infrastructure.OperationsType
+namespace DDDSample1.Infrastructure.Appointments
 {
-    public class OperationTypeRepository : BaseRepository<OperationType, OperationTypeId>, IOperationTypeRepository
+    public class AppointmentRepository : BaseRepository<Appointment, AppointmentId>, IAppointmentRepository
     {
         private readonly DDDSample1DbContext _context;
 
-        public OperationTypeRepository(DDDSample1DbContext context) : base(context.OperationsTypes)
+        public AppointmentRepository(DDDSample1DbContext context) : base(context.Appointments)
         {
             _context = context;
         }
@@ -25,9 +24,12 @@ namespace DDDSample1.Infrastructure.OperationsType
             return lastUser != null ? lastUser.SequentialNumber + 1 : 1;
         }
 
-        public async Task<OperationType> FindByNameAsync(Name name)
+        public async Task<List<Appointment>> GetByDateAsync(Date date) 
         {
-            return await _context.OperationsTypes.FirstOrDefaultAsync(u => u.Name.Equals(name));
+            return await _context.Appointments
+                .Where(x => x.date == date)
+                .ToListAsync(); 
+
         }
     }
 }

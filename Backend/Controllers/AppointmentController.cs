@@ -2,34 +2,36 @@ using Microsoft.AspNetCore.Mvc;
 using DDDSample1.Domain.OperationsType;
 using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
-using DDDSample1.Users;
-using DDDSample1.OperationsType;
+using DDDSample1.OperationRequests;
+using DDDSample1.Domain.OperationRequests;
+using DDDSample1.Appointments;
+using DDDSample1.Domain.Appointments;
 
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OperationTypeController : ControllerBase
+    public class AppointmentController : ControllerBase
     {
-        private readonly OperationTypeService _service;
+        private readonly AppointmentService _service;
 
-        public OperationTypeController(OperationTypeService service)
+        public AppointmentController(AppointmentService service)
         {
             _service = service;
         }
 
-        // GET: api/OperationType
+        // GET: api/Appointment
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationTypeDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AppointmentDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
-        // GET: api/OperationType/5
+        // GET: api/Appointment/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OperationTypeDTO>> GetById(Guid id)
+        public async Task<ActionResult<AppointmentDTO>> GetById(Guid id)
         {
-            var user = await _service.GetByIdAsync(new OperationTypeId(id));
+            var user = await _service.GetByIdAsync(new AppointmentId(id));
 
             if (user == null)
             {
@@ -39,17 +41,17 @@ namespace DDDSample1.Controllers
             return user;
         }
 
-        // POST: api/OperationType
+        // POST: api/Appointment
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDTO>> Create(CreatingOperationTypeDTO dto)
+        public async Task<ActionResult<AppointmentDTO>> Create(CreatingAppointmentDTO dto)
         {
             var user = await _service.AddAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // PUT: api/OperationType/5
+        // PUT: api/Appointment/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<OperationTypeDTO>> Update(Guid id, OperationTypeDTO dto)
+        public async Task<ActionResult<AppointmentDTO>> Update(Guid id, AppointmentDTO dto)
         {
             if (id != dto.Id)
             {
@@ -73,15 +75,15 @@ namespace DDDSample1.Controllers
             }
         }
 
-        // DELETE: api/OperationType/5
+        // DELETE: api/Appointment/5
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
 
-        public async Task<ActionResult<OperationTypeDTO>> SoftDelete(Guid id)
+        public async Task<ActionResult<AppointmentDTO>> SoftDelete(Guid id)
         {
             try
             {
-                var operation = await _service.DeleteAsync(new OperationTypeId(id));
+                var operation = await _service.DeleteAsync(new AppointmentId(id));
 
                 if (operation == null)
                 {
