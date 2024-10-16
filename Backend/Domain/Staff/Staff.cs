@@ -6,7 +6,6 @@ namespace DDDSample1.Domain.Staff
     public class Staff : Entity<LicenseNumber>, IAggregateRoot
     {
         public AvailabilitySlots? AvailabilitySlots { get; private set; }
-        public LicenseNumber LicenseNumber { get; internal set; }
 
         public Staff(LicenseNumber licenseNumber, AvailabilitySlots availabilitySlots)
         {

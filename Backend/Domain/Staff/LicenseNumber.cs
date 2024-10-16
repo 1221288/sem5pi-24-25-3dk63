@@ -32,16 +32,14 @@ namespace DDDSample1.Domain.Staff
             return LicenseNumberPattern.IsMatch(licenseNumber);
         }
 
-        override
-        protected Object createFromString(String text)
+        protected override object createFromString(string text)
         {
             return text;
         }
 
-        override
-        public String AsString()
+        public override string AsString()
         {
-            return (string) base.ObjValue;
+            return (string)base.ObjValue;
         }
     }
 }

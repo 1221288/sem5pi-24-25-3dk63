@@ -1,5 +1,6 @@
 using Backend.Domain.Staff.ValueObjects;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -18,13 +19,13 @@ namespace DDDSample1.Domain.Staff
         {
             return new StaffDTO
             {
-                LicenseNumber = staff.LicenseNumber,
+                LicenseNumber = new LicenseNumber(staff.Id.AsString()),
                 AvailabilitySlots = staff.AvailabilitySlots?.Slots
                     .Select(slot => new AvailabilitySlotDTO
-                    {
-                        Start = slot.Start,
-                        End = slot.End
-                    }).ToList() ?? new List<AvailabilitySlotDTO>()
+            {   
+                Start = slot.Start,
+                End = slot.End
+            }).ToList() ?? new List<AvailabilitySlotDTO>()
             };
         }
 
