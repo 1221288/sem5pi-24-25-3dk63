@@ -1,30 +1,38 @@
 using DDDSample1.Domain.Shared;
 using System;
+using System.Collections.Generic;
 
 namespace DDDSample1.Domain.SurgeryRooms.ValueObjects
 {
     public class RoomType : ValueObject
     {
-        public string Value { get; private set; }
 
-        public RoomType(string value)
+
+        public enum RoomTypeEnum
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new BusinessRuleValidationException("Room type cannot be empty.");
-            }
+            OperatingRoom,
+            ConsultationRoom,
+            ICU,
+            RecoveryRoom,
+            SurgeryRoom,
+            RadiologyRoom
+        }
 
-            this.Value = value;
+        public RoomTypeEnum Type { get; private set; }
+
+        public RoomType(RoomTypeEnum type)
+        {
+            Type = type;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Value;
+            yield return Type;
         }
 
         public override string ToString()
         {
-            return Value;
+            return Type.ToString();
         }
     }
 }

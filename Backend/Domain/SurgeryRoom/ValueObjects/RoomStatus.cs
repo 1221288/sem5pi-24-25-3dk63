@@ -1,22 +1,22 @@
-using DDDSample1.Domain.Shared;
 using System;
+using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.SurgeryRooms.ValueObjects
 {
+    public enum RoomStatusEnum
+    {
+        Available,
+        Occupied,
+        UnderMaintenance
+    }
+
     public class RoomStatus : ValueObject
     {
-        public string Value { get; private set; }
+        public RoomStatusEnum Value { get; private set; }
 
-        private static readonly List<string> ValidStatuses = new List<string> { "Available", "Occupied", "Under Maintenance" };
-
-        public RoomStatus(string value)
+        public RoomStatus(RoomStatusEnum value)
         {
-            if (string.IsNullOrWhiteSpace(value) || !ValidStatuses.Contains(value))
-            {
-                throw new BusinessRuleValidationException("Invalid room status.");
-            }
-
-            this.Value = value;
+            Value = value;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -26,7 +26,7 @@ namespace DDDSample1.Domain.SurgeryRooms.ValueObjects
 
         public override string ToString()
         {
-            return Value;
+            return Value.ToString();
         }
     }
 }

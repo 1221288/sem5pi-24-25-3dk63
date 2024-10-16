@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+
+
+using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.SurgeryRooms;
 
 namespace Backend.Domain.SurgeryRoom
 {
-    public class ISurgeryRoomRepository
+    public interface ISurgeryRoomRepository : IRepository<SurgeryRoomEntity, RoomId>
     {
-        
+        Task<List<SurgeryRoomEntity>> GetAvailableRoomsAsync(DateTime startTime, DateTime endTime);
+
     }
 }

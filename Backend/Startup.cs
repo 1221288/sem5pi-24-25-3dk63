@@ -25,6 +25,8 @@ using DDDSample1.OperationsType;
 using DDDSample1.Infrastructure.OperationsType;
 using DDDSample1.Domain.OperationsType;
 using Microsoft.AspNetCore.Authentication;
+using Backend.Domain.SurgeryRoom;
+using Backend.Infraestructure.SurgeryRoom;
 
 namespace DDDSample1
 {
@@ -117,26 +119,39 @@ namespace DDDSample1
 
         public void ConfigureMyServices(IServiceCollection services)
         {
-
+            // Add AutoMapper configuration
             services.AddAutoMapper(typeof(UserMappingProfile));
+            services.AddAutoMapper(typeof(SurgeryRoomMappingProfile));
 
+            // Unit of Work
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+            // Category Services
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
 
+            // Product Services
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ProductService>();
 
+            // Family Services
             services.AddTransient<IFamilyRepository, FamilyRepository>();
             services.AddTransient<FamilyService>();
 
+            // User Services
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
 
+            // Operation Type Services
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
             services.AddTransient<OperationTypeService>();
 
+            // Surgery Room Services
+            services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
+            services.AddTransient<SurgeryRoomService>();
+
         }
+
+
     }
 }

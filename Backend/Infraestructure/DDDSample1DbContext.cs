@@ -9,6 +9,7 @@ using DDDSample1.Domain;
 using DDDSample1.Infraestructure.Users;
 using DDDSample1.Infraestructure.OperationTypes;
 using Backend.Infraestructure.SurgeryRoom;
+using DDDSample1.Domain.SurgeryRooms;
 
 namespace DDDSample1.Infrastructure
 {
@@ -18,7 +19,8 @@ namespace DDDSample1.Infrastructure
         public DbSet<Product> Products { get; set; }
         public DbSet<Family> Families { get; set; }
         public DbSet<User> Users { get; set; }
-         public DbSet<OperationType> OperationsTypes { get; set; }
+        public DbSet<OperationType> OperationsTypes { get; set; }
+        public DbSet<SurgeryRoomEntity> SurgeryRooms { get; set; }
 
         public DDDSample1DbContext(DbContextOptions<DDDSample1DbContext> options) : base(options)
         {
@@ -31,7 +33,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new FamilyEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
-            //modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
         }
     }
 }

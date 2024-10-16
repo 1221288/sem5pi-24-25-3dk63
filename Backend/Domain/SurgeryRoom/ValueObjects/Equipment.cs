@@ -1,33 +1,48 @@
-// using DDDSample1.Domain.Shared;
-// using System;
+using DDDSample1.Domain.Shared;
 
-// namespace DDDSample1.Domain.SurgeryRooms.Entities
-// {
-//     public class Equipment : Entity<EquipmentId>
-//     {
-//         public string Name { get; private set; }
-//         public string SerialNumber { get; private set; }
+namespace Backend.Domain.SurgeryRoom
+{
+  public class Equipment : ValueObject
+  {
+    public string Name { get; private set; }
+    public string Type { get; private set; }
+    public bool IsOperational { get; private set; }
 
-//         public Equipment(string name, string serialNumber)
-//         {
-//             if (string.IsNullOrWhiteSpace(name))
-//             {
-//                 throw new BusinessRuleValidationException("Equipment name cannot be empty.");
-//             }
+    public Equipment( string name, string type, bool isOperational)
+    {
+      this.Name = name ;
+      this.Type = type ;
+      this.IsOperational = isOperational;
+    }
 
-//             if (string.IsNullOrWhiteSpace(serialNumber))
-//             {
-//                 throw new BusinessRuleValidationException("Serial number cannot be empty.");
-//             }
+    public void SetOperationalStatus(bool status)
+    {
+      this.IsOperational = status;
+    }
 
-//             this.Id = new EquipmentId(Guid.NewGuid());
-//             this.Name = name;
-//             this.SerialNumber = serialNumber;
-//         }
-//     }
+    public void ChangeName(string newName)
+    {
+      if (string.IsNullOrWhiteSpace(newName))
+      {
+        throw new ArgumentException("Name cannot be empty or null.");
+      }
+      this.Name = newName;
+    }
 
-//     public class EquipmentId : EntityId
-//     {
-//         public EquipmentId(Guid value) : base(value) { }
-//     }
-// }
+    public void ChangeType(string newType)
+    {
+      if (string.IsNullOrWhiteSpace(newType))
+      {
+        throw new ArgumentException("Type cannot be empty or null.");
+      }
+      this.Type = newType;
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+      yield return Name;
+      yield return Type;
+      yield return IsOperational;
+    }
+  }
+}
