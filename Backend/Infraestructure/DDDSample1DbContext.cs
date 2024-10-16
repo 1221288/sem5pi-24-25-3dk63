@@ -8,6 +8,7 @@ using DDDSample1.Infrastructure.Products;
 using DDDSample1.Domain;
 using DDDSample1.Infraestructure.Users;
 using DDDSample1.Infraestructure.OperationTypes;
+using Backend.Infraestructure.SurgeryRoom;
 
 namespace DDDSample1.Infrastructure
 {
@@ -30,6 +31,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new FamilyEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
+            //modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
         }
     }
 }
