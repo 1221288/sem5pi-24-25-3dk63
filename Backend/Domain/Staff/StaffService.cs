@@ -3,6 +3,7 @@ using DDDSample1.Domain.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -10,13 +11,11 @@ namespace DDDSample1.Domain.Staff
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStaffRepository _staffRepository;
-        private readonly IConfiguration _configuration;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository staffRepository, IConfiguration configuration)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository staffRepository)
         {
             _unitOfWork = unitOfWork;
             _staffRepository = staffRepository;
-            _configuration = configuration;
         }
 
         public async Task<List<StaffDTO>> GetAllAsync()
@@ -39,8 +38,8 @@ namespace DDDSample1.Domain.Staff
                 availabilitySlots.AddSlot(slot.Start, slot.End);
             }
 
-            var licenseNumber = await GetNextLicenseNumberAsync();
-            var staff = new Staff(licenseNumber, availabilitySlots);
+            var licenseNumber = new LicenseNumber(dto.LicenseNumber);
+            var staff = new Staff(dto.UserId, licenseNumber, availabilitySlots);
 
             await _staffRepository.AddAsync(staff);
             await _unitOfWork.CommitAsync();
@@ -48,20 +47,7 @@ namespace DDDSample1.Domain.Staff
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
-        private LicenseNumber GenerateNextLicenseNumber(LicenseNumber lastIssued)
-        {
-            var number = int.Parse(lastIssued.Value);
-            var nextNumber = number + 1;
-            return new LicenseNumber(nextNumber.ToString());
-        }
-
-        private async Task<LicenseNumber> GetNextLicenseNumberAsync()
-        {
-            LicenseNumber? lastLicenseNumber = await _staffRepository.GetLastIssuedLicenseNumberAsync();
-            return lastLicenseNumber == null ? new LicenseNumber("1") : GenerateNextLicenseNumber(lastLicenseNumber);
-        }
-
-        public async Task<StaffDTO> UpdateAsync(StaffDTO dto)
+        public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
         {
             var licenseNumber = new LicenseNumber(dto.LicenseNumber.Value);
             var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
@@ -79,8 +65,7 @@ namespace DDDSample1.Domain.Staff
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
-
-        public async Task<StaffDTO> DeleteAsync(LicenseNumber licenseNumber)
+        public async Task<StaffDTO?> DeleteAsync(LicenseNumber licenseNumber)
         {
             var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
             if (staff == null) return null;
@@ -91,9 +76,9 @@ namespace DDDSample1.Domain.Staff
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
-        public async Task<StaffDTO> FindByLicenseNumberAsync(string licenseNumber)
+        public async Task<StaffDTO?> FindByUserIdAsync(UserId userId)
         {
-            var staff = await _staffRepository.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
+            var staff = await _staffRepository.GetByUserIdAsync(userId);
             return staff == null ? null : CreatingStaffDTO.CreateFromDomain(staff);
         }
     }

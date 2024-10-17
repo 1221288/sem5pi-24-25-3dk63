@@ -1,12 +1,12 @@
-using Backend.Domain.Staff.ValueObjects;
-using System;
-using System.Collections.Generic;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain.Staff
 {
     public class StaffDTO
     {
         public LicenseNumber LicenseNumber { get; set; }
+
+        public UserId UserId { get; set; }
         public List<AvailabilitySlotDTO> AvailabilitySlots { get; set; }
 
         public StaffDTO()

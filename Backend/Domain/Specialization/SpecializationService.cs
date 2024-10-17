@@ -1,7 +1,5 @@
 using Backend.Domain.Specialization.ValueObjects;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Specialization;
-using DDDSample1.Domain.Staff;
 
 
 namespace DDDSample1.Domain.Specialization
@@ -30,24 +28,25 @@ namespace DDDSample1.Domain.Specialization
             return specializationDTOs;
         }
 
-        public async Task<SpecializationDTO?> GetByLicenseNumberAsync(LicenseNumber licenseNumber)
+        public async Task<SpecializationDTO?> GetBySpecializationIdAsync(SpecializationId specializationId)
         {
-            var specialization = await _specializationRepository.FindByLicenseNumberAsync(licenseNumber);
+            var specialization = await _specializationRepository.FindByIdAsync(specializationId);
             return specialization == null ? null : CreatingSpecializationDTO.FromDomain(specialization);
         }
 
         public async Task<SpecializationDTO> AddAsync(CreatingSpecializationDTO dto)
         {
-            var specialization = dto.ToDomain();
+            int sequentialNumber = await _specializationRepository.GetNextSequentialNumberAsync();
+            var specializationId = new SpecializationId(Guid.NewGuid());
+            var specialization = dto.ToDomain(specializationId, sequentialNumber);
             await _specializationRepository.AddAsync(specialization);
             await _unitOfWork.CommitAsync();
-
             return CreatingSpecializationDTO.FromDomain(specialization);
         }
 
-        public async Task<SpecializationDTO> UpdateAsync(SpecializationDTO dto)
+        public async Task<SpecializationDTO?> UpdateAsync(SpecializationDTO dto)
         {
-            var specialization = await _specializationRepository.FindByLicenseNumberAsync(dto.LicenseNumber);
+            var specialization = await _specializationRepository.FindByIdAsync(dto.Id);
             if (specialization == null) return null;
 
             specialization.UpdateDescription(new Description(dto.Description));
@@ -56,9 +55,9 @@ namespace DDDSample1.Domain.Specialization
             return CreatingSpecializationDTO.FromDomain(specialization);
         }
 
-        public async Task<SpecializationDTO> DeleteAsync(LicenseNumber licenseNumber)
+        public async Task<SpecializationDTO?> DeleteAsync(SpecializationId specializationId)
         {
-            var specialization = await _specializationRepository.FindByLicenseNumberAsync(licenseNumber);
+            var specialization = await _specializationRepository.FindByIdAsync(specializationId);
             if (specialization == null) return null;
 
             _specializationRepository.Remove(specialization);

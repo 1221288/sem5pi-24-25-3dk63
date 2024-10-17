@@ -1,22 +1,30 @@
 using Backend.Domain.Specialization.ValueObjects;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Staff;
 
 namespace DDDSample1.Domain.Specialization
 {
-    public class Specialization : Entity<LicenseNumber>, IAggregateRoot
+    public class Specialization : Entity<SpecializationId>, IAggregateRoot
     {
         public Description Description { get; private set; }
+        public int SequentialNumber { get; private set; }
 
-        public Specialization(LicenseNumber licenseNumber, Description description)
+        protected Specialization() {}
+
+        public Specialization(SpecializationId specializationId, Description description, int sequentialNumber)
         {
-            Id = licenseNumber;
-            Description = description;
+            Id = specializationId ?? throw new ArgumentNullException(nameof(specializationId));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
+            SequentialNumber = sequentialNumber;
         }
 
         public void UpdateDescription(Description newDescription)
         {
-            Description = newDescription;
+            Description = newDescription ?? throw new ArgumentNullException(nameof(newDescription));
+        }
+
+        public void UpdateSequentialNumber(int newSequentialNumber)
+        {
+            SequentialNumber = newSequentialNumber;
         }
     }
 }

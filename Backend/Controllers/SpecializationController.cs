@@ -2,34 +2,30 @@ using Microsoft.AspNetCore.Mvc;
 using DDDSample1.Domain.Specialization;
 using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
-using DDDSample1.Domain.Staff;
 
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecializationsController : ControllerBase
+    public class SpecializationController : ControllerBase
     {
-        private readonly SpecializationService _service;
+        private readonly SpecializationService _specializationService;
 
-        public SpecializationsController(SpecializationService service)
+        public SpecializationController(SpecializationService specializationService)
         {
-            _service = service;
+            _specializationService = specializationService;
         }
 
-        // GET: api/Specializations
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecializations()
         {
-            return await _service.GetAllAsync();
+            return await _specializationService.GetAllAsync();
         }
 
-        // GET: api/Specializations/{licenseNumber}
-        [HttpGet("{licenseNumber}")]
-        public async Task<ActionResult<SpecializationDTO>> GetByLicenseNumber(string licenseNumber)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SpecializationDTO>> GetSpecializationById(Guid id)
         {
-            var specialization = await _service.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
+            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(id));
 
             if (specialization == null)
             {
@@ -39,26 +35,24 @@ namespace DDDSample1.Controllers
             return specialization;
         }
 
-        // POST: api/Specializations
         [HttpPost]
-        public async Task<ActionResult<SpecializationDTO>> Create(CreatingSpecializationDTO dto)
+        public async Task<ActionResult<SpecializationDTO>> CreateSpecialization(CreatingSpecializationDTO dto)
         {
-            var specialization = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetByLicenseNumber), new { licenseNumber = specialization.LicenseNumber.Value }, specialization);
+            var specialization = await _specializationService.AddAsync(dto);
+            return CreatedAtAction(nameof(GetSpecializationById), new { id = specialization.Id }, specialization);
         }
 
-        // PUT: api/Specializations/{licenseNumber}
-        [HttpPut("{licenseNumber}")]
-        public async Task<ActionResult<SpecializationDTO>> Update(string licenseNumber, SpecializationDTO dto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<SpecializationDTO>> UpdateSpecialization(Guid id, SpecializationDTO dto)
         {
-            if (licenseNumber != dto.LicenseNumber.Value)
+            if (id != dto.Id.AsGuid())
             {
                 return BadRequest();
             }
 
             try
             {
-                var specialization = await _service.UpdateAsync(dto);
+                var specialization = await _specializationService.UpdateAsync(dto);
 
                 if (specialization == null)
                 {
@@ -73,14 +67,13 @@ namespace DDDSample1.Controllers
             }
         }
 
-        // DELETE: api/Specializations/{licenseNumber}
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{licenseNumber}")]
-        public async Task<ActionResult<SpecializationDTO>> SoftDelete(string licenseNumber)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<SpecializationDTO>> DeleteSpecialization(Guid id)
         {
             try
             {
-                var specialization = await _service.DeleteAsync(new LicenseNumber(licenseNumber));
+                var specialization = await _specializationService.DeleteAsync(new SpecializationId(id));
 
                 if (specialization == null)
                 {
