@@ -4,6 +4,7 @@ using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
 using DDDSample1.Domain.Users;
 using DDDSample1.Users;
+using DDDSample1.Domain.Specialization;
 
 namespace DDDSample1.Controllers
 {
@@ -13,11 +14,13 @@ namespace DDDSample1.Controllers
     {
         private readonly StaffService _staffService;
         private readonly UserService _userService;
+        private readonly SpecializationService _specializationService;
 
-        public StaffController(StaffService staffService, UserService userService)
+        public StaffController(StaffService staffService, UserService userService, SpecializationService specializationService)
         {
             _staffService = staffService;
             _userService = userService;
+            _specializationService = specializationService;
         }
 
         [HttpGet]
@@ -40,13 +43,28 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingUserDto userDto, CreatingStaffDTO staffDto)
+        public async Task<ActionResult<StaffDTO>> CreateStaff(Guid userId, Guid specializationId, CreatingStaffDTO staffDto)
         {
-            var user = await _userService.AddAsync(userDto);
-            staffDto.UserId = new UserId(user.Id.ToString());
+            var user = await _userService.GetByIdAsync(new UserId(userId.ToString()));
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(specializationId));
+            if (specialization == null)
+            {
+                return NotFound(new { Message = "Specialization not found" });
+            }
+
+            staffDto.UserId = new UserId(userId.ToString());
+            staffDto.SpecializationId = new SpecializationId(specializationId);
+
             var staff = await _staffService.AddAsync(staffDto);
+
             return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = staff.LicenseNumber.Value }, staff);
         }
+
 
         [HttpPut("{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffDTO dto)

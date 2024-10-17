@@ -39,13 +39,16 @@ namespace DDDSample1.Domain.Staff
             }
 
             var licenseNumber = new LicenseNumber(dto.LicenseNumber);
-            var staff = new Staff(dto.UserId, licenseNumber, availabilitySlots);
+            var specializationId = dto.SpecializationId;
+
+            var staff = new Staff(dto.UserId, licenseNumber, specializationId, availabilitySlots);
 
             await _staffRepository.AddAsync(staff);
             await _unitOfWork.CommitAsync();
 
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
+
 
         public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
         {
