@@ -132,6 +132,40 @@ namespace DDDNetCore.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("DDDSample1.Domain.Specialization.Specialization", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("SpecializationId");
+
+                    b.Property<int>("SequentialNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specializations");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Staff.Staff", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("LicenseNumber");
+
+                    b.Property<string>("AvailabilitySlots")
+                        .HasColumnType("longtext")
+                        .HasColumnName("AvailabilitySlots");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Staffs");
+                });
+
             modelBuilder.Entity("DDDSample1.Domain.SurgeryRooms.SurgeryRoomEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -358,6 +392,30 @@ namespace DDDNetCore.Migrations
                         .IsRequired();
 
                     b.Navigation("RequiredStaff")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Specialization.Specialization", b =>
+                {
+                    b.OwnsOne("Backend.Domain.Specialization.ValueObjects.Description", "Description", b1 =>
+                        {
+                            b1.Property<string>("SpecializationId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("Description");
+
+                            b1.HasKey("SpecializationId");
+
+                            b1.ToTable("Specializations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SpecializationId");
+                        });
+
+                    b.Navigation("Description")
                         .IsRequired();
                 });
 

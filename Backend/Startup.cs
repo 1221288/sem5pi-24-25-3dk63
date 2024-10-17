@@ -35,6 +35,10 @@ using DDDSample1.OperationRequests;
 using DDDSample1.Domain.Appointments;
 using DDDSample1.Infrastructure.Appointments;
 using DDDSample1.Appointments;
+using DDDSample1.Domain.Staff;
+using DDDSample1.Domain.Specialization;
+using DDDSample1.Infrastructure.Staffs;
+using DDDSample1.Infrastructure.Specializations;
 
 namespace DDDSample1
 {
@@ -164,6 +168,14 @@ namespace DDDSample1
 
             services.AddTransient<IAppointmentRepository, AppointmentRepository>();
             services.AddTransient<AppointmentService>();
+
+            // Staff services
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
+
+            //Specialization services
+            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
+            services.AddTransient<SpecializationService>();
         }
 
 

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using DDDSample1.Domain.Categories;
 using DDDSample1.Domain.Products;
 using DDDSample1.Domain.Families;
-using DDDSample1.Domain.Users;
 using DDDSample1.Infrastructure.Categories;
 using DDDSample1.Infrastructure.Products;
 using DDDSample1.Domain;
@@ -11,8 +10,11 @@ using DDDSample1.Infraestructure.OperationTypes;
 using Backend.Infraestructure.SurgeryRoom;
 using DDDSample1.Domain.SurgeryRooms;
 
-using DDDSample1.Domain.Appointments;
 using DDDSample1.Infraestructure.Appointments;
+using DDDSample1.Domain.Specialization;
+using DDDSample1.Infrastructure.StaffS;
+using DDDSample1.Infrastructure.Specializations;
+using DDDSample1.Domain.Staff;
 
 namespace DDDSample1.Infrastructure
 {
@@ -28,6 +30,8 @@ namespace DDDSample1.Infrastructure
 
         public DbSet<OperationRequest> OperationRequests { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
+        public DbSet<Specialization> Specializations { get; set; }
 
         public DDDSample1DbContext(DbContextOptions<DDDSample1DbContext> options) : base(options)
         {
@@ -46,6 +50,8 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
 
         }
     }
