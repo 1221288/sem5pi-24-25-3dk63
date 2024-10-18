@@ -45,7 +45,7 @@ namespace DDDSample1.Controllers
         [HttpPost]
         public async Task<ActionResult<StaffDTO>> CreateStaff(Guid userId, Guid specializationId, CreatingStaffDTO staffDto)
         {
-            var user = await _userService.GetByIdAsync(new UserId(userId.ToString()));
+            var user = await _userService.GetByIdAsync(new UserId(userId));
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });

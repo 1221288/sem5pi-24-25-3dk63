@@ -1,3 +1,4 @@
+using Backend.Domain.Staff.ValueObjects;
 using DDDSample1.Domain.Specialization;
 using DDDSample1.Domain.Users;
 
@@ -8,17 +9,11 @@ namespace DDDSample1.Domain.Staff
         public LicenseNumber LicenseNumber { get; set; }
         public UserId UserId { get; set; }
         public SpecializationId SpecializationId { get; set; }
-        public List<AvailabilitySlotDTO> AvailabilitySlots { get; set; }
+        public List<AvailabilitySlot> AvailabilitySlots { get; set; }
 
         public StaffDTO()
         {
-            AvailabilitySlots = new List<AvailabilitySlotDTO>();
+            AvailabilitySlots = new List<AvailabilitySlot>();
         }
-    }
-
-    public class AvailabilitySlotDTO
-    {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
     }
 }

@@ -49,7 +49,6 @@ namespace DDDSample1.Domain.Staff
             return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
-
         public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
         {
             var licenseNumber = new LicenseNumber(dto.LicenseNumber.Value);
