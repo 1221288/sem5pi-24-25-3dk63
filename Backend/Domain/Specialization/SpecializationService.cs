@@ -13,6 +13,7 @@ namespace DDDSample1.Domain.Specialization
         {
             _unitOfWork = unitOfWork;
             _specializationRepository = specializationRepository;
+            
         }
 
         public async Task<List<SpecializationDTO>> GetAllAsync()

@@ -13,6 +13,7 @@ namespace DDDSample1.Domain.Staff
 
         public StaffDTO()
         {
+            
             AvailabilitySlots = new List<AvailabilitySlot>();
         }
     }

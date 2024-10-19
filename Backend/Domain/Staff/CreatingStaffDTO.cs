@@ -6,39 +6,47 @@ namespace DDDSample1.Domain.Staff
 {
     public class CreatingStaffDTO
     {
-        public string LicenseNumber { get; set; }
+        public LicenseNumber LicenseNumber { get; set; }
         public UserId UserId { get; set; }
         public SpecializationId SpecializationId { get; set; }
         public List<AvailabilitySlot> AvailabilitySlots { get; set; }
 
-        public CreatingStaffDTO(string licenseNumber, UserId userId, SpecializationId specializationId, List<AvailabilitySlot> availabilitySlots)
+        public CreatingStaffDTO(string licenseNumber, string userId, string specializationId, List<AvailabilitySlot> availabilitySlots)
         {
-            this.LicenseNumber = licenseNumber;
-            this.UserId = userId;
-            this.SpecializationId = specializationId;
-            this.AvailabilitySlots = availabilitySlots ?? new List<AvailabilitySlot>();
+            LicenseNumber = new LicenseNumber(licenseNumber);
+            UserId = new UserId(userId);
+            SpecializationId = new SpecializationId(specializationId);
+            AvailabilitySlots = availabilitySlots ?? new List<AvailabilitySlot>();
+
         }
 
-        public static StaffDTO CreateFromDomain(Staff staff)
-        {
-            return new StaffDTO
-            {
-                LicenseNumber = staff.Id,
-                UserId = staff.UserId,
-                SpecializationId = staff.SpecializationId,
-                AvailabilitySlots = staff.AvailabilitySlots?.Slots?.ToList() ?? new List<AvailabilitySlot>()
-            };
-        }
-
-        public static Staff CreateDomainFromDTO(CreatingStaffDTO dto)
+        public Staff CreateDomainFromDTO()
         {
             var availabilitySlots = new AvailabilitySlots();
-            foreach (var slot in dto.AvailabilitySlots)
+            foreach (var slot in AvailabilitySlots)
             {
                 availabilitySlots.AddSlot(slot.Start, slot.End);
             }
 
-            return new Staff(new UserId(dto.UserId.AsGuid()), new LicenseNumber(dto.LicenseNumber), dto.SpecializationId, availabilitySlots);
+            return new Staff(
+                UserId,
+                LicenseNumber,
+                SpecializationId,
+                availabilitySlots
+            );
+        }
+
+        public static StaffDTO CreateFromDomain(Staff staff)
+        {
+
+            return new StaffDTO
+            {
+                
+                LicenseNumber = staff.Id,
+                UserId = staff.UserId, 
+                SpecializationId = staff.SpecializationId,
+                AvailabilitySlots = staff.AvailabilitySlots?.Slots?.ToList() ?? new List<AvailabilitySlot>()
+            };
         }
     }
 }

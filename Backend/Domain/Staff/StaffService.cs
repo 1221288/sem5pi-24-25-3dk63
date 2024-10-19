@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Users;
+using DDDSample1.Domain.Specialization;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -32,21 +33,32 @@ namespace DDDSample1.Domain.Staff
 
         public async Task<StaffDTO> AddAsync(CreatingStaffDTO dto)
         {
+
             var availabilitySlots = new AvailabilitySlots();
             foreach (var slot in dto.AvailabilitySlots)
             {
                 availabilitySlots.AddSlot(slot.Start, slot.End);
             }
 
-            var licenseNumber = new LicenseNumber(dto.LicenseNumber);
-            var specializationId = dto.SpecializationId;
+            var staff = new Staff(
+                dto.UserId,
+                dto.LicenseNumber,
+                dto.SpecializationId,
+                availabilitySlots
+            );
 
-            var staff = new Staff(dto.UserId, licenseNumber, specializationId, availabilitySlots);
+            try
+                {
+                    await _staffRepository.AddAsync(staff);
+                    await _unitOfWork.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error adding staff: {ex.Message}");
+                    throw;
+                }
 
-            await _staffRepository.AddAsync(staff);
-            await _unitOfWork.CommitAsync();
-
-            return CreatingStaffDTO.CreateFromDomain(staff);
+                return CreatingStaffDTO.CreateFromDomain(staff);
         }
 
         public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)

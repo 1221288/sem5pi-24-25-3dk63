@@ -43,26 +43,26 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<StaffDTO>> CreateStaff(Guid userId, Guid specializationId, CreatingStaffDTO staffDto)
+        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO staffDto)
         {
-            var user = await _userService.GetByIdAsync(new UserId(userId));
+
+            var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId.AsString()));
+
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
             }
 
-            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(specializationId));
+            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(staffDto.SpecializationId.AsString()));
+
             if (specialization == null)
             {
                 return NotFound(new { Message = "Specialization not found" });
             }
 
-            staffDto.UserId = new UserId(userId.ToString());
-            staffDto.SpecializationId = new SpecializationId(specializationId);
+            var staff = staffDto.CreateDomainFromDTO();
 
-            var staff = await _staffService.AddAsync(staffDto);
-
-            return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = staff.LicenseNumber.Value }, staff);
+            return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = staffDto.LicenseNumber }, staff);
         }
 
 

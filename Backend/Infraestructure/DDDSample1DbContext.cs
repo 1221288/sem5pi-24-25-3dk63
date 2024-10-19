@@ -12,7 +12,7 @@ using DDDSample1.Domain.SurgeryRooms;
 
 using DDDSample1.Infraestructure.Appointments;
 using DDDSample1.Domain.Specialization;
-using DDDSample1.Infrastructure.StaffS;
+using DDDSample1.Infrastructure.Staffs;
 using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staff;
 
