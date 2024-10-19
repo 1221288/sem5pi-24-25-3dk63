@@ -10,15 +10,19 @@ namespace DDDSample1.Patients
     public class PatientService
     {
         private readonly IPatientRepository _patientRepository;
+        private readonly IUserRepository _userRepository;
         private readonly EmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public PatientService(IPatientRepository patientRepository, EmailService emailService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IMapper mapper)
         {
             _patientRepository = patientRepository;
+            _userRepository = userRepository;
             _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
             _mapper = mapper;
         }
 
@@ -36,12 +40,31 @@ namespace DDDSample1.Patients
                 var patient = new Patient(registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact);
                 // Register the patient
                 await _patientRepository.AddAsync(patient);
+
+                //Register the initial user
+                await createUser(registerDto);
+
                 return _mapper.Map<PatientDTO>(patient);
             }
             else
             {
                 throw new BusinessRuleValidationException("Patient already exists.");
             }
+        }
+
+        private async Task<User> createUser(RegisterPatientDTO dto)
+        {
+            int sequentialNumber = await this._userRepository.GetNextSequentialNumberAsync();
+            string domain = _configuration["DNS_DOMAIN"];
+            if (string.IsNullOrEmpty(domain))
+            {
+                throw new BusinessRuleValidationException("O domínio DNS não está configurado corretamente.");
+            }
+            int recruitmentYear = DateTime.Now.Year;
+            var role = new Role(RoleType.Patient);
+            var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber);
+            await _userRepository.AddAsync(user);
+            return user;
         }
         
         // // Obtém todos os pacientes

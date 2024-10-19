@@ -32,30 +32,28 @@ namespace DDDSample1.Patients
                 throw new Exception("Patient not found. Please contact the admin.");
             }
 
-            var user = createUser(patient, dto);
+            // Verify if the User already exists
+            var user = await _userRepository.FindByEmailAsync(new Email(dto.PersonalEmail));
+            if (user.Username.ToString().Equals(dto.IamEmail.ToString()))
+            {
+            	throw new Exception("User already exists.");    
+            }
 
-            patient.AddUserId(user.Result.Id);
+            user = await updateUser(user,dto);
+
+            patient.AddUserId(user.Id);
             await _patientRepository.UpdatePatientAsync(patient);
             await _unitOfWork.CommitAsync();
 
             // Send the confirmation email with the token
-            await _emailService.SendConfirmationEmailAsync(user.Result.Email.ToString(), user.Result.ConfirmationToken);
+            await _emailService.SendConfirmationEmailAsync(user.Email.ToString(), user.ConfirmationToken);
         }
 
-        private async Task<User> createUser(Patient patient, SelfRegisterPatientDTO dto)
+        private async Task<User> updateUser(User user, SelfRegisterPatientDTO dto)
         {
-            int sequentialNumber = await this._userRepository.GetNextSequentialNumberAsync();
-            string domain = _configuration["DNS_DOMAIN"];
-            if (string.IsNullOrEmpty(domain))
-            {
-                throw new BusinessRuleValidationException("O domínio DNS não está configurado corretamente.");
-            }
-            int recruitmentYear = DateTime.Now.Year;
-            var role = new Role(RoleType.Patient);
-            var user = new User(role, new Email(dto.PersonalEmail), dto.name, recruitmentYear, domain, sequentialNumber);
             user.ChangeUsername(new Username(dto.IamEmail));
             user.ChangeConfirmationToken(Guid.NewGuid().ToString("N"));
-            await _userRepository.AddAsync(user);
+            await _userRepository.UpdateUserAsync(user);
             return user;
         }
 

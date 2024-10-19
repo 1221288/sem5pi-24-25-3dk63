@@ -23,12 +23,12 @@ namespace DDDSample1.Domain
         {
             using (var client = new SmtpClient("smtp.gmail.com", 587))
             {
-                client.Credentials = new NetworkCredential("your-email@gmail.com", "your-email-password");
+                client.Credentials = new NetworkCredential("lapr3dkg69sup@gmail.com", "lapr3dkg63");
                 client.EnableSsl = true;
 
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("your-email@gmail.com"),
+                    From = new MailAddress("lapr3dkg69sup@gmail.com"),
                     Subject = subject,
                     Body = body,
                     IsBodyHtml = true // Set to true if the body contains HTML content

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Users;
 using DDDSample1.Patients;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DDDSample1.Controllers
 {
@@ -33,9 +34,15 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("register-patient")]
-        public async Task RegisterPatient(RegisterPatientDTO dto)
+        [Authorize (Roles = "Admin")]
+        public async Task<ActionResult<PatientDTO>> RegisterPatient(RegisterPatientDTO dto)
         {
-            await _service.RegisterPatientAsync(dto);
+            var patient = await _service.RegisterPatientAsync(dto);
+            if (patient.Value == null)
+            {
+                return Problem("Error: patient is null");
+            }
+            return CreatedAtAction(nameof(GetById), new { id = patient.Value.Id }, patient);
         }
     }
 }

@@ -5,7 +5,6 @@ namespace DDDSample1.Domain.Patients
     public class PatientDTO
     {
         public Guid Id { get; set; }
-
         public UserId UserId { get; set; }
         public DateOfBirth dateOfBirth { get; set; }
         public Gender gender { get; set; }

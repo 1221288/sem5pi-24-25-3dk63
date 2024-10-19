@@ -11,5 +11,7 @@ namespace DDDSample1.Domain.Patients
         public List<AllergiesMedicalConditionals> allergiesMedicalConditionalsList { get; set; }
         public EmergencyContact emergencyContact { get; set; }
         public List<AppointmentHistory> appointmentHistoryList { get; set; }
+        public Email personalEmail { get; set; }
+        public Name name { get; set; }
     }
 }

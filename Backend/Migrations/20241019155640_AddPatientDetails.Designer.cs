@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-<<<<<<<< HEAD:Backend/Migrations/20241019154214_NomeDaMigraçao.Designer.cs
-    [Migration("20241019154214_NomeDaMigraçao")]
-    partial class NomeDaMigraçao
-========
-    [Migration("20241019143559_AddPatientDetails")]
+    [Migration("20241019155640_AddPatientDetails")]
     partial class AddPatientDetails
->>>>>>>> 27e11cd73f3e6bc3782989a6892b86fe7d0dea64:Backend/Migrations/20241019143559_AddPatientDetails.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

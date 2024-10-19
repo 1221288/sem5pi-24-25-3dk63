@@ -10,12 +10,12 @@ namespace DDDSample1.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RegistrationController : ControllerBase
+    public class RegistrationsController : ControllerBase
     {
         private readonly EmailService _emailService;
         private readonly RegistrationService _registrationService;
 
-        public RegistrationController(EmailService emailService, RegistrationService registrationService)
+        public RegistrationsController(EmailService emailService, RegistrationService registrationService)
         {
             _emailService = emailService;
             _registrationService = registrationService;
