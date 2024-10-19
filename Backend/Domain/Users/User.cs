@@ -11,8 +11,8 @@ namespace DDDSample1.Domain
         public Email Email { get; private set; }
         public Name Name { get; private set; }
         public bool Active { get; private set; }
-
         public int SequentialNumber { get; private set; }
+        public string ConfirmationToken { get; set; }
 
         private User()
         {
@@ -28,6 +28,7 @@ namespace DDDSample1.Domain
             this.Name = name;
             this.SequentialNumber = sequentialNumber;
             this.Username = GenerateUsername(role.Value, recruitmentYear, domain, sequentialNumber);
+            this.ConfirmationToken = "";
         }
 
         private Username GenerateUsername(RoleType roleType, int recruitmentYear, string domain, int sequentialNumber)
@@ -57,6 +58,17 @@ namespace DDDSample1.Domain
             return new Username(username);
         }
 
+        public void ChangeActiveTrue()
+        {
+            this.Active = true;
+        }
+
+        public void ChangeActiveFalse()
+        {
+            this.Active = false;
+        }
+
+
         public void ChangeRole(Role role)
         {
             if (!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
@@ -79,6 +91,12 @@ namespace DDDSample1.Domain
         {
             if (!this.Active) throw new BusinessRuleValidationException("User cannot be changed in this state");
             this.Name = name;
+        }
+
+        public void ChangeConfirmationToken(string confirmationToken)
+        {
+            if (this.Active) throw new BusinessRuleValidationException("User is already registered. No need to confirm.");
+            this.ConfirmationToken = confirmationToken;
         }
     }
 }

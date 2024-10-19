@@ -15,6 +15,7 @@ using DDDSample1.Domain.Specialization;
 using DDDSample1.Infrastructure.Staffs;
 using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staff;
+using DDDSample1.Infraestructure.Patients;
 
 namespace DDDSample1.Infrastructure
 {
@@ -32,6 +33,7 @@ namespace DDDSample1.Infrastructure
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<Patient> Patients { get; set; }
 
         public DDDSample1DbContext(DbContextOptions<DDDSample1DbContext> options) : base(options)
         {
@@ -52,6 +54,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
 
         }
     }

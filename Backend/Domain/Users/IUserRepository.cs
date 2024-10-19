@@ -13,6 +13,8 @@ namespace DDDSample1.Domain.Users
     {
         Task<int> GetNextSequentialNumberAsync();
         Task<User> FindByEmailAsync(Email emai);
+        Task<User> GetUserByConfirmationTokenAsync(string token);
+        Task UpdateUserAsync(User user);
 
     }
 }
