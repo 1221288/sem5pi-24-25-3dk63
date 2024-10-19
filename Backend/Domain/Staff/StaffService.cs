@@ -33,7 +33,7 @@ namespace DDDSample1.Domain.Staff
 
         public async Task<StaffDTO> AddAsync(CreatingStaffDTO dto)
         {
-
+            
             var availabilitySlots = new AvailabilitySlots();
             foreach (var slot in dto.AvailabilitySlots)
             {
@@ -48,7 +48,8 @@ namespace DDDSample1.Domain.Staff
             );
 
             try
-                {
+                {   
+                
                     await _staffRepository.AddAsync(staff);
                     await _unitOfWork.CommitAsync();
                 }

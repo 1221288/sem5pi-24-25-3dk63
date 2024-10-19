@@ -45,7 +45,6 @@ namespace DDDSample1.Controllers
         [HttpPost]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO staffDto)
         {
-
             var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId.AsString()));
 
             if (user == null)
@@ -59,12 +58,12 @@ namespace DDDSample1.Controllers
             {
                 return NotFound(new { Message = "Specialization not found" });
             }
-
             var staff = staffDto.CreateDomainFromDTO();
 
-            return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = staffDto.LicenseNumber }, staff);
-        }
+            var createdStaff = await _staffService.AddAsync(staffDto);
 
+            return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = createdStaff.LicenseNumber }, createdStaff);
+        }
 
         [HttpPut("{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffDTO dto)
