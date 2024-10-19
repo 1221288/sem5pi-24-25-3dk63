@@ -23,11 +23,16 @@ namespace DDDSample1.Infraestructure.Users
                         usernameString => new Username(usernameString))
                     .IsRequired();
 
+            builder.HasIndex(u => u.Username).IsUnique();
+
+
             builder.Property(u => u.Email)
                     .HasConversion(
                         email => email.ToString(),
                         emailString => new Email(emailString))
                     .IsRequired();
+
+            builder.HasIndex(u => u.Email).IsUnique();
 
             builder.Property(u => u.Role)
                     .HasConversion(

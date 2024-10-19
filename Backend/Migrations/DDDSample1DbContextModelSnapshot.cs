@@ -156,6 +156,11 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("AvailabilitySlots");
 
+                    b.Property<string>("SpecializationId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("SpecializationId");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -201,7 +206,7 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -212,9 +217,15 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
