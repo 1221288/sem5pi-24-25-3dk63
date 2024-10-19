@@ -111,6 +111,23 @@ namespace DDDNetCore.Migrations
                     b.ToTable("OperationTypes", (string)null);
                 });
 
+            modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Patients");
+                });
+
             modelBuilder.Entity("DDDSample1.Domain.Products.Product", b =>
                 {
                     b.Property<string>("Id")
@@ -203,6 +220,10 @@ namespace DDDNetCore.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ConfirmationToken")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -403,6 +424,140 @@ namespace DDDNetCore.Migrations
                         .IsRequired();
 
                     b.Navigation("RequiredStaff")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
+                {
+                    b.OwnsMany("DDDSample1.Domain.Patients.AllergiesMedicalConditionals", "allergiesMedicalConditionalsList", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("PatientId")
+                                .IsRequired()
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("allergyName")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("AllergyName");
+
+                            b1.Property<string>("description")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("severity")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("Severity");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("PatientId");
+
+                            b1.ToTable("AllergiesMedicalConditionals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.OwnsMany("DDDSample1.Domain.Patients.AppointmentHistory", "appointmentHistoryList", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("PatientId")
+                                .IsRequired()
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<DateTime>("appointmentDate")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<string>("doctorName")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("PatientId");
+
+                            b1.ToTable("AppointmentHistory");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.OwnsOne("DDDSample1.Domain.Patients.DateOfBirth", "dateOfBirth", b1 =>
+                        {
+                            b1.Property<string>("PatientId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<DateTime>("value")
+                                .HasColumnType("datetime(6)")
+                                .HasColumnName("DateOfBirth");
+
+                            b1.HasKey("PatientId");
+
+                            b1.ToTable("Patients");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.OwnsOne("DDDSample1.Domain.Patients.EmergencyContact", "emergencyContact", b1 =>
+                        {
+                            b1.Property<string>("PatientId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("emergencyContact")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("EmergencyContactName");
+
+                            b1.HasKey("PatientId");
+
+                            b1.ToTable("Patients");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.OwnsOne("DDDSample1.Domain.Patients.Gender", "gender", b1 =>
+                        {
+                            b1.Property<string>("PatientId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("gender")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("Gender");
+
+                            b1.HasKey("PatientId");
+
+                            b1.ToTable("Patients");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.Navigation("allergiesMedicalConditionalsList");
+
+                    b.Navigation("appointmentHistoryList");
+
+                    b.Navigation("dateOfBirth")
+                        .IsRequired();
+
+                    b.Navigation("emergencyContact")
+                        .IsRequired();
+
+                    b.Navigation("gender")
                         .IsRequired();
                 });
 
