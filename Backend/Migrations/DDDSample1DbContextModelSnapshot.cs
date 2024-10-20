@@ -120,8 +120,10 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("sequentialNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -225,7 +227,6 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ConfirmationToken")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")

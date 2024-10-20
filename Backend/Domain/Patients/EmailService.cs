@@ -11,7 +11,7 @@ namespace DDDSample1.Domain
         public async Task SendConfirmationEmailAsync(string email, string token)
         {
             // Compose the email content
-            var confirmationLink = $"https://localhost:5001/api/confirm-email?token={token}";
+            var confirmationLink = $"https://localhost:5001/api/Registrations/confirm-email?token={token}";
             var subject = "Confirm your registration";
             var body = $"Please click on the following link to confirm your registration: {confirmationLink}";
 
@@ -30,7 +30,7 @@ namespace DDDSample1.Domain
             {
                 using (var client = new SmtpClient("smtp.gmail.com", 587))
                 {
-                    client.Credentials = new NetworkCredential("lapr3dkg69sup@gmail.com", "lapr3dkg63");
+                    client.Credentials = new NetworkCredential("lapr3dkg69sup@gmail.com", "jqpq httt gxex cnvh");
                     client.EnableSsl = true;
 
                     var mailMessage = new MailMessage

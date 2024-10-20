@@ -13,6 +13,7 @@ namespace DDDSample1.Patients
         private readonly IPatientRepository _patientRepository;
         private readonly IUserRepository _userRepository;
         private readonly EmailService _emailService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly ILogger<PatientService> _logger;
@@ -20,11 +21,12 @@ namespace DDDSample1.Patients
 
         public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
                                 IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
-                                IMapper mapper)
+                                IUnitOfWork unitOfWork, IMapper mapper)
         {
             _patientRepository = patientRepository;
             _userRepository = userRepository;
             _emailService = emailService;
+            _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _logger = logger;
@@ -37,17 +39,18 @@ namespace DDDSample1.Patients
             return patient == null ? null : _mapper.Map<PatientDTO>(patient);
         }
 
-        public async Task<ActionResult<PatientDTO>> RegisterPatientAsync(RegisterPatientDTO registerDto)
+        public async Task<PatientDTO> RegisterPatientAsync(RegisterPatientDTO registerDto)
         {
             // Check if the patient medical record number already exists
             if (await _patientRepository.FindByEmailAsync(registerDto.personalEmail) == null)
             {
-                var patient = new Patient(registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, _patientRepository.GetNextSequentialNumberAsync().Result);
-                // Register the patient
-                await _patientRepository.AddAsync(patient);
-
                 //Register the initial user
-                await createUser(registerDto);
+                var user = await createUser(registerDto);
+
+                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.allergy, _patientRepository.GetNextSequentialNumberAsync().Result);
+                // Register the patient
+                patient = await _patientRepository.AddAsync(patient);
+                await _unitOfWork.CommitAsync();                
 
                 return _mapper.Map<PatientDTO>(patient);
             }
@@ -68,7 +71,9 @@ namespace DDDSample1.Patients
             int recruitmentYear = DateTime.Now.Year;
             var role = new Role(RoleType.Patient);
             var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber);
-            await _userRepository.AddAsync(user);
+            user.ChangeActiveFalse();
+            user = await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
             return user;
         }
 

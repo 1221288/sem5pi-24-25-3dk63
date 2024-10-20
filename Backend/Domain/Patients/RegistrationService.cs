@@ -26,12 +26,12 @@ namespace DDDSample1.Patients
         public async Task SelfRegisterAsync(SelfRegisterPatientDTO dto)
         {
             // Verify if the Patient exists in the system registered by the Admin
-            var patient = await _patientRepository.GetPatientByIamEmailAsync(dto.IamEmail.ToString());
+            var patient = await _patientRepository.GetPatientByPersonalEmailAsync(new Email(dto.PersonalEmail));
             if (patient == null)
             {
                 throw new Exception("Patient not found. Please contact the admin.");
             }
-
+            
             // Verify if the User already exists
             var user = await _userRepository.FindByEmailAsync(new Email(dto.PersonalEmail));
             if (user.Username.ToString().Equals(dto.IamEmail.ToString()))
@@ -39,10 +39,8 @@ namespace DDDSample1.Patients
             	throw new Exception("User already exists.");    
             }
 
-            user.ChangeActiveTrue();
             user = await updateUser(user,dto);
 
-            patient.AddUserId(user.Id);
             patient.ChangeActiveTrue();
             await _patientRepository.UpdatePatientAsync(patient);
             await _unitOfWork.CommitAsync();
@@ -53,8 +51,9 @@ namespace DDDSample1.Patients
 
         private async Task<User> updateUser(User user, SelfRegisterPatientDTO dto)
         {
-            user.ChangeUsername(new Username(dto.IamEmail));
             user.ChangeConfirmationToken(Guid.NewGuid().ToString("N"));
+            user.ChangeActiveTrue();
+            user.ChangeUsername(new Username(dto.IamEmail));
             await _userRepository.UpdateUserAsync(user);
             return user;
         }

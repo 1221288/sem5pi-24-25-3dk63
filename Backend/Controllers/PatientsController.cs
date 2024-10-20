@@ -34,15 +34,14 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("register-patient")]
-        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<PatientDTO>> RegisterPatient(RegisterPatientDTO dto)
         {
             var patient = await _service.RegisterPatientAsync(dto);
-            if (patient.Value == null)
+            if (patient == null)
             {
                 return Problem("Error: patient is null");
             }
-            return CreatedAtAction(nameof(GetById), new { id = patient.Value.Id }, patient);
+            return CreatedAtAction(nameof(GetById), new { id = patient.Id }, patient);
         }
 
         [HttpPut("{id}")]

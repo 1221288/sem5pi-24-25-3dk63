@@ -13,6 +13,7 @@ namespace DDDSample1.Domain
         public Allergy allergy { get; private set; }
         public EmergencyContact emergencyContact { get; private set; }
         public List<AppointmentHistory> appointmentHistoryList { get; private set; }
+        public int sequentialNumber { get; private set; }
         public bool Active { get; private set; }
 
         private Patient()
@@ -30,6 +31,7 @@ namespace DDDSample1.Domain
             this.allergy = new Allergy("");
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
+            this.sequentialNumber = sequentialNumber;
         }
 
         public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
@@ -41,6 +43,7 @@ namespace DDDSample1.Domain
             this.allergy = allergy;
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
+            this.sequentialNumber = sequentialNumber;
         }
 
         public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, int sequentialNumber)
@@ -53,6 +56,7 @@ namespace DDDSample1.Domain
             this.allergy = new Allergy("");
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
+            this.sequentialNumber = sequentialNumber;
         }
 
         public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
@@ -65,17 +69,12 @@ namespace DDDSample1.Domain
             this.allergy = allergy;
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
+            this.sequentialNumber = sequentialNumber;
         }
 
         public void AddAppointment(AppointmentHistory appointment)
         {
             appointmentHistoryList.Add(appointment);
-        }
-
-        public void AddUserId(UserId userId)
-        {
-            if (this.UserId!=null) throw new BusinessRuleValidationException("Patient's user is already registered.");
-            this.UserId = userId;
         }
 
         public void ChangeActiveTrue()

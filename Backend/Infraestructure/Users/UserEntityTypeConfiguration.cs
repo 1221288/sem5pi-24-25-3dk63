@@ -55,6 +55,9 @@ namespace DDDSample1.Infraestructure.Users
 
             builder.Property(u => u.Active).IsRequired();
             builder.Property(u => u.SequentialNumber).IsRequired();
-            }
+            
+            builder.Property(u => u.ConfirmationToken)
+                    .IsRequired(false);
+        }
     }
 }

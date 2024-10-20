@@ -24,11 +24,11 @@ namespace DDDSample1.Infrastructure.Patients
         
         public async Task<int> GetNextSequentialNumberAsync()
         {
-            var lastUser = await _context.Users
-                .OrderByDescending(u => u.SequentialNumber)
+            var lastPatient = await _context.Patients
+                .OrderByDescending(p => p.sequentialNumber)
                 .FirstOrDefaultAsync();
 
-            return lastUser != null ? lastUser.SequentialNumber + 1 : 1;
+            return lastPatient != null ? lastPatient.sequentialNumber + 1 : 1;
         }
 
         public async Task<User> FindByEmailAsync(Email email)
@@ -53,18 +53,14 @@ namespace DDDSample1.Infrastructure.Patients
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Patient?> GetPatientByIamEmailAsync(string iamEmail)
+        public async Task<Patient?> GetPatientByPersonalEmailAsync(Email personalEmail)
         {
-            var result = await _context.Patients
-                .Join(
-                    _context.Users,
-                    patient => patient.UserId,
-                    user => user.Id,
-                    (patient, user) => new { Patient = patient, User = user }
-                )
-                .Where(joined => joined.User.Username.Equals(iamEmail))
-                .Select(joined => joined.Patient)
-                .FirstOrDefaultAsync();
+            var result = await (
+                from Patient in _context.Patients
+                join User in _context.Users on Patient.UserId equals User.Id
+                where User.Email.Equals(personalEmail)
+                select Patient
+                ).FirstOrDefaultAsync();
 
             return result ?? null;
         }

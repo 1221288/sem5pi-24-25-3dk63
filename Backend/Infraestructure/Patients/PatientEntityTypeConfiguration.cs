@@ -11,6 +11,9 @@ namespace DDDSample1.Infraestructure.Patients
              // Define the primary key for the Patient entity
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.UserId)
+                    .IsRequired(false);
+
             // Configure the DateOfBirth value object
             builder.OwnsOne(p => p.dateOfBirth, dob =>
             {

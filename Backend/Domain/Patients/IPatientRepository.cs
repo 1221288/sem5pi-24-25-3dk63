@@ -12,6 +12,6 @@ namespace DDDSample1.Domain.Patients
         Task<bool> ExistsByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber);
         Task<Patient> FindByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber);
         Task UpdatePatientAsync(Patient patient);
-        Task<Patient?> GetPatientByIamEmailAsync(string iamEmail);
+        Task<Patient?> GetPatientByPersonalEmailAsync(Email personalEmail);
     }
 }

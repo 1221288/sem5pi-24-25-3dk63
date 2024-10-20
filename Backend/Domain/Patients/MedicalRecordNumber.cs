@@ -13,6 +13,16 @@ namespace DDDSample1.Domain.Patients
         // Constructor
         public MedicalRecordNumber(string value) : base(value)
         {
+            if (string.IsNullOrWhiteSpace(value) || !IsValidFormat(value))
+            {
+                throw new ArgumentException("Invalid Medical Record Number format.");
+            }
+        }
+
+        private bool IsValidFormat(string value)
+        {
+            // Check if the format matches YYYYMMnnnnnn
+            return System.Text.RegularExpressions.Regex.IsMatch(value, @"^\d{6}\d{6}$");
         }
 
         protected override object createFromString(string text)

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241020135821_AddPatientDetails")]
+    [Migration("20241020174713_AddPatientDetails")]
     partial class AddPatientDetails
     {
         /// <inheritdoc />
@@ -123,8 +123,10 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("sequentialNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -228,7 +230,6 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ConfirmationToken")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")

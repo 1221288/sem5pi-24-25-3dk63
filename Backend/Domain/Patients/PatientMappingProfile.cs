@@ -9,7 +9,7 @@ public class PatientMappingProfile : Profile
     public PatientMappingProfile()
     {
         CreateMap<Patient, PatientDTO>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.AsString())) // Use AsString() to get the string representation
             .ForMember(dest => dest.dateOfBirth, opt => opt.MapFrom(src => src.dateOfBirth))
             .ForMember(dest => dest.gender, opt => opt.MapFrom(src => src.gender))
             .ForMember(dest => dest.allergy, opt => opt.MapFrom(src => src.allergy))
@@ -17,7 +17,7 @@ public class PatientMappingProfile : Profile
             .ForMember(dest => dest.appointmentHistoryList, opt => opt.MapFrom(src => src.appointmentHistoryList));
 
         CreateMap<PatientDTO, Patient>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new MedicalRecordNumber(src.Id.ToString())))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) // Assuming Id is already in correct string format
             .ForMember(dest => dest.dateOfBirth, opt => opt.MapFrom(src => src.dateOfBirth))
             .ForMember(dest => dest.gender, opt => opt.MapFrom(src => src.gender))
             .ForMember(dest => dest.allergy, opt => opt.MapFrom(src => src.allergy))
