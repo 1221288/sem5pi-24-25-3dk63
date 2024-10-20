@@ -22,9 +22,9 @@ namespace DDDSample1.Domain
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
-        public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact)
+        public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, int sequentialNumber)
         {
-            this.Id = new MedicalRecordNumber(Guid.NewGuid());
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.value, sequentialNumber));
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
@@ -33,9 +33,9 @@ namespace DDDSample1.Domain
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
-        public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact)
+        public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, int sequentialNumber)
         {
-            this.Id = new MedicalRecordNumber(Guid.NewGuid());
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.value, sequentialNumber));
             this.UserId = userId;
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
@@ -44,6 +44,7 @@ namespace DDDSample1.Domain
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
+
 
         public void AddAllergy(AllergiesMedicalConditionals allergy)
         {

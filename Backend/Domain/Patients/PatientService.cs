@@ -35,9 +35,9 @@ namespace DDDSample1.Patients
         public async Task<ActionResult<PatientDTO>> RegisterPatientAsync(RegisterPatientDTO registerDto)
         {
             // Check if the patient medical record number already exists
-            if (!await _patientRepository.ExistsByMedicalRecordNumberAsync(new MedicalRecordNumber(registerDto.MedicalRecordNumber)))
+            if (await _patientRepository.FindByEmailAsync(registerDto.personalEmail) == null)
             {
-                var patient = new Patient(registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact);
+                var patient = new Patient(registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, _patientRepository.GetNextSequentialNumberAsync().Result);
                 // Register the patient
                 await _patientRepository.AddAsync(patient);
 
@@ -50,6 +50,10 @@ namespace DDDSample1.Patients
             {
                 throw new BusinessRuleValidationException("Patient already exists.");
             }
+
+            // Check if the patient email already exists
+            
+            
         }
 
         private async Task<User> createUser(RegisterPatientDTO dto)

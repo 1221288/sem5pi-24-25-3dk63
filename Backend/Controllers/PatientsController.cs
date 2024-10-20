@@ -21,9 +21,9 @@ namespace DDDSample1.Controllers
 
         // GET: api/Patients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PatientDTO>> GetById(Guid id)
+        public async Task<ActionResult<PatientDTO>> GetById(MedicalRecordNumber id)
         {
-            var patient = await _service.GetByIdAsync(new MedicalRecordNumber(id));
+            var patient = await _service.GetByIdAsync(id);
 
             if (patient == null)
             {

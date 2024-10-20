@@ -10,28 +10,47 @@ namespace DDDSample1.Domain.Patients
 {
     public class MedicalRecordNumber : EntityId
     {
-        [JsonConstructor]
-        public MedicalRecordNumber(Guid value) : base(value){}
-
-        public MedicalRecordNumber(String value) : base(value)
+        // Constructor
+        public MedicalRecordNumber(string value) : base(value)
         {
-
         }
 
-        override
-        protected Object createFromString(String text){
-            return new Guid(text);
+        protected override object createFromString(string text)
+        {
+            if (!IsValid(text))
+            {
+                throw new ArgumentException("Invalid medical record number format.");
+            }
+            return text;
         }
 
-        override
-        public String AsString(){
-            Guid obj = (Guid) base.ObjValue;
-            return obj.ToString();
+        public override string AsString()
+        {
+            return (string)this.ObjValue;
         }
 
+        // Validate if the input string is in the correct format
+        private static bool IsValid(string entityId)
+        {
+            if (string.IsNullOrEmpty(entityId) || entityId.Length != 12)
+                return false;
 
-        public Guid AsGuid(){
-            return (Guid) base.ObjValue;
+            if (!int.TryParse(entityId.Substring(0, 6), out _))
+                return false;
+
+            int month = int.Parse(entityId.Substring(4, 2));
+            if (month < 1 || month > 12)
+                return false;
+
+            return true;
+        }
+
+        public static string GenerateNewRecordNumber(DateTime registrationDate, int sequentialNumber)
+        {
+            string year = registrationDate.ToString("yyyy");
+            string month = registrationDate.ToString("MM");
+            string seqNum = sequentialNumber.ToString("D6");
+            return year + month + seqNum;
         }
     }
 }
