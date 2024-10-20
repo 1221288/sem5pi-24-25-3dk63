@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using DDDSample1.Domain.Users;
 using DDDSample1.Users;
 using DDDSample1.Domain.Specialization;
+using Backend.Domain.Staff.ValueObjects;
 
 namespace DDDSample1.Controllers
 {
@@ -26,7 +27,8 @@ namespace DDDSample1.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> GetAllStaff()
         {
-            return await _staffService.GetAllAsync();
+            var staffList = await _staffService.GetAllAsync();
+            return Ok(staffList);
         }
 
         [HttpGet("{licenseNumber}")]
@@ -39,50 +41,61 @@ namespace DDDSample1.Controllers
                 return NotFound();
             }
 
-            return staff;
+            return Ok(staff);
         }
 
         [HttpPost]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO staffDto)
         {
-            var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId.AsString()));
+            var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId));
 
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
             }
 
-            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(staffDto.SpecializationId.AsString()));
+            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(staffDto.SpecializationId));
 
             if (specialization == null)
             {
                 return NotFound(new { Message = "Specialization not found" });
             }
-            var staff = staffDto.CreateDomainFromDTO();
+
+            var availabilitySlots = staffDto.AvailabilitySlots != null
+                ? new AvailabilitySlots(staffDto.AvailabilitySlots.Select(slot => new AvailabilitySlot(slot.Start, slot.End)).ToList())
+                : new AvailabilitySlots();
+
+            var staff = new Staff(
+                new UserId(staffDto.UserId),
+                new LicenseNumber(staffDto.LicenseNumber),
+                new SpecializationId(staffDto.SpecializationId),
+                availabilitySlots
+            );
 
             var createdStaff = await _staffService.AddAsync(staffDto);
 
             return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = createdStaff.LicenseNumber }, createdStaff);
         }
 
+
         [HttpPut("{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffDTO dto)
         {
-            if (licenseNumber != dto.LicenseNumber.Value)
+            if (licenseNumber != dto.LicenseNumber.ToString())
             {
                 return BadRequest();
             }
 
             try
             {
-                var staff = await _staffService.UpdateAsync(dto);
+                var updatedStaff = await _staffService.UpdateAsync(dto);
 
-                if (staff == null)
+                if (updatedStaff == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(staff);
+                return Ok(updatedStaff);
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -96,14 +109,14 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                var staff = await _staffService.DeleteAsync(new LicenseNumber(licenseNumber));
+                var deletedStaff = await _staffService.DeleteAsync(new LicenseNumber(licenseNumber));
 
-                if (staff == null)
+                if (deletedStaff == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(staff);
+                return Ok(deletedStaff);
             }
             catch (BusinessRuleValidationException ex)
             {

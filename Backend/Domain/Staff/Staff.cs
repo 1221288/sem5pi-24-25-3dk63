@@ -1,3 +1,4 @@
+using System;
 using DDDSample1.Domain.Shared;
 using Backend.Domain.Staff.ValueObjects;
 using DDDSample1.Domain.Users;
@@ -9,32 +10,26 @@ namespace DDDSample1.Domain.Staff
     {
         public UserId UserId { get; private set; }
         public SpecializationId SpecializationId { get; private set; }
-        public AvailabilitySlots? AvailabilitySlots { get; private set; }
+        public AvailabilitySlots AvailabilitySlots { get; private set; }
+        public bool Active { get; private set; }
 
-        protected Staff() { }
+        protected Staff()
+        {
+            this.Active = true;
+        }
 
         public Staff(UserId userId, LicenseNumber licenseNumber, SpecializationId specializationId, AvailabilitySlots availabilitySlots)
         {
-            this.UserId = userId;
             this.Id = licenseNumber;
+            this.UserId = userId;
             this.SpecializationId = specializationId;
             this.AvailabilitySlots = availabilitySlots;
+            this.Active = true;
         }
 
-        public Staff(UserId userId, LicenseNumber licenseNumber, SpecializationId specializationId)
+        public void MarkAsInactive()
         {
-            this.UserId = userId;
-            this.Id = licenseNumber;
-            this.SpecializationId = specializationId;
-        }
-
-        public void AddAvailabilitySlot(DateTime start, DateTime end)
-        {
-            if (AvailabilitySlots == null)
-            {
-                AvailabilitySlots = new AvailabilitySlots();
-            }
-            AvailabilitySlots.AddSlot(start, end);
+            this.Active = false;
         }
 
         public void UpdateAvailabilitySlots(AvailabilitySlots newAvailabilitySlots)

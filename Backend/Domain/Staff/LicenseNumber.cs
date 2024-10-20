@@ -18,13 +18,17 @@ namespace DDDSample1.Domain.Staff
 
             if (!IsValid(value))
             {
-                throw new ArgumentException("Invalid license number format.");
+                throw new ArgumentException("Invalid license number format. It must be alphanumeric and can contain dashes.");
             }
         }
 
         [JsonConstructor]
         public LicenseNumber(Guid value) : base(value.ToString())
         {
+            if (!IsValid(value.ToString()))
+            {
+                throw new ArgumentException("Invalid license number format.");
+            }
         }
 
         public static bool IsValid(string licenseNumber)
@@ -34,13 +38,22 @@ namespace DDDSample1.Domain.Staff
 
         protected override object createFromString(string text)
         {
+            if (!IsValid(text))
+            {
+                throw new ArgumentException("Invalid license number format.");
+            }
             return text;
         }
 
-        public override string AsString()
-        {
-            return (string)base.ObjValue;
+        override
+        public String AsString(){
+            Guid obj = (Guid) base.ObjValue;
+            return obj.ToString();
         }
-        
+
+
+        public Guid AsGuid(){
+            return (Guid) base.ObjValue;
+        }
     }
 }
