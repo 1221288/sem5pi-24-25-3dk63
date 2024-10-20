@@ -39,9 +39,11 @@ namespace DDDSample1.Patients
             	throw new Exception("User already exists.");    
             }
 
+            user.ChangeActiveTrue();
             user = await updateUser(user,dto);
 
             patient.AddUserId(user.Id);
+            patient.ChangeActiveTrue();
             await _patientRepository.UpdatePatientAsync(patient);
             await _unitOfWork.CommitAsync();
 

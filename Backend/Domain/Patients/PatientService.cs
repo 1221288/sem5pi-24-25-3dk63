@@ -4,6 +4,7 @@ using DDDSample1.Domain.Users;
 using DDDSample1.Domain.Shared;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace DDDSample1.Patients
 {
@@ -14,15 +15,19 @@ namespace DDDSample1.Patients
         private readonly EmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<PatientService> _logger;
         private readonly IMapper _mapper;
 
-        public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IMapper mapper)
+        public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
+                                IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
+                                IMapper mapper)
         {
             _patientRepository = patientRepository;
             _userRepository = userRepository;
             _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            _logger = logger;
             _mapper = mapper;
         }
 
@@ -50,10 +55,6 @@ namespace DDDSample1.Patients
             {
                 throw new BusinessRuleValidationException("Patient already exists.");
             }
-
-            // Check if the patient email already exists
-            
-            
         }
 
         private async Task<User> createUser(RegisterPatientDTO dto)
@@ -69,6 +70,76 @@ namespace DDDSample1.Patients
             var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber);
             await _userRepository.AddAsync(user);
             return user;
+        }
+
+        public async Task<bool> UpdatePatientProfileAsync(PatientUpdateDTO updateDto)
+        {
+            var patient = await _patientRepository.FindByMedicalRecordNumberAsync(updateDto.id);
+            var userPatient = await _patientRepository.FindByEmailAsync(new Email(updateDto.Email));
+
+            if (patient == null)
+            {
+                return false;
+            }
+
+            var oldEmail = userPatient.Email.ToString();
+
+            // Update patient profile
+            await UpdatePatientInfo(patient, userPatient, updateDto);
+
+            // Log changes
+            _logger.LogInformation($"Patient profile updated: {updateDto.id}");
+
+            // Send notification if email changed
+            if (oldEmail != updateDto.Email)
+            {
+                await _emailService.SendNotificationEmailAsync(updateDto);
+            }
+
+            return true;
+        }
+
+        private async Task<Patient> UpdatePatientInfo(Patient patient, User user, PatientUpdateDTO updateDto)
+        {
+            bool userAttributesUpdated = false;
+            bool patientAttributesUpdated = false;
+
+            PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {   
+                var newValue = property.GetValue(updateDto, null);
+                
+                if (newValue != null)
+                {
+                    
+                    if(CheckIfExistsOnUser(property.Name)){
+                        typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
+                        userAttributesUpdated = true;
+                    }
+                    
+                    if(CheckIfExistsOnPatient(property.Name)){
+                        typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
+                        patientAttributesUpdated = true;
+                    }
+                }
+            }
+
+            if(userAttributesUpdated) await _userRepository.UpdateUserAsync(user);
+            if(patientAttributesUpdated) await _patientRepository.UpdatePatientAsync(patient);
+
+            return patient;
+        }
+
+        private bool CheckIfExistsOnUser(string propertyName)
+        {
+            PropertyInfo userProperty = typeof(User).GetProperty(propertyName);
+            return userProperty != null && userProperty.CanWrite;
+        }
+
+        private bool CheckIfExistsOnPatient(string propertyName)
+        {
+            PropertyInfo patientProperty = typeof(Patient).GetProperty(propertyName);
+            return patientProperty != null && patientProperty.CanWrite;
         }
         
         // // Obtém todos os pacientes

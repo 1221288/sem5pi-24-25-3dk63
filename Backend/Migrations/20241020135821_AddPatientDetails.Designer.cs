@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241019155640_AddPatientDetails")]
+    [Migration("20241020135821_AddPatientDetails")]
     partial class AddPatientDetails
     {
         /// <inheritdoc />
@@ -171,6 +171,9 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)")
                         .HasColumnName("LicenseNumber");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("AvailabilitySlots")
                         .HasColumnType("longtext")
@@ -432,37 +435,19 @@ namespace DDDNetCore.Migrations
 
             modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
                 {
-                    b.OwnsMany("DDDSample1.Domain.Patients.AllergiesMedicalConditionals", "allergiesMedicalConditionalsList", b1 =>
+                    b.OwnsOne("DDDSample1.Domain.Patients.Allergy", "allergy", b1 =>
                         {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
-
                             b1.Property<string>("PatientId")
-                                .IsRequired()
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<string>("allergyName")
+                            b1.Property<string>("allergy")
                                 .IsRequired()
                                 .HasColumnType("longtext")
-                                .HasColumnName("AllergyName");
+                                .HasColumnName("Allergy");
 
-                            b1.Property<string>("description")
-                                .IsRequired()
-                                .HasColumnType("longtext");
+                            b1.HasKey("PatientId");
 
-                            b1.Property<string>("severity")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("Severity");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("PatientId");
-
-                            b1.ToTable("AllergiesMedicalConditionals");
+                            b1.ToTable("Patients");
 
                             b1.WithOwner()
                                 .HasForeignKey("PatientId");
@@ -502,7 +487,7 @@ namespace DDDNetCore.Migrations
                             b1.Property<string>("PatientId")
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<DateTime>("value")
+                            b1.Property<DateTime>("date")
                                 .HasColumnType("datetime(6)")
                                 .HasColumnName("DateOfBirth");
 
@@ -550,7 +535,8 @@ namespace DDDNetCore.Migrations
                                 .HasForeignKey("PatientId");
                         });
 
-                    b.Navigation("allergiesMedicalConditionalsList");
+                    b.Navigation("allergy")
+                        .IsRequired();
 
                     b.Navigation("appointmentHistoryList");
 

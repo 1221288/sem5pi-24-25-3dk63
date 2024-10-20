@@ -10,45 +10,61 @@ namespace DDDSample1.Domain
         public UserId UserId { get; set; }
         public DateOfBirth dateOfBirth { get; private set; }
         public Gender gender { get; private set; }
-        public List<AllergiesMedicalConditionals> allergiesMedicalConditionalsList { get; private set; }
+        public Allergy allergy { get; private set; }
         public EmergencyContact emergencyContact { get; private set; }
         public List<AppointmentHistory> appointmentHistoryList { get; private set; }
         public bool Active { get; private set; }
 
         private Patient()
         {
-            this.Active = true;
-            this.allergiesMedicalConditionalsList = new List<AllergiesMedicalConditionals>();
+            this.Active = false;
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
         public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, int sequentialNumber)
         {
-            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.value, sequentialNumber));
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergiesMedicalConditionalsList = new List<AllergiesMedicalConditionals>();
+            this.allergy = new Allergy("");
+            this.emergencyContact = emergencyContact;
+            this.appointmentHistoryList = new List<AppointmentHistory>();
+        }
+
+        public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
+        {
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
+            this.Active = false;
+            this.dateOfBirth = dateOfBirth;
+            this.gender = gender;
+            this.allergy = allergy;
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
         public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, int sequentialNumber)
         {
-            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.value, sequentialNumber));
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
             this.UserId = userId;
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergiesMedicalConditionalsList = new List<AllergiesMedicalConditionals>();
+            this.allergy = new Allergy("");
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
-
-        public void AddAllergy(AllergiesMedicalConditionals allergy)
+        public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
         {
-            allergiesMedicalConditionalsList.Add(allergy);
+            this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
+            this.UserId = userId;
+            this.Active = false;
+            this.dateOfBirth = dateOfBirth;
+            this.gender = gender;
+            this.allergy = allergy;
+            this.emergencyContact = emergencyContact;
+            this.appointmentHistoryList = new List<AppointmentHistory>();
         }
 
         public void AddAppointment(AppointmentHistory appointment)
@@ -60,6 +76,21 @@ namespace DDDSample1.Domain
         {
             if (this.UserId!=null) throw new BusinessRuleValidationException("Patient's user is already registered.");
             this.UserId = userId;
+        }
+
+        public void ChangeActiveTrue()
+        {
+            this.Active = true;
+        }
+
+        public void ChangeActiveFalse()
+        {
+            this.Active = false;
+        }
+
+        public void ChangeAllergy(string allergy)
+        {
+            this.allergy = new Allergy(allergy);
         }
     }
 }

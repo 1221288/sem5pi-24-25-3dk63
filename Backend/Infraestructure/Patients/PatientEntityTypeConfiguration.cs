@@ -9,14 +9,14 @@ namespace DDDSample1.Infraestructure.Patients
         public void Configure(EntityTypeBuilder<Patient> builder)
         {
              // Define the primary key for the Patient entity
-            builder.HasKey(b => b.Id);
+            builder.HasKey(p => p.Id);
 
             // Configure the DateOfBirth value object
             builder.OwnsOne(p => p.dateOfBirth, dob =>
             {
-                dob.Property(d => d.value)
-                   .HasColumnName("DateOfBirth")
-                   .IsRequired();
+                dob.Property(d => d.date)
+                    .HasColumnName("DateOfBirth")
+                    .IsRequired();
             });
 
             // Configure the Gender value object
@@ -35,19 +35,11 @@ namespace DDDSample1.Infraestructure.Patients
                        .IsRequired();
             });
 
-            // Configure AllergiesMedicalConditionals as an owned collection
-            builder.OwnsMany(p => p.allergiesMedicalConditionalsList, a =>
+            // Configure Allergies as an owned collection
+            builder.OwnsOne(p => p.allergy, contact =>
             {
-                a.Property<int>("Id"); // Shadow property as primary key
-                a.HasKey("Id"); // Define primary key for the owned entity
-
-                a.Property(a => a.allergyName)
-                 .HasColumnName("AllergyName")
-                 .IsRequired();
-
-                a.Property(a => a.severity)
-                 .HasColumnName("Severity")
-                 .IsRequired();
+                contact.Property(c => c.allergy)
+                       .HasColumnName("Allergy");
             });
 
             // Similarly, configure AppointmentHistory if it's also a value object

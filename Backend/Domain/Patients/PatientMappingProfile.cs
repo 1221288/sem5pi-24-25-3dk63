@@ -12,7 +12,7 @@ public class PatientMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.dateOfBirth, opt => opt.MapFrom(src => src.dateOfBirth))
             .ForMember(dest => dest.gender, opt => opt.MapFrom(src => src.gender))
-            .ForMember(dest => dest.allergiesMedicalConditionalsList, opt => opt.MapFrom(src => src.allergiesMedicalConditionalsList))
+            .ForMember(dest => dest.allergy, opt => opt.MapFrom(src => src.allergy))
             .ForMember(dest => dest.emergencyContact, opt => opt.MapFrom(src => src.emergencyContact))
             .ForMember(dest => dest.appointmentHistoryList, opt => opt.MapFrom(src => src.appointmentHistoryList));
 
@@ -20,7 +20,7 @@ public class PatientMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new MedicalRecordNumber(src.Id.ToString())))
             .ForMember(dest => dest.dateOfBirth, opt => opt.MapFrom(src => src.dateOfBirth))
             .ForMember(dest => dest.gender, opt => opt.MapFrom(src => src.gender))
-            .ForMember(dest => dest.allergiesMedicalConditionalsList, opt => opt.MapFrom(src => src.allergiesMedicalConditionalsList))
+            .ForMember(dest => dest.allergy, opt => opt.MapFrom(src => src.allergy))
             .ForMember(dest => dest.emergencyContact, opt => opt.MapFrom(src => src.emergencyContact))
             .ForMember(dest => dest.appointmentHistoryList, opt => opt.MapFrom(src => src.appointmentHistoryList))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));

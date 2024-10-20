@@ -21,36 +21,6 @@ namespace DDDSample1.Infrastructure.Patients
             // Check for existence in the Users table
             return await _context.Users.AnyAsync(u => u.Email.Equals(email));
         }
-
-        // public async Task RegisterPatientAsync(Patient patient)
-        // {
-        //     // Validate input DTOs
-        //     if (registerDto == null) throw new ArgumentNullException(nameof(registerDto));
-
-        //     // Convert PatientDTO to Patient using the parameterized constructor
-        //     var patient = new Patient(
-        //         registerDto.dateOfBirth,
-        //         registerDto.gender,
-        //         registerDto.emergencyContact
-        //     );
-
-        //     // Add allergies and appointments
-        //     foreach (var allergy in registerDto.allergiesMedicalConditionalsList)
-        //     {
-        //         patient.AddAllergy(allergy);
-        //     }
-
-        //     foreach (var appointment in registerDto.appointmentHistoryList)
-        //     {
-        //         patient.AddAppointment(appointment);
-        //     }
-
-        //     //Add the patient
-        //     await _context.Patients.AddAsync(patient);
-            
-        //     // Save changes to the database
-        //     await _context.SaveChangesAsync();
-        // }
         
         public async Task<int> GetNextSequentialNumberAsync()
         {
@@ -63,13 +33,18 @@ namespace DDDSample1.Infrastructure.Patients
 
         public async Task<User> FindByEmailAsync(Email email)
         {
-            return await _context.Users .FirstOrDefaultAsync(u => u.Email.Equals(email));
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
         }
 
         public async Task<bool> ExistsByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber)
         {
             return await _context.Patients
                 .AnyAsync(p => p.Id == medicalRecordNumber);
+        }
+
+        public async Task<Patient> FindByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber)
+        {
+            return await _context.Patients.FirstOrDefaultAsync(p => p.Id.Equals(medicalRecordNumber));
         }
 
         public async Task UpdatePatientAsync(Patient patient)

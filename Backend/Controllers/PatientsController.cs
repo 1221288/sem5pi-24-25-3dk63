@@ -44,5 +44,23 @@ namespace DDDSample1.Controllers
             }
             return CreatedAtAction(nameof(GetById), new { id = patient.Value.Id }, patient);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePatientProfile(PatientUpdateDTO updateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _service.UpdatePatientProfileAsync(updateDto);
+
+            if (result)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
     }
 }

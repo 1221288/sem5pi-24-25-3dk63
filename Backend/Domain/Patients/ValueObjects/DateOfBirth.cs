@@ -4,7 +4,7 @@ namespace DDDSample1.Domain.Patients
 {
     public class DateOfBirth : ValueObject
     {
-        public DateTime value { get; private set; }
+        public DateTime date { get; private set; }
 
         public DateOfBirth(DateTime date)
         {
@@ -13,17 +13,17 @@ namespace DDDSample1.Domain.Patients
                 throw new ArgumentException("Date of birth cannot be in the future.");
             }
 
-            this.value = date;
+            this.date = date;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return value;
+            yield return date;
         }
 
         public override string ToString()
         {
-            return value.ToString("yyyy-MM-dd");
+            return date.ToString("yyyy-MM-dd");
         }
     }
 }
