@@ -5,6 +5,7 @@ using DDDSample1.Domain.Specialization;
 using AutoMapper;
 using DDDSample1.Users;
 using Backend.Domain.Users.ValueObjects;
+using Backend.Domain.Specialization.ValueObjects;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -12,13 +13,15 @@ namespace DDDSample1.Domain.Staff
     {
         private readonly UserService _userService;
         private readonly IStaffRepository _staffRepository;
+        private readonly ISpecializationRepository _specializationRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public StaffService(UserService userService, IStaffRepository staffRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public StaffService(UserService userService, IStaffRepository staffRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _userService = userService;
             _staffRepository = staffRepository;
+            _specializationRepository = specializationRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -52,10 +55,17 @@ namespace DDDSample1.Domain.Staff
                 
                 try
                 {
+                   
+                    var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
+                    if (specialization == null)
+                    {
+                        throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
+                    }
+
                     var staff = new Staff(
                         new UserId(createdUser.Id),
                         new LicenseNumber(staffDto.LicenseNumber),
-                        new SpecializationId(staffDto.SpecializationId),
+                        specialization.Id,
                         new AvailabilitySlots(staffDto.AvailabilitySlots)
                     );
 

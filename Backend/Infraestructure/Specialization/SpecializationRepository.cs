@@ -1,3 +1,4 @@
+using Backend.Domain.Specialization.ValueObjects;
 using DDDSample1.Domain.Specialization;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -28,5 +29,12 @@ namespace DDDSample1.Infrastructure.Specializations
 
             return lastSpecialization != null ? lastSpecialization.SequentialNumber + 1 : 1;
         }
+
+        public async Task<Specialization> GetByDescriptionAsync(Description description)
+        {
+            return await _context.Specializations
+                .FirstOrDefaultAsync(s => s.Description == description);
+        }
+
     }
 }
