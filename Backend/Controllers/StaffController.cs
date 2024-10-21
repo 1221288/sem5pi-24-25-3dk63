@@ -102,5 +102,28 @@ namespace DDDSample1.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        // PATCH: api/Staff/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{licenseNumber}")]
+        public async Task<ActionResult<StaffDTO>> DeactivateAsync(string licenseNumber)
+        {
+            try
+            {
+                var operation = await _staffService.DeactivateAsync(new LicenseNumber(licenseNumber));
+
+
+                if (operation == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(operation);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }

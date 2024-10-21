@@ -111,5 +111,16 @@ namespace DDDSample1.Domain.Staff
             var staff = await _staffRepository.GetByUserIdAsync(userId);
             return staff == null ? null : _mapper.Map<StaffDTO>(staff);
         }
+
+        public async Task<StaffDTO?> DeactivateAsync (LicenseNumber licenseNumber)
+        {
+            var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
+            if (staff == null) return null;
+
+            staff.Deactivate();
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.Map<StaffDTO>(staff);
+        }
     }
 }
