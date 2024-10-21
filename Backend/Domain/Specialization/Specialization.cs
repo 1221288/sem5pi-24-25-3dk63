@@ -26,5 +26,19 @@ namespace DDDSample1.Domain.Specialization
         {
             SequentialNumber = newSequentialNumber;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Specialization other)
+            {
+                return this.Description.Equals(other.Description);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Description.GetHashCode();
+        }
     }
 }

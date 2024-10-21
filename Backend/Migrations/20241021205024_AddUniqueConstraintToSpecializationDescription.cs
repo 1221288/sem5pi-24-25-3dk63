@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DDDNetCore.Migrations
 {
     /// <inheritdoc />
-    public partial class AdicioneiPhoneNumber : Migration
+    public partial class AddUniqueConstraintToSpecializationDescription : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -156,7 +156,7 @@ namespace DDDNetCore.Migrations
                 {
                     SpecializationId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
+                    Description = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     SequentialNumber = table.Column<int>(type: "int", nullable: false)
                 },
@@ -336,6 +336,12 @@ namespace DDDNetCore.Migrations
                 name: "IX_AppointmentHistory_PatientId",
                 table: "AppointmentHistory",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unique_Description",
+                table: "Specializations",
+                column: "Description",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",

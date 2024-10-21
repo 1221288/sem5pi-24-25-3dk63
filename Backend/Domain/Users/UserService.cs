@@ -96,6 +96,17 @@ namespace DDDSample1.Users
             return _mapper.Map<UserDTO>(user);
         }
 
+        public async Task<UserDTO> DeleteFailureAsync(UserId id)
+        {
+            var user = await this._userRepository.GetByIdAsync(id);
+            if (user == null) return null;
+
+            this._userRepository.Remove(user);
+            await this._unitOfWork.CommitAsync();
+
+            return _mapper.Map<UserDTO>(user);
+        }
+
         public async Task<UserDTO> FindByEmailAsync(string email)
         {
             var user = await this._userRepository.FindByEmailAsync(new Email(email));

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241021175630_AdicioneiPhoneNumber")]
-    partial class AdicioneiPhoneNumber
+    [Migration("20241021205024_AddUniqueConstraintToSpecializationDescription")]
+    partial class AddUniqueConstraintToSpecializationDescription
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,11 +235,6 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .IsUnicode(true)
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -579,10 +574,15 @@ namespace DDDNetCore.Migrations
 
                             b1.Property<string>("Value")
                                 .IsRequired()
-                                .HasColumnType("longtext")
+                                .HasMaxLength(200)
+                                .HasColumnType("varchar(200)")
                                 .HasColumnName("Description");
 
                             b1.HasKey("SpecializationId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique()
+                                .HasDatabaseName("IX_Unique_Description");
 
                             b1.ToTable("Specializations");
 
@@ -662,6 +662,25 @@ namespace DDDNetCore.Migrations
 
             modelBuilder.Entity("DDDSample1.Domain.User", b =>
                 {
+                    b.OwnsOne("Backend.Domain.Users.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .IsUnicode(true)
+                                .HasColumnType("longtext")
+                                .HasColumnName("PhoneNumber");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("Backend.Domain.Users.ValueObjects.Name", "Name", b1 =>
                         {
                             b1.Property<string>("UserId")
@@ -686,6 +705,9 @@ namespace DDDNetCore.Migrations
                         });
 
                     b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("PhoneNumber")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

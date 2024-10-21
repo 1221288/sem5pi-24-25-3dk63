@@ -43,6 +43,9 @@ namespace DDDSample1.Domain.Staff
 
         public async Task<StaffDTO> CreateStaffWithUserAsync(CreatingStaffDTO staffDto)
         {
+            var createdUserId = Guid.Empty;
+            var staffCreated = false;
+
             try
             {
                 var role = Enum.Parse<RoleType>(staffDto.Role);
@@ -81,9 +84,34 @@ namespace DDDSample1.Domain.Staff
                     await _userService.DeleteAsync(new UserId(createdUser.Id));
                     throw new Exception("Failed to create staff, user creation rolled back.", ex);
                 }
+                
             }
             catch (Exception ex)
             {
+                if (createdUserId != Guid.Empty && !staffCreated)
+                {
+                    try
+                    {
+                        await _userService.DeleteFailureAsync(new UserId(createdUserId));
+                    }
+                    catch (Exception deleteUserEx)
+                    {
+                        throw new Exception("Failed to rollback user creation after staff creation failure.", deleteUserEx);
+                    }
+                }
+
+                if (staffCreated)
+                {
+                    try
+                    {
+                        await DeleteAsync(new LicenseNumber(staffDto.LicenseNumber));
+                    }
+                    catch (Exception deleteStaffEx)
+                    {
+                        throw new Exception("Failed to rollback staff creation after user creation failure.", deleteStaffEx);
+                    }
+                }
+
                 throw new Exception("An error occurred while creating the user and staff.", ex);
             }
         }

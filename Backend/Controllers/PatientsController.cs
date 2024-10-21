@@ -48,7 +48,6 @@ namespace DDDSample1.Controllers
             return CreatedAtAction(nameof(GetById), new { id = patient.Id }, patient);
         }
 
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdatePatientProfile(PatientUpdateDTO updateDto)
         {
