@@ -39,10 +39,16 @@ namespace DDDSample1.Infrastructure.Users
             return await _context.Users.FirstOrDefaultAsync(u => u.ConfirmationToken.Equals(token));
         }
 
+
         public async Task UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+        }
+
+        public IQueryable<User> GetQueryable()
+        {
+            return _context.Users.AsQueryable();
         }
 
     }

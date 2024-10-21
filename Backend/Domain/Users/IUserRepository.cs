@@ -17,5 +17,7 @@ namespace DDDSample1.Domain.Users
         Task<User> GetUserByConfirmationTokenAsync(string token);
         Task UpdateUserAsync(User user);
 
+        IQueryable<User> GetQueryable();
+
     }
 }
