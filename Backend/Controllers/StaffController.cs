@@ -6,6 +6,8 @@ using DDDSample1.Domain.Users;
 using DDDSample1.Users;
 using DDDSample1.Domain.Specialization;
 using Backend.Domain.Staff.ValueObjects;
+using DDDSample1.Domain;
+using Backend.Domain.Users.ValueObjects;
 
 namespace DDDSample1.Controllers
 {
@@ -14,14 +16,10 @@ namespace DDDSample1.Controllers
     public class StaffController : ControllerBase
     {
         private readonly StaffService _staffService;
-        private readonly UserService _userService;
-        private readonly SpecializationService _specializationService;
 
-        public StaffController(StaffService staffService, UserService userService, SpecializationService specializationService)
+        public StaffController(StaffService staffService, SpecializationService specializationService)
         {
             _staffService = staffService;
-            _userService = userService;
-            _specializationService = specializationService;
         }
 
         [HttpGet]
@@ -45,37 +43,17 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO staffDto)
+        public async Task<ActionResult<StaffDTO>> CreateStaffAsync(CreatingStaffDTO staffDto)
         {
-            var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId));
-
-            if (user == null)
+            try
             {
-                return NotFound(new { Message = "User not found" });
+                var createdStaff = await _staffService.CreateStaffWithUserAsync(staffDto);
+                return Ok(createdStaff);
             }
-
-            var specialization = await _specializationService.GetBySpecializationIdAsync(new SpecializationId(staffDto.SpecializationId));
-
-            if (specialization == null)
+            catch (Exception ex)
             {
-                return NotFound(new { Message = "Specialization not found" });
+                return BadRequest(new { message = ex.Message });
             }
-
-            var availabilitySlots = staffDto.AvailabilitySlots != null
-                ? new AvailabilitySlots(staffDto.AvailabilitySlots.Select(slot => new AvailabilitySlot(slot.Start, slot.End)).ToList())
-                : new AvailabilitySlots();
-
-            var staff = new Staff(
-                new UserId(staffDto.UserId),
-                new LicenseNumber(staffDto.LicenseNumber),
-                new SpecializationId(staffDto.SpecializationId),
-                availabilitySlots
-            );
-
-            var createdStaff = await _staffService.AddAsync(staffDto);
-
-            return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = createdStaff.LicenseNumber }, createdStaff);
         }
 
 

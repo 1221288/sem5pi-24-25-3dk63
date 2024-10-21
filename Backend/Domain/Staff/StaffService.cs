@@ -1,24 +1,25 @@
 using Backend.Domain.Staff.ValueObjects;
 using DDDSample1.Domain.Shared;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DDDSample1.Domain.Users;
 using DDDSample1.Domain.Specialization;
 using AutoMapper;
+using DDDSample1.Users;
+using Backend.Domain.Users.ValueObjects;
 
 namespace DDDSample1.Domain.Staff
 {
     public class StaffService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserService _userService;
         private readonly IStaffRepository _staffRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository staffRepository, IMapper mapper)
+        public StaffService(UserService userService, IStaffRepository staffRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _userService = userService;
             _staffRepository = staffRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -34,30 +35,47 @@ namespace DDDSample1.Domain.Staff
             return staff == null ? null : _mapper.Map<StaffDTO>(staff);
         }
 
-        public async Task<StaffDTO> AddAsync(CreatingStaffDTO dto)
+        public async Task<StaffDTO> CreateStaffWithUserAsync(CreatingStaffDTO staffDto)
         {
-            var availabilitySlots = new AvailabilitySlots();
-            
-            if (dto.AvailabilitySlots != null)
+            try
             {
-                foreach (var slot in dto.AvailabilitySlots)
+                var role = Enum.Parse<RoleType>(staffDto.Role);
+                var creatingUserDto = new CreatingUserDto(
+                    new Role(role),
+                    new Email(staffDto.Email),
+                    staffDto.FirstName,
+                    staffDto.LastName,
+                    new PhoneNumber(staffDto.PhoneNumber)
+                );
+
+                var createdUser = await _userService.AddAsync(creatingUserDto);
+                
+                try
                 {
-                    availabilitySlots.AddSlot(slot.Start, slot.End);
+                    var staff = new Staff(
+                        new UserId(createdUser.Id),
+                        new LicenseNumber(staffDto.LicenseNumber),
+                        new SpecializationId(staffDto.SpecializationId),
+                        new AvailabilitySlots(staffDto.AvailabilitySlots)
+                    );
+
+                    await _staffRepository.AddAsync(staff);
+                    await _unitOfWork.CommitAsync();
+
+                    return _mapper.Map<StaffDTO>(staff);
                 }
-            }            
-
-            var staff = new Staff(
-                new UserId(dto.UserId),
-                new LicenseNumber(dto.LicenseNumber),
-                new SpecializationId(dto.SpecializationId),
-                availabilitySlots
-            );
-
-            await _staffRepository.AddAsync(staff);
-            await _unitOfWork.CommitAsync();
-
-            return _mapper.Map<StaffDTO>(staff);
+                catch (Exception ex)
+                {
+                    await _userService.DeleteAsync(new UserId(createdUser.Id)); 
+                    throw new Exception("Failed to create staff, user creation rolled back.", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while creating the user and staff.", ex);
+            }
         }
+
 
         public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
         {
