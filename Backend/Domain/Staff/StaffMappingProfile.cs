@@ -1,5 +1,4 @@
 using AutoMapper;
-
 using Backend.Domain.Staff.ValueObjects;
 using DDDSample1.Domain.Specialization;
 using DDDSample1.Domain.Staff;
@@ -16,7 +15,7 @@ public class StaffMappingProfile : Profile
             .ForMember(dest => dest.AvailabilitySlots, opt => opt.MapFrom(src => src.AvailabilitySlots.Slots));
 
         CreateMap<StaffDTO, Staff>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new LicenseNumber(src.LicenseNumber)))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new LicenseNumber(src.LicenseNumber.ToString())))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => new UserId(src.UserId)))
             .ForMember(dest => dest.SpecializationId, opt => opt.MapFrom(src => new SpecializationId(src.SpecializationId)))
             .ForMember(dest => dest.AvailabilitySlots, opt => opt.MapFrom(src => new AvailabilitySlots(src.AvailabilitySlots)));

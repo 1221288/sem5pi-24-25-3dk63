@@ -32,12 +32,19 @@ namespace DDDSample1.Infraestructure.OperationTypes
                     
             });
 
-            // Configura a propriedade RequiredStaff (associada ao Value Object RequiredStaffBySpecialization)
-            builder.OwnsOne(o => o.RequiredStaff, staff =>
+            // Configura a coleção de RequiredStaff (associada à lista de StaffSpecialization)
+            builder.OwnsMany(o => o.RequiredStaff, staff =>
             {
-                staff.Property(s => s.Value) // Aqui, depende de como RequiredStaff foi implementado.
-                    .HasColumnName("RequiredStaff")
+                staff.WithOwner().HasForeignKey("OperationTypeId"); // Configura a chave estrangeira
+                staff.Property(s => s.Specialization)
+                    .HasColumnName("Specialization")
                     .IsRequired();
+
+                staff.Property(s => s.RequiredNumber)
+                    .HasColumnName("RequiredNumber")
+                    .IsRequired();
+
+                staff.ToTable("RequiredStaffBySpecialization"); // Define a tabela para a coleção
             });
 
             // Configura o campo Active

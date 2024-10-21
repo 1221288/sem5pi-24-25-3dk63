@@ -9,6 +9,8 @@ namespace DDDSample1.Domain.Staff
     {
         private static readonly Regex LicenseNumberPattern = new Regex(@"^[A-Za-z0-9\-]+$", RegexOptions.Compiled);
 
+        public string Number { get; private set; }
+
         public LicenseNumber(string value) : base(value)
         {
             if (string.IsNullOrEmpty(value))
@@ -18,17 +20,16 @@ namespace DDDSample1.Domain.Staff
 
             if (!IsValid(value))
             {
-                throw new ArgumentException("Invalid license number format. It must be alphanumeric and can contain dashes.");
+                throw new ArgumentException("Invalid license number format.");
             }
+
+            this.Number = value;
         }
 
         [JsonConstructor]
-        public LicenseNumber(Guid value) : base(value.ToString())
+        public LicenseNumber(string value, bool skipValidation) : base(value)
         {
-            if (!IsValid(value.ToString()))
-            {
-                throw new ArgumentException("Invalid license number format.");
-            }
+            this.Number = value;
         }
 
         public static bool IsValid(string licenseNumber)
@@ -45,15 +46,9 @@ namespace DDDSample1.Domain.Staff
             return text;
         }
 
-        override
-        public String AsString(){
-            Guid obj = (Guid) base.ObjValue;
-            return obj.ToString();
-        }
-
-
-        public Guid AsGuid(){
-            return (Guid) base.ObjValue;
+        public override string AsString()
+        {
+            return this.Number;
         }
     }
 }

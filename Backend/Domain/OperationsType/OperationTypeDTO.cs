@@ -7,7 +7,7 @@ namespace DDDSample1.Domain.OperationsType
         public Guid Id { get; set; }
         public Name Name { get; set; }
         public Duration Duration { get; set; }
-        public RequiredStaff RequiredStaff { get; set; }
+        public List<StaffSpecialization> RequiredStaff { get; set; }
     }
 }
  

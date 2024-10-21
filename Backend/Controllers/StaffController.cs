@@ -45,6 +45,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO staffDto)
         {
             var user = await _userService.GetByIdAsync(new UserId(staffDto.UserId));

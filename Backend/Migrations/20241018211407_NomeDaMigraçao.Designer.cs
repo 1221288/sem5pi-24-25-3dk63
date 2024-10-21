@@ -4,6 +4,7 @@ using DDDSample1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    partial class DDDSample1DbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018211407_NomeDaMigraçao")]
+    partial class NomeDaMigraçao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,25 +114,6 @@ namespace DDDNetCore.Migrations
                     b.ToTable("OperationTypes", (string)null);
                 });
 
-            modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("sequentialNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Patients");
-                });
-
             modelBuilder.Entity("DDDSample1.Domain.Products.Product", b =>
                 {
                     b.Property<string>("Id")
@@ -171,17 +155,9 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("LicenseNumber");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("AvailabilitySlots")
                         .HasColumnType("longtext")
                         .HasColumnName("AvailabilitySlots");
-
-                    b.Property<string>("SpecializationId")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("SpecializationId");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -226,14 +202,7 @@ namespace DDDNetCore.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("ConfirmationToken")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -246,15 +215,9 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -443,123 +406,6 @@ namespace DDDNetCore.Migrations
                         .IsRequired();
 
                     b.Navigation("RequiredStaff");
-                });
-
-            modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
-                {
-                    b.OwnsOne("DDDSample1.Domain.Patients.Allergy", "allergy", b1 =>
-                        {
-                            b1.Property<string>("PatientId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<string>("allergy")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("Allergy");
-
-                            b1.HasKey("PatientId");
-
-                            b1.ToTable("Patients");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.OwnsMany("DDDSample1.Domain.Patients.AppointmentHistory", "appointmentHistoryList", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("PatientId")
-                                .IsRequired()
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<DateTime>("appointmentDate")
-                                .HasColumnType("datetime(6)");
-
-                            b1.Property<string>("doctorName")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("PatientId");
-
-                            b1.ToTable("AppointmentHistory");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.OwnsOne("DDDSample1.Domain.Patients.DateOfBirth", "dateOfBirth", b1 =>
-                        {
-                            b1.Property<string>("PatientId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<DateTime>("date")
-                                .HasColumnType("datetime(6)")
-                                .HasColumnName("DateOfBirth");
-
-                            b1.HasKey("PatientId");
-
-                            b1.ToTable("Patients");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.OwnsOne("DDDSample1.Domain.Patients.EmergencyContact", "emergencyContact", b1 =>
-                        {
-                            b1.Property<string>("PatientId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<string>("emergencyContact")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("EmergencyContactName");
-
-                            b1.HasKey("PatientId");
-
-                            b1.ToTable("Patients");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.OwnsOne("DDDSample1.Domain.Patients.Gender", "gender", b1 =>
-                        {
-                            b1.Property<string>("PatientId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<string>("gender")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("Gender");
-
-                            b1.HasKey("PatientId");
-
-                            b1.ToTable("Patients");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.Navigation("allergy")
-                        .IsRequired();
-
-                    b.Navigation("appointmentHistoryList");
-
-                    b.Navigation("dateOfBirth")
-                        .IsRequired();
-
-                    b.Navigation("emergencyContact")
-                        .IsRequired();
-
-                    b.Navigation("gender")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.Specialization.Specialization", b =>

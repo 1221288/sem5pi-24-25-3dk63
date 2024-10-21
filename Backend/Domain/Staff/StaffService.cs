@@ -37,10 +37,14 @@ namespace DDDSample1.Domain.Staff
         public async Task<StaffDTO> AddAsync(CreatingStaffDTO dto)
         {
             var availabilitySlots = new AvailabilitySlots();
-            foreach (var slot in dto.AvailabilitySlots)
+            
+            if (dto.AvailabilitySlots != null)
             {
-                availabilitySlots.AddSlot(slot.Start, slot.End);
-            }
+                foreach (var slot in dto.AvailabilitySlots)
+                {
+                    availabilitySlots.AddSlot(slot.Start, slot.End);
+                }
+            }            
 
             var staff = new Staff(
                 new UserId(dto.UserId),
@@ -57,7 +61,7 @@ namespace DDDSample1.Domain.Staff
 
         public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
         {
-            var licenseNumber = new LicenseNumber(dto.LicenseNumber);
+            var licenseNumber = new LicenseNumber(dto.LicenseNumber.ToString());
             var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
             if (staff == null) return null;
 
