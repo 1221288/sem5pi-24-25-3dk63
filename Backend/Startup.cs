@@ -43,7 +43,8 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Patients;
 using DDDSample1.Domain;
 using DDDSample1.Infrastructure.Patients;
-
+using Serilog;
+using Backend.Domain.Shared;
 
 namespace DDDSample1
 {
@@ -58,6 +59,13 @@ namespace DDDSample1
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            Log.Logger = new LoggerConfiguration()
+          .MinimumLevel.Debug()
+          .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
+          .CreateLogger();
+
+
             services.AddDbContext<DDDSample1DbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MySqlConnection"),
                     new MySqlServerVersion(new Version(8, 0, 0)))
@@ -83,7 +91,7 @@ namespace DDDSample1
 
                     if (user == null)
                     {
-                        Console.WriteLine("Login falhou: email não encontrado.");
+                        Log.Information("Login falhou: email não encontrado.");
 
                         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                         context.Fail("Este email não está registrado no sistema.");
@@ -94,7 +102,7 @@ namespace DDDSample1
                         return;
                     }else{
 
-                        Console.WriteLine("Login bem-sucedido: email encontrado.");
+                        Log.Information("Login bem-sucedido: email encontrado.");
                     }
 
                     var identity = (ClaimsIdentity)context.Principal.Identity;
@@ -112,6 +120,9 @@ namespace DDDSample1
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Log.Information("Aplicação iniciada.");
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -134,6 +145,7 @@ namespace DDDSample1
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
 
         public void ConfigureMyServices(IServiceCollection services)
@@ -189,6 +201,12 @@ namespace DDDSample1
             services.AddTransient<PatientService>();
             services.AddTransient<RegistrationService>();
             services.AddTransient<EmailService>();
+
+            services.AddTransient<AuditService>(provider =>
+            {
+                var logger = Log.ForContext<AuditService>();
+                return new AuditService(logger);
+            });
         }
 
 

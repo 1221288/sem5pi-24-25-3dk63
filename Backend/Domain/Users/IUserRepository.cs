@@ -16,7 +16,6 @@ namespace DDDSample1.Domain.Users
         Task<User> FindByEmailAsync(Email email);
         Task<User> GetUserByConfirmationTokenAsync(string token);
         Task UpdateUserAsync(User user);
-        Task<User> FindByPhoneNumberAsync(PhoneNumber phoneNumber);
 
     }
 }

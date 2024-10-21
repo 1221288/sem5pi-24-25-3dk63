@@ -37,12 +37,7 @@ namespace DDDSample1.Users
         public async Task<UserDTO> AddAsync(CreatingUserDto dto)
         {
             var existingUser = await this._userRepository.FindByEmailAsync(new Email(dto.Email.Value));
-            var existingPhoneNumber = await this._userRepository.FindByPhoneNumberAsync(new PhoneNumber(dto.phoneNumber.Number));
 
-            if (existingPhoneNumber != null)
-            {
-                throw new BusinessRuleValidationException("Telefone já existe no sistema, por favor tente novamente com outro telefone.");
-            }
             if (existingUser != null)
             {
                 throw new BusinessRuleValidationException("Email já existe no sistema, por favor tente novamente com outro email.");

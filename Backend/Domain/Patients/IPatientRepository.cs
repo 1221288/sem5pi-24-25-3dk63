@@ -13,5 +13,8 @@ namespace DDDSample1.Domain.Patients
         Task<Patient> FindByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber);
         Task UpdatePatientAsync(Patient patient);
         Task<Patient?> GetPatientByPersonalEmailAsync(Email personalEmail);
+        void Remove(Patient patient);
+
+
     }
 }

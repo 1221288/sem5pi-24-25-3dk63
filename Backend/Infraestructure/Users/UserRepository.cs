@@ -45,9 +45,5 @@ namespace DDDSample1.Infrastructure.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> FindByPhoneNumberAsync(PhoneNumber phoneNumber)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Number == phoneNumber.Number);
-        }
     }
 }

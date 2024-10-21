@@ -235,6 +235,7 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .IsUnicode(true)
                         .HasColumnType("longtext");
 
                     b.Property<string>("Role")
@@ -342,6 +343,10 @@ namespace DDDNetCore.Migrations
                         {
                             b1.Property<string>("OperationRequestId")
                                 .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasColumnType("longtext");
 
                             b1.Property<string>("Value")
                                 .IsRequired()

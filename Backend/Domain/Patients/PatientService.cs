@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using Backend.Domain.Users.ValueObjects;
+using Backend.Domain.Shared;
 
 namespace DDDSample1.Patients
 {
@@ -15,15 +16,17 @@ namespace DDDSample1.Patients
         private readonly IPatientRepository _patientRepository;
         private readonly IUserRepository _userRepository;
         private readonly EmailService _emailService;
+        private readonly AuditService _auditService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly ILogger<PatientService> _logger;
         private readonly IMapper _mapper;
 
+
         public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
                                 IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
-                                IUnitOfWork unitOfWork, IMapper mapper)
+                                IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService)
         {
             _patientRepository = patientRepository;
             _userRepository = userRepository;
@@ -33,6 +36,7 @@ namespace DDDSample1.Patients
             _configuration = configuration;
             _logger = logger;
             _mapper = mapper;
+            _auditService = auditService;
         }
 
         public async Task<PatientDTO> GetByIdAsync(MedicalRecordNumber id)
@@ -149,6 +153,26 @@ namespace DDDSample1.Patients
             PropertyInfo patientProperty = typeof(Patient).GetProperty(propertyName);
             return patientProperty != null && patientProperty.CanWrite;
         }
+
+
+
+        public async Task<PatientDTO> DeletePatientAsync(MedicalRecordNumber id, string adminEmail)
+        {
+            _logger.LogInformation($"Tentando deletar o paciente com medical record number ID No patient service: {id}");
+
+            var patientToRemove = await _patientRepository.FindByMedicalRecordNumberAsync(id);
+
+            if (patientToRemove == null) return null;
+
+            _auditService.LogDeletionPatient(patientToRemove, adminEmail);
+
+            this._patientRepository.Remove(patientToRemove);
+            await this._unitOfWork.CommitAsync();
+
+            return _mapper.Map<PatientDTO>(patientToRemove); 
+        }
+
+
 
         // // Obtém todos os pacientes
         // public async Task<List<PatientDTO>> GetAllAsync()

@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
-using Newtonsoft.Json;
-
 
 namespace DDDSample1.Domain.Patients
 {
     public class MedicalRecordNumber : EntityId
     {
+        private readonly string _value;
+
         // Constructor
         public MedicalRecordNumber(string value) : base(value)
         {
@@ -17,17 +15,18 @@ namespace DDDSample1.Domain.Patients
             {
                 throw new ArgumentException("Invalid Medical Record Number format.");
             }
+            _value = value;
         }
 
         private bool IsValidFormat(string value)
         {
-            // Check if the format matches YYYYMMnnnnnn
-            return System.Text.RegularExpressions.Regex.IsMatch(value, @"^\d{6}\d{6}$");
+            // Verifica se o formato corresponde a YYYYMMnnnnnn (12 dígitos)
+            return Regex.IsMatch(value, @"^\d{12}$");
         }
 
         protected override object createFromString(string text)
         {
-            if (!IsValid(text))
+            if (!IsValidFormat(text))
             {
                 throw new ArgumentException("Invalid medical record number format.");
             }
@@ -36,23 +35,7 @@ namespace DDDSample1.Domain.Patients
 
         public override string AsString()
         {
-            return (string)this.ObjValue;
-        }
-
-        // Validate if the input string is in the correct format
-        private static bool IsValid(string entityId)
-        {
-            if (string.IsNullOrEmpty(entityId) || entityId.Length != 12)
-                return false;
-
-            if (!int.TryParse(entityId.Substring(0, 6), out _))
-                return false;
-
-            int month = int.Parse(entityId.Substring(4, 2));
-            if (month < 1 || month > 12)
-                return false;
-
-            return true;
+            return _value; // Retorna o valor do campo privado
         }
 
         public static string GenerateNewRecordNumber(DateTime registrationDate, int sequentialNumber)
@@ -61,6 +44,44 @@ namespace DDDSample1.Domain.Patients
             string month = registrationDate.ToString("MM");
             string seqNum = sequentialNumber.ToString("D6");
             return year + month + seqNum;
+        }
+
+        public override string ToString()
+        {
+            return _value; // Usar _value em vez de Value
+        }
+
+        public static bool operator ==(MedicalRecordNumber left, MedicalRecordNumber right)
+        {
+            // Verifica se ambos são nulos
+            if (ReferenceEquals(left, right))
+                return true;
+
+            // Verifica se um dos dois é nulo
+            if (left is null || right is null)
+                return false;
+
+            // Compara os valores
+            return left._value == right._value; // Usar _value aqui
+        }
+
+        public static bool operator !=(MedicalRecordNumber left, MedicalRecordNumber right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is MedicalRecordNumber other)
+            {
+                return this == other;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return _value.GetHashCode(); // Usar _value em vez de Value
         }
     }
 }

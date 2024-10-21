@@ -9,11 +9,14 @@ namespace DDDSample1.Infrastructure.Patients
 {
     public class PatientRepository : BaseRepository<Patient, MedicalRecordNumber>, IPatientRepository
     {
+        private readonly ILogger<PatientRepository> _logger;
+
         private readonly DDDSample1DbContext _context;
 
-        public PatientRepository(DDDSample1DbContext context) : base(context.Patients)
+        public PatientRepository(ILogger<PatientRepository> logger,DDDSample1DbContext context) : base(context.Patients)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> EmailExistsAsync(string email)
@@ -21,7 +24,7 @@ namespace DDDSample1.Infrastructure.Patients
             // Check for existence in the Users table
             return await _context.Users.AnyAsync(u => u.Email.Equals(email));
         }
-        
+
         public async Task<int> GetNextSequentialNumberAsync()
         {
             var lastPatient = await _context.Patients
@@ -44,8 +47,17 @@ namespace DDDSample1.Infrastructure.Patients
 
         public async Task<Patient> FindByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber)
         {
-            return await _context.Patients.FirstOrDefaultAsync(p => p.Id.Equals(medicalRecordNumber));
+            var idValue = medicalRecordNumber.Value;
+
+            // Puxa todos os pacientes de forma assíncrona e filtra na memória
+            var patients = await _context.Patients.ToListAsync();
+
+            return patients.FirstOrDefault(p => p.Id.Value.Trim() == idValue.Trim());
         }
+
+
+
+
 
         public async Task UpdatePatientAsync(Patient patient)
         {
@@ -64,8 +76,6 @@ namespace DDDSample1.Infrastructure.Patients
 
             return result ?? null;
         }
-
-
 
     }
 }
