@@ -7,6 +7,7 @@ using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
 using DDDSample1.Users;
+using Backend.Domain.Users.ValueObjects;
 
 namespace DDDSample1.Infrastructure.Users
 {
@@ -42,6 +43,11 @@ namespace DDDSample1.Infrastructure.Users
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> FindByPhoneNumberAsync(PhoneNumber phoneNumber)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Number == phoneNumber.Number);
         }
     }
 }
