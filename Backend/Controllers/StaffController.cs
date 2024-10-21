@@ -40,7 +40,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> CreateStaffAsync(CreatingStaffDTO staffDto)
         {
             try
@@ -100,22 +100,20 @@ namespace DDDSample1.Controllers
             }
         }
 
-<<<<<<< HEAD
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffAsync([FromQuery] string? name = null, [FromQuery] string? email = null, [FromQuery] string? specialization = null)
         {
             var staffList = await _staffService.SearchStaffAsync(name, email, specialization);
             return Ok(staffList);
-=======
-        // PATCH: api/Staff/{id}
+        }
+
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{licenseNumber}")]
+        [HttpPatch("{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> DeactivateAsync(string licenseNumber)
         {
             try
             {
                 var operation = await _staffService.DeactivateAsync(new LicenseNumber(licenseNumber));
-
 
                 if (operation == null)
                 {
@@ -128,7 +126,6 @@ namespace DDDSample1.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
->>>>>>> 609376d80dd0eb0bef4c5825249da79ca5a56bff
         }
     }
 }
