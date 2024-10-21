@@ -4,7 +4,7 @@ using DDDSample1.Domain.Users;
 namespace DDDSample1.Domain.Patients
 {
     public class RegisterPatientDTO
-    {   
+    {
         public Guid MedicalRecordNumber { get; set; }
         public DateOfBirth dateOfBirth { get; set; }
         public Gender gender { get; set; }
@@ -13,5 +13,6 @@ namespace DDDSample1.Domain.Patients
         public List<AppointmentHistory> appointmentHistoryList { get; set; }
         public Email personalEmail { get; set; }
         public Name name { get; set; }
+        public PhoneNumber phoneNumber { get; set; }
     }
 }

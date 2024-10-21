@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain;
 using DDDSample1.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -53,9 +54,15 @@ namespace DDDSample1.Infraestructure.Users
                     name.Ignore(n => n.FullName);
                 });
 
+            builder.Property(u => u.PhoneNumber)
+            .HasConversion(
+                phoneNumber => phoneNumber.Number,
+                phoneNumberString => new PhoneNumber(phoneNumberString)) 
+            .IsRequired();
+
             builder.Property(u => u.Active).IsRequired();
             builder.Property(u => u.SequentialNumber).IsRequired();
-            
+
             builder.Property(u => u.ConfirmationToken)
                     .IsRequired(false);
         }

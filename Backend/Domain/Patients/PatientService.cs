@@ -5,6 +5,8 @@ using DDDSample1.Domain.Shared;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+using Backend.Domain.Users.ValueObjects;
 
 namespace DDDSample1.Patients
 {
@@ -50,7 +52,7 @@ namespace DDDSample1.Patients
                 var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.allergy, _patientRepository.GetNextSequentialNumberAsync().Result);
                 // Register the patient
                 patient = await _patientRepository.AddAsync(patient);
-                await _unitOfWork.CommitAsync();                
+                await _unitOfWork.CommitAsync();
 
                 return _mapper.Map<PatientDTO>(patient);
             }
@@ -70,7 +72,8 @@ namespace DDDSample1.Patients
             }
             int recruitmentYear = DateTime.Now.Year;
             var role = new Role(RoleType.Patient);
-            var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber);
+            var phoneNumber = new PhoneNumber(dto.phoneNumber.Number);
+            var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber,phoneNumber);
             user.ChangeActiveFalse();
             user = await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();
@@ -111,17 +114,17 @@ namespace DDDSample1.Patients
 
             PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
             foreach (PropertyInfo property in properties)
-            {   
+            {
                 var newValue = property.GetValue(updateDto, null);
-                
+
                 if (newValue != null)
                 {
-                    
+
                     if(CheckIfExistsOnUser(property.Name)){
                         typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
                         userAttributesUpdated = true;
                     }
-                    
+
                     if(CheckIfExistsOnPatient(property.Name)){
                         typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
                         patientAttributesUpdated = true;
@@ -146,7 +149,7 @@ namespace DDDSample1.Patients
             PropertyInfo patientProperty = typeof(Patient).GetProperty(propertyName);
             return patientProperty != null && patientProperty.CanWrite;
         }
-        
+
         // // Obtém todos os pacientes
         // public async Task<List<PatientDTO>> GetAllAsync()
         // {
@@ -202,7 +205,7 @@ namespace DDDSample1.Patients
         //         Active = patient.Active
         //     };
         // }
-        
+
         // // Atualiza um paciente
         // public async Task<PatientDTO> UpdateAsync(PatientDTO dto)
         // {
@@ -315,6 +318,6 @@ namespace DDDSample1.Patients
         //         }),
         //         Active = patient.Active
         //     };
-        // }        
+        // }
     }
 }

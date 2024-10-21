@@ -10,6 +10,7 @@ namespace DDDSample1.Domain
         public Role Role { get; private set; }
         public Email Email { get; private set; }
         public Name Name { get; private set; }
+        public PhoneNumber PhoneNumber { get; private set; }
         public bool Active { get; private set; }
         public int SequentialNumber { get; private set; }
         public string ConfirmationToken { get; set; }
@@ -19,13 +20,14 @@ namespace DDDSample1.Domain
             this.Active = true;
         }
 
-        public User(Role role, Email email, Name name, int recruitmentYear, string domain, int sequentialNumber)
+        public User(Role role, Email email, Name name, int recruitmentYear, string domain, int sequentialNumber, PhoneNumber phoneNumber)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Active = true;
             this.Email = email;
             this.Role = role;
             this.Name = name;
+            this.PhoneNumber = phoneNumber;
             this.SequentialNumber = sequentialNumber;
             this.Username = GenerateUsername(role.Value, recruitmentYear, domain, sequentialNumber);
             this.ConfirmationToken = "";

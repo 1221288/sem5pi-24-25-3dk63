@@ -10,6 +10,7 @@ namespace DDDSample1.Domain.Users
         public Role Role { get; set; }
         public Email Email { get; set; }
         public Name Name { get; set; }
+        public PhoneNumber phoneNumber { get; set; }
         public string ConfirmationToken { get; set; }
     }
 }

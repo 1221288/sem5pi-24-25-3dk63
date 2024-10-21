@@ -51,10 +51,6 @@ namespace DDDSample1.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception)
-            {
-                return StatusCode(500, new { message = "Ocorreu um erro inesperado. Tente novamente mais tarde." });
-            }
         }
 
 

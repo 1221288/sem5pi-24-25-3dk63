@@ -53,7 +53,9 @@ namespace DDDSample1.Users
             int recruitmentYear = DateTime.Now.Year;
             var role = new Role(dto.Role.Value);
             var name = new Name(dto.FirstName, dto.LastName);
-            var user = new User(role, new Email(dto.Email.Value), name, recruitmentYear, domain, sequentialNumber);
+            var phoneNumber = new PhoneNumber(dto.phoneNumber.Number);
+
+            var user = new User(role, new Email(dto.Email.Value), name, recruitmentYear, domain, sequentialNumber, phoneNumber);
 
             await this._userRepository.AddAsync(user);
             await this._unitOfWork.CommitAsync();
