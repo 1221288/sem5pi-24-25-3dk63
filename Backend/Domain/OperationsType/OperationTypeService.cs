@@ -61,7 +61,12 @@ namespace DDDSample1.OperationsType
 
             var name =  new Name(dto.FirstName, dto.LastName);
             var duration = new Duration(dto.duration.Value);
-            var requiredStaff = new RequiredStaff(dto.requiredStaff.Value);
+            // Construir a lista de StaffSpecialization a partir do DTO
+            var requiredStaff = new List<StaffSpecialization>();
+            foreach (var staff in dto.RequiredStaff)
+            {
+                requiredStaff.Add(new StaffSpecialization(staff.Specialization, staff.RequiredNumber));
+            }
 
 
             var operationType = new OperationType(name, duration, requiredStaff);

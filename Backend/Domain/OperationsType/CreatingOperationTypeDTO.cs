@@ -10,14 +10,14 @@ namespace DDDSample1.OperationsType
     public string FirstName { get; set; }
     public string LastName { get; set; }   
     public Duration duration { get; set; }
-    public RequiredStaff requiredStaff { get; set; }
+    public List<StaffSpecialization> RequiredStaff { get; set; }
 
-    public CreatingOperationTypeDTO(string firstName, string lastName, Duration duration, RequiredStaff requiredStaff)
+    public CreatingOperationTypeDTO(string firstName, string lastName, Duration duration,  List<StaffSpecialization> requiredStaff)
     {
         this.FirstName = firstName;
         this.LastName = lastName;
         this.duration = duration;
-        this.requiredStaff = requiredStaff;
+        this.RequiredStaff = requiredStaff ?? new List<StaffSpecialization>();
     }   
 
     }

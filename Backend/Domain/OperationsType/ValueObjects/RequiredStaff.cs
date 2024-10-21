@@ -1,53 +1,121 @@
 using System;
+using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 
-//NÃO ESTÁ BEM IMPLEMENTADO
 namespace DDDSample1.Domain.OperationsType
 {
-    public class RequiredStaff : IValueObject
+    // Classe que representa uma especialização e a quantidade de funcionários necessários
+    public class StaffSpecialization : IValueObject
     {
-        public int Value { get; private set; }
+        public string Specialization { get; private set; }
+        public int RequiredNumber { get; private set; }
 
-        // Construtor privado para garantir que a classe não é criada diretamente sem validação
-        private RequiredStaff() { }
-
-        // Construtor público que valida o número de funcionários necessários
-        public RequiredStaff(int value)
+        public StaffSpecialization(string specialization, int requiredNumber)
         {
-            if (value < 0)
-                throw new BusinessRuleValidationException("Required staff cannot be negative");
+            if (string.IsNullOrEmpty(specialization))
+                throw new BusinessRuleValidationException("Specialization cannot be null or empty");
 
-            this.Value = value;
+            if (requiredNumber < 0)
+                throw new BusinessRuleValidationException("Number of required staff cannot be negative");
+
+            Specialization = specialization;
+            RequiredNumber = requiredNumber;
         }
 
-        // Método para mudar o número de funcionários necessários com validação
-        public void ChangeValue(int newValue)
-        {
-            if (newValue < 0)
-                throw new BusinessRuleValidationException("Required staff cannot be negative");
-
-            this.Value = newValue;
-        }
-
-        // Override do método ToString para facilitar a leitura
+        // Override de ToString para facilitar a leitura
         public override string ToString()
         {
-            return $"Required Staff: {Value}";
+            return $"{Specialization}: {RequiredNumber}";
         }
 
-        // Método para verificar igualdade entre instâncias de RequiredStaff
+        // Método Equals para verificar igualdade entre instâncias
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            StaffSpecialization other = (StaffSpecialization)obj;
+            return Specialization == other.Specialization && RequiredNumber == other.RequiredNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Specialization, RequiredNumber);
+        }
+    }
+
+    // Classe principal que contém a lista de especializações e número de funcionários por especialização
+    public class RequiredStaff : IValueObject
+    {
+        public List<StaffSpecialization> StaffBySpecialization { get; private set; }
+
+        // Construtor público que valida a lista de especializações
+        public RequiredStaff(List<StaffSpecialization> staffBySpecialization)
+        {
+            if (staffBySpecialization == null || staffBySpecialization.Count == 0)
+                throw new BusinessRuleValidationException("There must be at least one staff specialization");
+
+            StaffBySpecialization = new List<StaffSpecialization>(staffBySpecialization);
+        }
+
+        // Método para adicionar ou atualizar uma especialização
+        public void AddOrUpdateSpecialization(string specialization, int requiredNumber)
+        {
+            if (requiredNumber < 0)
+                throw new BusinessRuleValidationException("Number of required staff cannot be negative");
+
+            var existingSpecialization = StaffBySpecialization.Find(s => s.Specialization == specialization);
+            if (existingSpecialization != null)
+            {
+                // Atualizar a quantidade se já existir a especialização
+                StaffBySpecialization.Remove(existingSpecialization);
+                StaffBySpecialization.Add(new StaffSpecialization(specialization, requiredNumber));
+            }
+            else
+            {
+                // Adicionar uma nova especialização
+                StaffBySpecialization.Add(new StaffSpecialization(specialization, requiredNumber));
+            }
+        }
+
+        // Método para remover uma especialização
+        public void RemoveSpecialization(string specialization)
+        {
+            var existingSpecialization = StaffBySpecialization.Find(s => s.Specialization == specialization);
+            if (existingSpecialization != null)
+            {
+                StaffBySpecialization.Remove(existingSpecialization);
+            }
+        }
+
+        // Override de ToString para facilitar a leitura
+        public override string ToString()
+        {
+            return string.Join(", ", StaffBySpecialization);
+        }
+
+        // Override de Equals e GetHashCode para comparar instâncias
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
             RequiredStaff other = (RequiredStaff)obj;
-            return Value == other.Value;
+            if (StaffBySpecialization.Count != other.StaffBySpecialization.Count)
+                return false;
+
+            for (int i = 0; i < StaffBySpecialization.Count; i++)
+            {
+                if (!StaffBySpecialization[i].Equals(other.StaffBySpecialization[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return HashCode.Combine(StaffBySpecialization);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace DDDSample1.Domain
     {
         public Name Name { get; private set; }
         public Duration Duration { get; private set; }
-        public RequiredStaff RequiredStaff  { get; private set; }
+        public List<StaffSpecialization> RequiredStaff { get; private set; }
         public bool Active { get; private set; }
 
     private OperationType()
@@ -18,14 +18,14 @@ namespace DDDSample1.Domain
         this.Active = true;
     }
 
-    public OperationType(Name name, Duration duration, RequiredStaff requiredStaff)
-    {
-        this.Id = new OperationTypeId(Guid.NewGuid());
-        this.Active = true;
-        this.Name = name;
-        this.Duration = duration;
-        this.RequiredStaff = requiredStaff;
-    }
+    public OperationType(Name name, Duration duration, List<StaffSpecialization> requiredStaff)
+        {
+            this.Id = new OperationTypeId(Guid.NewGuid());
+            this.Active = true;
+            this.Name = name;
+            this.Duration = duration;
+            this.RequiredStaff = requiredStaff ?? throw new ArgumentNullException(nameof(requiredStaff), "RequiredStaff list cannot be null");
+        }
 
     public void ChangeName(Name name)
     {
@@ -39,12 +39,14 @@ namespace DDDSample1.Domain
         this.Duration = duration;
     }
 
-    public void ChangeRequiredStaff(RequiredStaff requiredStaff)
-    {
-        if (!this.Active) throw new BusinessRuleValidationException("Operation type cannot be changed in this state");
-        this.RequiredStaff = requiredStaff;
+     // Método para mudar o RequiredStaff (lista completa)
+         // Método para mudar a lista completa de RequiredStaff (substituição)
+        public void ChangeRequiredStaff(List<StaffSpecialization> requiredStaff)
+        {
+            if (!this.Active) throw new BusinessRuleValidationException("Operation type cannot be changed in this state");
+            this.RequiredStaff = requiredStaff ?? throw new ArgumentNullException(nameof(requiredStaff), "RequiredStaff list cannot be null");
+        }
     }
-}
 }
 
     
