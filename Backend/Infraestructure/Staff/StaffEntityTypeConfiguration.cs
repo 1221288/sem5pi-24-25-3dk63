@@ -12,38 +12,34 @@ namespace DDDSample1.Infrastructure.Staffs
     {
         public void Configure(EntityTypeBuilder<Staff> builder)
         {
-            // Define the primary key as the LicenseNumber (Id in the Staff class)
             builder.HasKey(s => s.Id);
 
-            // Map the LicenseNumber as the primary key (Id)
             builder.Property(s => s.Id)
                 .HasColumnName("LicenseNumber")
                 .HasConversion(
-                    id => id.AsString(),      // Convert the LicenseNumber to a string
-                    idString => new LicenseNumber(idString)) // Convert it back to LicenseNumber
+                    id => id.AsString(),
+                    idString => new LicenseNumber(idString)) 
                 .IsRequired();
 
-            // Configure UserId as a foreign key
             builder.Property(s => s.UserId)
                 .HasColumnName("UserId")
                 .HasConversion(
-                    userId => userId.AsString(), // Convert UserId to a string for the database
-                    userIdString => new UserId(userIdString)) // Convert it back to UserId
+                    userId => userId.AsString(),
+                    userIdString => new UserId(userIdString))
                 .IsRequired();
 
-            // Configure SpecializationId as a foreign key
             builder.Property(s => s.SpecializationId)
                 .HasColumnName("SpecializationId")
                 .HasConversion(
-                    specializationId => specializationId.AsString(), // Convert SpecializationId to a string for the database
-                    specializationIdString => new SpecializationId(specializationIdString)) // Convert it back to SpecializationId
+                    specializationId => specializationId.AsString(),
+                    specializationIdString => new SpecializationId(specializationIdString))
                 .IsRequired();
 
             // Configure AvailabilitySlots as a serialized value
             builder.Property(s => s.AvailabilitySlots)
                 .HasConversion(
-                    availabilitySlots => availabilitySlots != null ? availabilitySlots.SerializeSlots() : null, // Serialize AvailabilitySlots to JSON string
-                    json => AvailabilitySlots.DeserializeSlots(json)) // Deserialize JSON string back to AvailabilitySlots
+                    availabilitySlots => availabilitySlots != null ? availabilitySlots.SerializeSlots() : null,
+                    json => AvailabilitySlots.DeserializeSlots(json))
                 .HasColumnName("AvailabilitySlots")
                 .IsRequired(false);
         }
