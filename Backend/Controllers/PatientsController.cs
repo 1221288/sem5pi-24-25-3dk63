@@ -5,6 +5,7 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Users;
 using DDDSample1.Patients;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace DDDSample1.Controllers
 {
@@ -12,10 +13,13 @@ namespace DDDSample1.Controllers
     [Route("api/[controller]")]
     public class PatientsController : ControllerBase
     {
+
+        private readonly ILogger<PatientsController> _logger;
         private readonly PatientService _service;
 
-        public PatientsController(PatientService service)
+        public PatientsController(ILogger<PatientsController> logger, PatientService service)
         {
+            _logger = logger;
             _service = service;
         }
 
@@ -61,5 +65,27 @@ namespace DDDSample1.Controllers
 
             return BadRequest(result);
         }
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeletePatientProfile(string id)
+        {
+            var adminEmail = User.FindFirstValue(ClaimTypes.Email);
+            _logger.LogInformation($"Tentando deletar o paciente com ID: {id}");
+
+            var medicalRecordNumber = new MedicalRecordNumber(id);
+            _logger.LogInformation($"Tentando deletar o paciente com medical record number ID: {medicalRecordNumber}");
+
+            var result = await _service.DeletePatientAsync(medicalRecordNumber, adminEmail);
+
+            if (result == null)
+            {
+                return NotFound("Patient not found.");
+            }
+
+            return NoContent();
+        }
+
+
+
     }
 }
