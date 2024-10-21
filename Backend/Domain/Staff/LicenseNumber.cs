@@ -9,6 +9,8 @@ namespace DDDSample1.Domain.Staff
     {
         private static readonly Regex LicenseNumberPattern = new Regex(@"^[A-Za-z0-9\-]+$", RegexOptions.Compiled);
 
+        public string Number { get; private set; }
+
         public LicenseNumber(string value) : base(value)
         {
             if (string.IsNullOrEmpty(value))
@@ -20,11 +22,14 @@ namespace DDDSample1.Domain.Staff
             {
                 throw new ArgumentException("Invalid license number format.");
             }
+
+            this.Number = value;
         }
 
         [JsonConstructor]
-        public LicenseNumber(Guid value) : base(value.ToString())
+        public LicenseNumber(string value, bool skipValidation) : base(value)
         {
+            this.Number = value;
         }
 
         public static bool IsValid(string licenseNumber)
@@ -34,13 +39,16 @@ namespace DDDSample1.Domain.Staff
 
         protected override object createFromString(string text)
         {
+            if (!IsValid(text))
+            {
+                throw new ArgumentException("Invalid license number format.");
+            }
             return text;
         }
 
         public override string AsString()
         {
-            return (string)base.ObjValue;
+            return this.Number;
         }
-        
     }
 }

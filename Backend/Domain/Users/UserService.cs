@@ -36,6 +36,12 @@ namespace DDDSample1.Users
 
         public async Task<UserDTO> AddAsync(CreatingUserDto dto)
         {
+            var existingUser = await this._userRepository.FindByEmailAsync(new Email(dto.Email.Value));
+            if (existingUser != null)
+            {
+                throw new BusinessRuleValidationException("Email já existe no sistema, por favor tente novamente com outro email.");
+            }
+
             int sequentialNumber = await this._userRepository.GetNextSequentialNumberAsync();
 
             string domain = _configuration["DNS_DOMAIN"];
@@ -54,6 +60,7 @@ namespace DDDSample1.Users
 
             return _mapper.Map<UserDTO>(user);
         }
+
 
         public async Task<UserDTO> UpdateAsync(UserDTO dto)
         {

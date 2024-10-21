@@ -1,23 +1,14 @@
-using DDDSample1.Domain.Users;
+using System;
+using Backend.Domain.Staff.ValueObjects;
 
 namespace DDDSample1.Domain.Staff
 {
     public class StaffDTO
     {
-        public LicenseNumber LicenseNumber { get; set; }
-
-        public UserId UserId { get; set; }
-        public List<AvailabilitySlotDTO> AvailabilitySlots { get; set; }
-
-        public StaffDTO()
-        {
-            AvailabilitySlots = new List<AvailabilitySlotDTO>();
-        }
-    }
-
-    public class AvailabilitySlotDTO
-    {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public required string LicenseNumber { get; set; }
+        public Guid UserId { get; set; }
+        public Guid SpecializationId { get; set; }
+        public List<AvailabilitySlot> AvailabilitySlots { get; set; }
+        public bool Active { get; set; }
     }
 }

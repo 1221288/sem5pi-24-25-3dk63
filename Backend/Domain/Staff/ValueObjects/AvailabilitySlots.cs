@@ -11,6 +11,11 @@ namespace Backend.Domain.Staff.ValueObjects
             Slots = new List<AvailabilitySlot>();
         }
 
+        public AvailabilitySlots(List<AvailabilitySlot> slots)
+        {
+            Slots = slots ?? new List<AvailabilitySlot>();
+        }
+
         public void AddSlot(DateTime start, DateTime end)
         {
             Slots.Add(new AvailabilitySlot(start, end));
@@ -24,7 +29,7 @@ namespace Backend.Domain.Staff.ValueObjects
         public static AvailabilitySlots DeserializeSlots(string json)
         {
             var slots = JsonSerializer.Deserialize<List<AvailabilitySlot>>(json);
-            return new AvailabilitySlots { Slots = slots ?? new List<AvailabilitySlot>() };
+            return new AvailabilitySlots(slots ?? new List<AvailabilitySlot>());
         }
     }
 

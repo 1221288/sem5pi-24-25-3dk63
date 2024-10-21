@@ -23,11 +23,16 @@ namespace DDDSample1.Infraestructure.Users
                         usernameString => new Username(usernameString))
                     .IsRequired();
 
+            builder.HasIndex(u => u.Username).IsUnique();
+
+
             builder.Property(u => u.Email)
                     .HasConversion(
                         email => email.ToString(),
                         emailString => new Email(emailString))
                     .IsRequired();
+
+            builder.HasIndex(u => u.Email).IsUnique();
 
             builder.Property(u => u.Role)
                     .HasConversion(
@@ -50,6 +55,9 @@ namespace DDDSample1.Infraestructure.Users
 
             builder.Property(u => u.Active).IsRequired();
             builder.Property(u => u.SequentialNumber).IsRequired();
-            }
+            
+            builder.Property(u => u.ConfirmationToken)
+                    .IsRequired(false);
+        }
     }
 }

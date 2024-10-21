@@ -2,7 +2,6 @@ using DDDSample1.Domain.Shared;
 using Newtonsoft.Json;
 
 namespace DDDSample1.Domain.Specialization
-
 {
     public class SpecializationId : EntityId
     {
@@ -10,6 +9,10 @@ namespace DDDSample1.Domain.Specialization
         public SpecializationId(Guid value) : base(value) {}
 
         public SpecializationId(string value) : base(value) {}
+
+        public SpecializationId(object value) : base(value)
+        {
+        }
 
         protected override object createFromString(string text)
         {

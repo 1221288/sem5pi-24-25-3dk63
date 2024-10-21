@@ -42,9 +42,21 @@ namespace DDDSample1.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDTO>> Create(CreatingUserDto dto)
         {
-            var user = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            try
+            {
+                var user = await _service.AddAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Ocorreu um erro inesperado. Tente novamente mais tarde." });
+            }
         }
+
 
         // PUT: api/Users/5
         [HttpPut("{id}")]

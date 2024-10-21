@@ -39,6 +39,11 @@ using DDDSample1.Domain.Staff;
 using DDDSample1.Domain.Specialization;
 using DDDSample1.Infrastructure.Staffs;
 using DDDSample1.Infrastructure.Specializations;
+using DDDSample1.Domain.Patients;
+using DDDSample1.Patients;
+using DDDSample1.Domain;
+using DDDSample1.Infrastructure.Patients;
+
 
 namespace DDDSample1
 {
@@ -83,7 +88,7 @@ namespace DDDSample1
                         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                         context.Fail("Este email não está registrado no sistema.");
                         context.Response.StatusCode = 302;
-                        context.Response.Headers["Location"] = "/api/login";
+                        context.Response.Headers["Location"] = "/api/self-register";
                         await context.Response.CompleteAsync();
 
                         return;
@@ -101,6 +106,8 @@ namespace DDDSample1
             ConfigureMyServices(services);
 
             services.AddControllers().AddNewtonsoftJson();
+
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -134,6 +141,7 @@ namespace DDDSample1
             // Add AutoMapper configuration
             services.AddAutoMapper(typeof(UserMappingProfile));
             services.AddAutoMapper(typeof(SurgeryRoomMappingProfile));
+            services.AddAutoMapper(typeof(PatientMappingProfile));
 
             // Unit of Work
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -176,6 +184,11 @@ namespace DDDSample1
             //Specialization services
             services.AddTransient<ISpecializationRepository, SpecializationRepository>();
             services.AddTransient<SpecializationService>();
+
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<PatientService>();
+            services.AddTransient<RegistrationService>();
+            services.AddTransient<EmailService>();
         }
 
 
