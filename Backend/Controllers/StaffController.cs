@@ -2,12 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using DDDSample1.Domain.Staff;
 using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
-using DDDSample1.Domain.Users;
-using DDDSample1.Users;
-using DDDSample1.Domain.Specialization;
 using Backend.Domain.Staff.ValueObjects;
-using DDDSample1.Domain;
-using Backend.Domain.Users.ValueObjects;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DDDSample1.Controllers
 {
@@ -17,7 +14,7 @@ namespace DDDSample1.Controllers
     {
         private readonly StaffService _staffService;
 
-        public StaffController(StaffService staffService, SpecializationService specializationService)
+        public StaffController(StaffService staffService)
         {
             _staffService = staffService;
         }
@@ -48,7 +45,7 @@ namespace DDDSample1.Controllers
             try
             {
                 var createdStaff = await _staffService.CreateStaffWithUserAsync(staffDto);
-                return Ok(createdStaff);
+                return CreatedAtAction(nameof(GetStaffByLicenseNumber), new { licenseNumber = createdStaff.LicenseNumber }, createdStaff);
             }
             catch (Exception ex)
             {
@@ -56,13 +53,12 @@ namespace DDDSample1.Controllers
             }
         }
 
-
         [HttpPut("{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffDTO dto)
         {
             if (licenseNumber != dto.LicenseNumber.ToString())
             {
-                return BadRequest();
+                return BadRequest("License number mismatch.");
             }
 
             try
@@ -101,6 +97,13 @@ namespace DDDSample1.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffAsync([FromQuery] string? name = null, [FromQuery] string? email = null, [FromQuery] string? specialization = null)
+        {
+            var staffList = await _staffService.SearchStaffAsync(name, email, specialization);
+            return Ok(staffList);
         }
     }
 }
