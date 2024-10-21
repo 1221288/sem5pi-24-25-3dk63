@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Reflection;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Users;
@@ -19,9 +20,27 @@ namespace DDDSample1.Domain
             await SendEmailAsync(email, subject, body);
         }
 
-        public async Task SendNotificationEmailAsync(PatientUpdateDTO dto)
+        public async Task SendNotificationEmailAsync(PatientUpdateDTO dto, bool userSensitiveDataChanged, bool patientSensitiveDataChanged)
         {
-            return;
+            var subject = "Patient Profile Updated";
+            var body = $"Your profile has been updated with changes to sensitive data. Please review the changes below: \n\n";
+
+            body += $"Updated Attributes:\n";
+
+            PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                if (property != null)
+                {
+                    var newValue = property.GetValue(dto, null);
+                    if (newValue != null)
+                    {
+                        body += $"- {property.Name}: {newValue}\n";
+                    }
+                }
+            }
+
+            await SendEmailAsync(dto.emailToChange.ToString(), subject, body);
         }
 
         private async Task SendEmailAsync(string email, string subject, string body)

@@ -23,7 +23,6 @@ namespace DDDSample1.Patients
         private readonly ILogger<PatientService> _logger;
         private readonly IMapper _mapper;
 
-
         public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
                                 IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
                                 IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService)
@@ -53,8 +52,8 @@ namespace DDDSample1.Patients
                 //Register the initial user
                 var user = await createUser(registerDto);
 
-                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.allergy, _patientRepository.GetNextSequentialNumberAsync().Result);
                 // Register the patient
+                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.allergy, _patientRepository.GetNextSequentialNumberAsync().Result);
                 patient = await _patientRepository.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
 
@@ -80,67 +79,92 @@ namespace DDDSample1.Patients
             var user = new User(role, dto.personalEmail, dto.name, recruitmentYear, domain, sequentialNumber,phoneNumber);
             user.ChangeActiveFalse();
             user = await _userRepository.AddAsync(user);
-            await _unitOfWork.CommitAsync();
             return user;
         }
 
         public async Task<bool> UpdatePatientProfileAsync(PatientUpdateDTO updateDto)
         {
-            var patient = await _patientRepository.FindByMedicalRecordNumberAsync(updateDto.id);
-            var userPatient = await _patientRepository.FindByEmailAsync(new Email(updateDto.Email));
+            var patient = await _patientRepository.FindByMedicalRecordNumberAsync(updateDto.Id);
+            var userPatient = await _patientRepository.FindByEmailAsync(updateDto.personalEmail);
 
             if (patient == null)
             {
                 return false;
             }
 
-            var oldEmail = userPatient.Email.ToString();
-
             // Update patient profile
             await UpdatePatientInfo(patient, userPatient, updateDto);
 
             // Log changes
-            _logger.LogInformation($"Patient profile updated: {updateDto.id}");
-
-            // Send notification if email changed
-            if (oldEmail != updateDto.Email)
-            {
-                await _emailService.SendNotificationEmailAsync(updateDto);
-            }
+            _logger.LogInformation($"Patient profile updated: {updateDto.Id}");
 
             return true;
         }
 
         private async Task<Patient> UpdatePatientInfo(Patient patient, User user, PatientUpdateDTO updateDto)
         {
+            if (user == null) throw new ArgumentNullException(nameof(user), "User cannot be null");
+
+            if (patient == null) throw new ArgumentNullException(nameof(patient), "Patient cannot be null");
+
             bool userAttributesUpdated = false;
             bool patientAttributesUpdated = false;
+            bool userSensitiveDataChanged = false;
+            bool patientSensitiveDataChanged = false;
 
             PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
             foreach (PropertyInfo property in properties)
-            {
+            {   
                 var newValue = property.GetValue(updateDto, null);
 
                 if (newValue != null)
                 {
+                    Console.WriteLine("Property name: " + property.Name);
+                    if (CheckIfExistsOnUser(property.Name) || property.PropertyType == typeof(UserId))
+                    {
+                        var oldValue = typeof(User).GetProperty(property.Name)?.GetValue(user);
+                        if (!Equals(oldValue, newValue))
+                        {
+                            Console.WriteLine("Old value: " + oldValue);
+                            Console.WriteLine("New value: " + newValue);
+                            typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
+                            userAttributesUpdated = true;
 
-                    if(CheckIfExistsOnUser(property.Name)){
-                        typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
-                        userAttributesUpdated = true;
+                            if (_sensitiveAttributes.Contains(property.Name))
+                            {
+                                userSensitiveDataChanged = true;
+                            }
+                        }
                     }
 
-                    if(CheckIfExistsOnPatient(property.Name)){
-                        typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
-                        patientAttributesUpdated = true;
+                    if (CheckIfExistsOnPatient(property.Name) || property.PropertyType == typeof(MedicalRecordNumber))
+                    {
+                        var oldValue = typeof(Patient).GetProperty(property.Name)?.GetValue(patient);
+                        if (!Equals(oldValue, newValue))
+                        {
+                            typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
+                            patientAttributesUpdated = true;
+
+                            if (_sensitiveAttributes.Contains(property.Name))
+                            {
+                                patientSensitiveDataChanged = true;
+                            }
+                        }
                     }
                 }
             }
 
-            if(userAttributesUpdated) await _userRepository.UpdateUserAsync(user);
-            if(patientAttributesUpdated) await _patientRepository.UpdatePatientAsync(patient);
+            if (userAttributesUpdated) await _userRepository.UpdateUserAsync(user);
+            if (patientAttributesUpdated) await _patientRepository.UpdatePatientAsync(patient);
+
+            if (userSensitiveDataChanged || patientSensitiveDataChanged)
+            {
+                await _emailService.SendNotificationEmailAsync(updateDto, userSensitiveDataChanged, patientSensitiveDataChanged);
+            }
 
             return patient;
         }
+
 
         private bool CheckIfExistsOnUser(string propertyName)
         {

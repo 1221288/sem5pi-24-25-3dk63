@@ -49,8 +49,12 @@ namespace DDDSample1.Controllers
             return CreatedAtAction(nameof(GetById), new { id = patient.Id }, patient);
         }
 
+<<<<<<< HEAD
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
+=======
+        [HttpPatch("{id}")]
+>>>>>>> 9655a10 (added notification email method)
         public async Task<IActionResult> UpdatePatientProfile(PatientUpdateDTO updateDto)
         {
             if (!ModelState.IsValid)
