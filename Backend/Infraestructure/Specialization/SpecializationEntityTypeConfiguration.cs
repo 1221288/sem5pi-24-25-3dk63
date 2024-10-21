@@ -21,7 +21,12 @@ namespace DDDSample1.Infrastructure.Specializations
             {
                 description.Property(d => d.Value)
                     .HasColumnName("Description")
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                description.HasIndex(d => d.Value)
+                    .IsUnique()
+                    .HasDatabaseName("IX_Unique_Description");
             });
 
             builder.Property(s => s.SequentialNumber)

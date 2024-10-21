@@ -46,8 +46,12 @@ namespace DDDSample1.Domain
             if (!this.Active) throw new BusinessRuleValidationException("Operation type cannot be changed in this state");
             this.RequiredStaff = requiredStaff ?? throw new ArgumentNullException(nameof(requiredStaff), "RequiredStaff list cannot be null");
         }
+
+        public void Deactivate()
+        {
+            this.Active = false;
+    }
     }
 }
 
     
-

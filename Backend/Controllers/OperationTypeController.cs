@@ -73,7 +73,7 @@ namespace DDDSample1.Controllers
             }
         }
 
-        // DELETE: api/OperationType/5
+        // DELETE: api/OperationType/{id}
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
 
@@ -82,6 +82,28 @@ namespace DDDSample1.Controllers
             try
             {
                 var operation = await _service.DeleteAsync(new OperationTypeId(id));
+
+                if (operation == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(operation);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        
+        // PATCH: api/OperationType/{id}
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<OperationTypeDTO>> DeactivateAsync(Guid id)
+        {
+            try
+            {
+                var operation = await _service.DeactivateAsync(new OperationTypeId(id));
 
                 if (operation == null)
                 {

@@ -36,5 +36,10 @@ namespace DDDSample1.Domain.Staff
         {
             AvailabilitySlots = newAvailabilitySlots;
         }
+
+        public void Deactivate()
+        {
+            this.Active = false;
+        }
     }
 }

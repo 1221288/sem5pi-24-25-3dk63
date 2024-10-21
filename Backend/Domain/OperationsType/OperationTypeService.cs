@@ -137,6 +137,23 @@ namespace DDDSample1.OperationsType
             };
 
     }
+
+    public async Task<OperationTypeDTO> DeactivateAsync (OperationTypeId id) {
+        var operationType = await this._operationTypeRepository.GetByIdAsync(id);
+        if (operationType == null) return null;
+
+        operationType.Deactivate();
+
+        await this._unitOfWork.CommitAsync();
+
+        return new OperationTypeDTO
+        {
+            Id = operationType.Id.AsGuid(),
+            Name = operationType.Name,
+            Duration = operationType.Duration,
+            RequiredStaff = operationType.RequiredStaff
+        };
+    }
     }
 }
 

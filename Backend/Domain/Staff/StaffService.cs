@@ -5,7 +5,11 @@ using DDDSample1.Domain.Specialization;
 using AutoMapper;
 using DDDSample1.Users;
 using Backend.Domain.Users.ValueObjects;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
+=======
+using Backend.Domain.Specialization.ValueObjects;
+>>>>>>> 609376d80dd0eb0bef4c5825249da79ca5a56bff
 
 namespace DDDSample1.Domain.Staff
 {
@@ -13,6 +17,7 @@ namespace DDDSample1.Domain.Staff
     {
         private readonly UserService _userService;
         private readonly IStaffRepository _staffRepository;
+<<<<<<< HEAD
         private readonly IUserRepository _userRepository; // Added user repository
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -22,6 +27,17 @@ namespace DDDSample1.Domain.Staff
             _userService = userService;
             _staffRepository = staffRepository;
             _userRepository = userRepository; // Initialize user repository
+=======
+        private readonly ISpecializationRepository _specializationRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public StaffService(UserService userService, IStaffRepository staffRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _userService = userService;
+            _staffRepository = staffRepository;
+            _specializationRepository = specializationRepository;
+>>>>>>> 609376d80dd0eb0bef4c5825249da79ca5a56bff
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -55,10 +71,17 @@ namespace DDDSample1.Domain.Staff
 
                 try
                 {
+                   
+                    var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
+                    if (specialization == null)
+                    {
+                        throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
+                    }
+
                     var staff = new Staff(
                         new UserId(createdUser.Id),
                         new LicenseNumber(staffDto.LicenseNumber),
-                        new SpecializationId(staffDto.SpecializationId),
+                        specialization.Id,
                         new AvailabilitySlots(staffDto.AvailabilitySlots)
                     );
 
@@ -114,6 +137,7 @@ namespace DDDSample1.Domain.Staff
             return staff == null ? null : _mapper.Map<StaffDTO>(staff);
         }
 
+<<<<<<< HEAD
         public async Task<List<StaffDTO>> SearchStaffAsync(string? name = null, string? email = null, string? specialization = null)
         {
             var query = from staff in _staffRepository.GetQueryable()
@@ -140,6 +164,17 @@ namespace DDDSample1.Domain.Staff
                 .ToListAsync();
 
             return _mapper.Map<List<StaffDTO>>(paginatedStaff);
+=======
+        public async Task<StaffDTO?> DeactivateAsync (LicenseNumber licenseNumber)
+        {
+            var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
+            if (staff == null) return null;
+
+            staff.Deactivate();
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.Map<StaffDTO>(staff);
+>>>>>>> 609376d80dd0eb0bef4c5825249da79ca5a56bff
         }
     }
 }
