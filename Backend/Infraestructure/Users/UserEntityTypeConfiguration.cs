@@ -57,8 +57,10 @@ namespace DDDSample1.Infraestructure.Users
             builder.Property(u => u.PhoneNumber)
             .HasConversion(
                 phoneNumber => phoneNumber.Number,
-                phoneNumberString => new PhoneNumber(phoneNumberString)) 
+                phoneNumberString => new PhoneNumber(phoneNumberString))
             .IsRequired();
+
+            builder.Property(u => u.PhoneNumber).IsUnicode();
 
             builder.Property(u => u.Active).IsRequired();
             builder.Property(u => u.SequentialNumber).IsRequired();
