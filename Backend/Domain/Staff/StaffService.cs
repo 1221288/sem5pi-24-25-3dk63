@@ -23,7 +23,7 @@ namespace DDDSample1.Domain.Staff
         {
             _userService = userService;
             _staffRepository = staffRepository;
-            _userRepository = userRepository; // Initialize user repository
+            _userRepository = userRepository;
             _specializationRepository = specializationRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -44,7 +44,6 @@ namespace DDDSample1.Domain.Staff
         public async Task<StaffDTO> CreateStaffWithUserAsync(CreatingStaffDTO staffDto)
         {
             var createdUserId = Guid.Empty;
-            var staffCreated = false;
 
             try
             {
@@ -58,58 +57,29 @@ namespace DDDSample1.Domain.Staff
                 );
 
                 var createdUser = await _userService.AddAsync(creatingUserDto);
+                createdUserId = createdUser.Id;
 
-                try
-                {
-                    var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
-                    if (specialization == null)
-                    {
-                        throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
-                    }
+                var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
+                if (specialization == null)
+                    throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
 
-                    var staff = new Staff(
-                        new UserId(createdUser.Id),
-                        new LicenseNumber(staffDto.LicenseNumber),
-                        specialization.Id,
-                        new AvailabilitySlots(staffDto.AvailabilitySlots)
-                    );
+                var staff = new Staff(
+                    new UserId(createdUser.Id),
+                    new LicenseNumber(staffDto.LicenseNumber),
+                    specialization.Id,
+                    new AvailabilitySlots(staffDto.AvailabilitySlots ?? new List<AvailabilitySlot>())
+                );
 
-                    await _staffRepository.AddAsync(staff);
-                    await _unitOfWork.CommitAsync();
+                await _staffRepository.AddAsync(staff);
+                await _unitOfWork.CommitAsync();
 
-                    return _mapper.Map<StaffDTO>(staff);
-                }
-                catch (Exception ex)
-                {
-                    await _userService.DeleteAsync(new UserId(createdUser.Id));
-                    throw new Exception("Failed to create staff, user creation rolled back.", ex);
-                }
-                
+                return _mapper.Map<StaffDTO>(staff);
             }
             catch (Exception ex)
             {
-                if (createdUserId != Guid.Empty && !staffCreated)
+                if (createdUserId != Guid.Empty)
                 {
-                    try
-                    {
-                        await _userService.DeleteFailureAsync(new UserId(createdUserId));
-                    }
-                    catch (Exception deleteUserEx)
-                    {
-                        throw new Exception("Failed to rollback user creation after staff creation failure.", deleteUserEx);
-                    }
-                }
-
-                if (staffCreated)
-                {
-                    try
-                    {
-                        await DeleteAsync(new LicenseNumber(staffDto.LicenseNumber));
-                    }
-                    catch (Exception deleteStaffEx)
-                    {
-                        throw new Exception("Failed to rollback staff creation after user creation failure.", deleteStaffEx);
-                    }
+                    await _userService.DeleteFailureAsync(new UserId(createdUserId));
                 }
 
                 throw new Exception("An error occurred while creating the user and staff.", ex);
