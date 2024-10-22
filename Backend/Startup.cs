@@ -158,6 +158,11 @@ namespace DDDSample1
             // Unit of Work
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+
+            //Specialization services
+            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
+            services.AddTransient<SpecializationService>();
+
             // Category Services
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
@@ -193,13 +198,11 @@ namespace DDDSample1
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
 
-            //Specialization services
-            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
-            services.AddTransient<SpecializationService>();
-
             services.AddTransient<IPatientRepository, PatientRepository>();
             services.AddTransient<PatientService>();
+
             services.AddTransient<RegistrationService>();
+            
             services.AddTransient<EmailService>();
 
             services.AddTransient<AuditService>(provider =>

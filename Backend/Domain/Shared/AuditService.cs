@@ -20,5 +20,7 @@ namespace Backend.Domain.Shared
 
             _logger.Information(logMessage);
         }
+
+        
     }
 }

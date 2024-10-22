@@ -1,0 +1,23 @@
+2024-10-22 08:42:06.501 +01:00 [INF] Aplicação iniciada.
+2024-10-22 08:59:23.609 +01:00 [INF] Aplicação iniciada.
+2024-10-22 09:01:09.248 +01:00 [INF] Login bem-sucedido: email encontrado.
+2024-10-22 09:25:07.909 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:21:51.999 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:32:54.700 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:34:09.659 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:35:56.176 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:37:04.385 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:38:04.636 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:43:33.021 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:44:45.438 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:49:00.933 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:53:01.738 +01:00 [INF] Aplicação iniciada.
+2024-10-22 12:54:48.247 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:00:26.499 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:01:52.404 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:04:18.957 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:07:35.221 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:17:03.186 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:23:44.351 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:25:28.893 +01:00 [INF] Aplicação iniciada.
+2024-10-22 13:27:51.210 +01:00 [INF] Aplicação iniciada.

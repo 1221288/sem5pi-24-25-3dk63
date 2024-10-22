@@ -1,4 +1,5 @@
 using DDDSample1.Domain.Specialization;
+using DDDSample1.Domain.Staff;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,6 +32,11 @@ namespace DDDSample1.Infrastructure.Specializations
 
             builder.Property(s => s.SequentialNumber)
                 .IsRequired();
+
+            builder.HasMany<Staff>()
+                .WithOne()
+                .HasForeignKey(s => s.SpecializationId)
+                .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 }
