@@ -20,9 +20,8 @@ namespace DDDSample1.Domain
             await SendEmailAsync(email, subject, body);
         }
 
-        public async Task SendNotificationEmailAsync(PatientUpdateDTO dto)
+        public async Task SendPatientNotificationEmailAsync(PatientUpdateDTO dto)
         {
-            Console.WriteLine("IT GETS HERE TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
             var subject = "Patient Profile Updated";
             var body = $"Your profile has been updated with changes to sensitive data. Please review the changes below: \n\n";
 

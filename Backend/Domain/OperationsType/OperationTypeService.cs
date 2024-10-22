@@ -59,7 +59,7 @@ namespace DDDSample1.OperationsType
                 throw new BusinessRuleValidationException("DNS_DOMAIN is not defined in the configuration file");
             }
 
-            var name =  new Name(dto.FirstName, dto.LastName);
+            var name = dto.name;
             var duration = new Duration(dto.duration.Value);
             // Construir a lista de StaffSpecialization a partir do DTO
             var requiredStaff = new List<StaffSpecialization>();

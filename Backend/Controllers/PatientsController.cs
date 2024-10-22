@@ -38,6 +38,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("register-patient")]
+        //[Authorize(Roles="Admin")]
         public async Task<ActionResult<PatientDTO>> RegisterPatient(RegisterPatientDTO dto)
         {
             var patient = await _service.RegisterPatientAsync(dto);
@@ -49,6 +50,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPatch("{id}")]
+        //[Authorize(Roles="Admin")]
         public async Task<IActionResult> UpdatePatientProfile(PatientUpdateDTO updateDto)
         {
             if (!ModelState.IsValid)

@@ -55,19 +55,18 @@ namespace DDDSample1.OperationRequests
         // Adiciona um novo OperationRequest
         public async Task<OperationRequestDTO> AddAsync(CreatingOperationRequestDTO dto)
         {
-            int sequentialNumber = await this._operationRequestRepository.GetNextSequentialNumberAsync();
+            bool isDuplicate = await _operationRequestRepository.IsDuplicateRequestAsync(dto.OperationTypeId, dto.MedicalRecordNumber);
 
-            string domain = _configuration["DNS_DOMAIN"];
-            if (string.IsNullOrEmpty(domain))
+            if (isDuplicate)
             {
-                throw new BusinessRuleValidationException("DNS_DOMAIN is not defined in the configuration file");
+                throw new InvalidOperationException("There is already an open operation request for this type and patient.");
             }
 
-            var deadline = new Deadline(dto.Deadline.Value);
-            var priority = new Priority(dto.Priority.Value);
-            var licenseNumber = new LicenseNumber(dto.LicenseNumber.Value);
+            var deadline = dto.Deadline;
+            var priority = dto.Priority;
+            var licenseNumber = dto.LicenseNumber;
             var medicalRecordNumber = dto.MedicalRecordNumber;
-            var operationTypeId = new OperationTypeId(dto.OperationTypeId.Value);
+            var operationTypeId = dto.OperationTypeId;
 
             var operationRequest = new OperationRequest(operationTypeId, deadline, priority, licenseNumber, medicalRecordNumber);
 
