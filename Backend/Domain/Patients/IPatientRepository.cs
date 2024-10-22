@@ -14,7 +14,6 @@ namespace DDDSample1.Domain.Patients
         Task UpdatePatientAsync(Patient patient);
         Task<Patient?> GetPatientByPersonalEmailAsync(Email personalEmail);
         void Remove(Patient patient);
-
-
+        Task<Patient> FindByUserIdAsync(UserId id);
     }
 }

@@ -88,7 +88,58 @@ namespace DDDSample1.Controllers
             return NoContent();
         }
 
+        [HttpPatch("update")]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> UpdateOwnPatientProfile(UserProfileUpdateDTO updateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized("Unable to find the patient information from Google IAM.");
+            }
+
+            var patient = await _service.GetPatientByUsername(new Username(userEmail));
+
+            if (patient == null)
+            {
+                return Unauthorized("Patient not found.");
+            }
+
+            if (patient == null)
+            {
+                return Unauthorized("Patient information is incomplete.");
+            }
+
+            var userResult = await _service.GetUserByUserIdAsync(patient.UserId);
+
+            updateDto.oldEmail = new Email(userResult.Email.ToString());
+
+            PatientUpdateDTO patientUpdate = new PatientUpdateDTO
+            {
+                Id = patient.Id,
+                Name = updateDto.Name,
+                Email = updateDto.Email,
+                personalEmail = updateDto.oldEmail,
+                PhoneNumber = updateDto.PhoneNumber,
+                emergencyContact = updateDto.emergencyContact,
+                allergy = updateDto.allergy
+            };
+
+            var result = await _service.UpdatePatientProfileAsync(patientUpdate);
+
+            if (result)
+            {
+                return Ok("Patient updated successfully");
+            }
+
+            return BadRequest("Patient not updated!");
+        }
 
     }
 }

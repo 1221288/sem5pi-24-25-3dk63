@@ -55,10 +55,6 @@ namespace DDDSample1.Infrastructure.Patients
             return patients.FirstOrDefault(p => p.Id.Value.Trim() == idValue.Trim());
         }
 
-
-
-
-
         public async Task UpdatePatientAsync(Patient patient)
         {
             _context.Patients.Update(patient);
@@ -75,6 +71,11 @@ namespace DDDSample1.Infrastructure.Patients
                 ).FirstOrDefaultAsync();
 
             return result ?? null;
+        }
+
+        public async Task<Patient> FindByUserIdAsync(UserId id)
+        {
+            return await _context.Patients.FirstOrDefaultAsync(p => p.UserId == id);
         }
 
     }

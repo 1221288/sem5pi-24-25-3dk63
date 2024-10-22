@@ -159,7 +159,6 @@ namespace DDDSample1.Patients
             return patient;
         }
 
-
         private bool CheckIfExistsOnUser(string propertyName)
         {
             PropertyInfo userProperty = typeof(User).GetProperty(propertyName);
@@ -171,8 +170,6 @@ namespace DDDSample1.Patients
             PropertyInfo patientProperty = typeof(Patient).GetProperty(propertyName);
             return patientProperty != null && patientProperty.CanWrite;
         }
-
-
 
         public async Task<PatientDTO> DeletePatientAsync(MedicalRecordNumber id, string adminEmail)
         {
@@ -188,6 +185,32 @@ namespace DDDSample1.Patients
             await this._unitOfWork.CommitAsync();
 
             return _mapper.Map<PatientDTO>(patientToRemove); 
+        }
+
+        public async Task<PatientDTO> GetPatientByUsername(Username email)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(email);
+
+            var patient = await _patientRepository.FindByUserIdAsync(user.Id);
+
+            if (patient == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<PatientDTO>(patient);
+        }
+
+        public async Task<UserDTO> GetUserByUserIdAsync(UserId userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<UserDTO>(user);
         }
     }
 }
