@@ -45,17 +45,17 @@ namespace DDDSample1.Domain.Staff
         {
             var createdUserId = Guid.Empty;
 
+            var role = Enum.Parse<RoleType>(staffDto.Role);
+            var creatingUserDto = new CreatingUserDto(
+                new Role(role),
+                new Email(staffDto.Email),
+                staffDto.FirstName,
+                staffDto.LastName,
+                new PhoneNumber(staffDto.PhoneNumber)
+            );
+
             try
             {
-                var role = Enum.Parse<RoleType>(staffDto.Role);
-                var creatingUserDto = new CreatingUserDto(
-                    new Role(role),
-                    new Email(staffDto.Email),
-                    staffDto.FirstName,
-                    staffDto.LastName,
-                    new PhoneNumber(staffDto.PhoneNumber)
-                );
-
                 var createdUser = await _userService.AddAsync(creatingUserDto);
                 createdUserId = createdUser.Id;
 
