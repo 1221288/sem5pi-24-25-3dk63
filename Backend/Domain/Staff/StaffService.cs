@@ -27,7 +27,7 @@ namespace DDDSample1.Domain.Staff
         {
             _userService = userService;
             _staffRepository = staffRepository;
-            _userRepository = userRepository; // Initialize user repository
+            _userRepository = userRepository;
             _specializationRepository = specializationRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -47,47 +47,45 @@ namespace DDDSample1.Domain.Staff
 
         public async Task<StaffDTO> CreateStaffWithUserAsync(CreatingStaffDTO staffDto)
         {
+            var createdUserId = Guid.Empty;
+
+            var role = Enum.Parse<RoleType>(staffDto.Role);
+            var creatingUserDto = new CreatingUserDto(
+                new Role(role),
+                new Email(staffDto.Email),
+                staffDto.FirstName,
+                staffDto.LastName,
+                new PhoneNumber(staffDto.PhoneNumber)
+            );
+
             try
             {
-                var role = Enum.Parse<RoleType>(staffDto.Role);
-                var creatingUserDto = new CreatingUserDto(
-                    new Role(role),
-                    new Email(staffDto.Email),
-                    staffDto.FirstName,
-                    staffDto.LastName,
-                    new PhoneNumber(staffDto.PhoneNumber)
+                var createdUser = await _userService.AddAsync(creatingUserDto);
+                createdUserId = createdUser.Id;
+
+                var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
+                if (specialization == null)
+                    throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
+
+                var staff = new Staff(
+                    new UserId(createdUser.Id),
+                    new LicenseNumber(staffDto.LicenseNumber),
+                    specialization.Id,
+                    new AvailabilitySlots(staffDto.AvailabilitySlots ?? new List<AvailabilitySlot>())
                 );
 
-                var createdUser = await _userService.AddAsync(creatingUserDto);
+                await _staffRepository.AddAsync(staff);
+                await _unitOfWork.CommitAsync();
 
-                try
-                {
-                    var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(staffDto.SpecializationDescription));
-                    if (specialization == null)
-                    {
-                        throw new ArgumentException($"Specialization '{staffDto.SpecializationDescription}' not found.");
-                    }
-
-                    var staff = new Staff(
-                        new UserId(createdUser.Id),
-                        new LicenseNumber(staffDto.LicenseNumber),
-                        specialization.Id,
-                        new AvailabilitySlots(staffDto.AvailabilitySlots)
-                    );
-
-                    await _staffRepository.AddAsync(staff);
-                    await _unitOfWork.CommitAsync();
-
-                    return _mapper.Map<StaffDTO>(staff);
-                }
-                catch (Exception ex)
-                {
-                    await _userService.DeleteAsync(new UserId(createdUser.Id));
-                    throw new Exception("Failed to create staff, user creation rolled back.", ex);
-                }
+                return _mapper.Map<StaffDTO>(staff);
             }
             catch (Exception ex)
             {
+                if (createdUserId != Guid.Empty)
+                {
+                    await _userService.DeleteFailureAsync(new UserId(createdUserId));
+                }
+
                 throw new Exception("An error occurred while creating the user and staff.", ex);
             }
         }

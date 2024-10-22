@@ -30,10 +30,11 @@ namespace DDDSample1.Infrastructure.Specializations
             return lastSpecialization != null ? lastSpecialization.SequentialNumber + 1 : 1;
         }
 
-        public async Task<Specialization> GetByDescriptionAsync(Description description)
+        public async Task<Specialization?> GetByDescriptionAsync(Description description)
         {
             return await _context.Specializations
-                .FirstOrDefaultAsync(s => s.Description == description);
+        .SingleOrDefaultAsync(s => s.Description.Value == description.Value);
+
         }
 
     }

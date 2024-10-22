@@ -48,7 +48,6 @@ namespace DDDSample1.Controllers
             return CreatedAtAction(nameof(GetById), new { id = patient.Id }, patient);
         }
 
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdatePatientProfile(PatientUpdateDTO updateDto)
         {
@@ -64,7 +63,7 @@ namespace DDDSample1.Controllers
                 return Ok("Patient updated successfully");
             }
 
-            return BadRequest(result);
+            return BadRequest("Patient not updated!");
         }
 
         [HttpDelete("{id}")]
