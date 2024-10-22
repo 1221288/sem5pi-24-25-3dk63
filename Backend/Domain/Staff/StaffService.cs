@@ -7,6 +7,7 @@ using DDDSample1.Users;
 using Backend.Domain.Users.ValueObjects;
 using Backend.Domain.Specialization.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using DDDSample1.Infrastructure;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -14,10 +15,13 @@ namespace DDDSample1.Domain.Staff
     {
         private readonly UserService _userService;
         private readonly IStaffRepository _staffRepository;
-        private readonly IUserRepository _userRepository; 
+        private readonly IUserRepository _userRepository;
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
+
+        private readonly DDDSample1DbContext _context;
 
         public StaffService(UserService userService, IStaffRepository staffRepository, IUserRepository userRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -117,13 +121,7 @@ namespace DDDSample1.Domain.Staff
             return _mapper.Map<StaffDTO>(staff);
         }
 
-        public async Task<StaffDTO?> FindByUserIdAsync(UserId userId)
-        {
-            var staff = await _staffRepository.GetByUserIdAsync(userId);
-            return staff == null ? null : _mapper.Map<StaffDTO>(staff);
-        }
-
-        public async Task<List<StaffDTO>> SearchStaffAsync(string? name = null, string? email = null, string? specialization = null)
+        public async Task<List<StaffDTO>> SearchStaffAsync(string? name = null, string? email = null, string? specializationDescription = null)
         {
             var query = from staff in _staffRepository.GetQueryable()
                         join user in _userRepository.GetQueryable() on staff.UserId equals user.Id
@@ -134,22 +132,28 @@ namespace DDDSample1.Domain.Staff
                 query = query.Where(s => s.user.Name.FirstName.Contains(name) || s.user.Name.LastName.Contains(name));
             }
 
+            var results = await query.ToListAsync();
+
             if (!string.IsNullOrEmpty(email))
             {
-                query = query.Where(s => s.user.Email.Value.Contains(email));
+                results = results.Where(s => s.user.Email.Value == email).ToList();
             }
 
-            if (!string.IsNullOrEmpty(specialization))
+            if (!string.IsNullOrEmpty(specializationDescription))
             {
-                query = query.Where(s => s.staff.SpecializationId.ToString().Contains(specialization));
+                var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(specializationDescription));
+
+                if (specialization != null)
+                {
+                    results = results.Where(s => s.staff.SpecializationId == specialization.Id).ToList();
+                }
             }
 
-            var paginatedStaff = await query
-                .Select(s => s.staff)
-                .ToListAsync();
+            var paginatedStaff = results.Select(s => s.staff).ToList();
 
             return _mapper.Map<List<StaffDTO>>(paginatedStaff);
         }
+
 
         public async Task<StaffDTO?> DeactivateAsync(LicenseNumber licenseNumber)
         {

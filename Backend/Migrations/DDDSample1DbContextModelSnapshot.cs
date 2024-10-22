@@ -180,7 +180,7 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("SpecializationId")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("SpecializationId");
 
                     b.Property<string>("UserId")
@@ -189,6 +189,8 @@ namespace DDDNetCore.Migrations
                         .HasColumnName("UserId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SpecializationId");
 
                     b.ToTable("Staffs");
                 });
@@ -232,11 +234,6 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .IsUnicode(true)
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -576,10 +573,15 @@ namespace DDDNetCore.Migrations
 
                             b1.Property<string>("Value")
                                 .IsRequired()
-                                .HasColumnType("longtext")
+                                .HasMaxLength(200)
+                                .HasColumnType("varchar(200)")
                                 .HasColumnName("Description");
 
                             b1.HasKey("SpecializationId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique()
+                                .HasDatabaseName("IX_Unique_Description");
 
                             b1.ToTable("Specializations");
 
@@ -588,6 +590,15 @@ namespace DDDNetCore.Migrations
                         });
 
                     b.Navigation("Description")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Staff.Staff", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.Specialization.Specialization", null)
+                        .WithMany()
+                        .HasForeignKey("SpecializationId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -659,6 +670,25 @@ namespace DDDNetCore.Migrations
 
             modelBuilder.Entity("DDDSample1.Domain.User", b =>
                 {
+                    b.OwnsOne("Backend.Domain.Users.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .IsUnicode(true)
+                                .HasColumnType("longtext")
+                                .HasColumnName("PhoneNumber");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("Backend.Domain.Users.ValueObjects.Name", "Name", b1 =>
                         {
                             b1.Property<string>("UserId")
@@ -683,6 +713,9 @@ namespace DDDNetCore.Migrations
                         });
 
                     b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("PhoneNumber")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
