@@ -39,8 +39,27 @@
 2024-10-21 20:20:38.932 +01:00 [INF] Aplicação iniciada.
 2024-10-21 20:20:42.480 +01:00 [INF] Patient 199005000001 was deleted by Admin (lapr3dkg69sup@gmail.com) on 10/21/2024 7:20:42 PM
 <<<<<<< HEAD
+<<<<<<< HEAD
 2024-10-21 21:36:59.683 +01:00 [INF] Aplicação iniciada.
 =======
 2024-10-21 20:48:13.809 +01:00 [INF] Aplicação iniciada.
 2024-10-21 20:52:33.385 +01:00 [INF] Aplicação iniciada.
 >>>>>>> 609376d80dd0eb0bef4c5825249da79ca5a56bff
+=======
+2024-10-21 20:49:59.817 +01:00 [INF] Aplicação iniciada.
+2024-10-21 20:52:23.386 +01:00 [INF] Aplicação iniciada.
+2024-10-21 20:56:34.147 +01:00 [INF] Aplicação iniciada.
+2024-10-21 20:59:46.864 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:03:42.630 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:14:35.601 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:17:03.009 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:18:12.585 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:19:07.829 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:19:45.299 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:21:01.760 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:22:05.974 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:27:30.736 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:29:57.317 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:30:36.068 +01:00 [INF] Aplicação iniciada.
+2024-10-21 21:41:19.281 +01:00 [INF] Aplicação iniciada.
+>>>>>>> ac9bfe9 (modified the update method for patient)

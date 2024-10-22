@@ -22,6 +22,7 @@ namespace DDDSample1.Patients
         private readonly IConfiguration _configuration;
         private readonly ILogger<PatientService> _logger;
         private readonly IMapper _mapper;
+        private readonly List<string> _sensitiveAttributes = new List<string> { "Email", "emergencyContact"};
 
         public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
                                 IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
@@ -107,59 +108,54 @@ namespace DDDSample1.Patients
 
             if (patient == null) throw new ArgumentNullException(nameof(patient), "Patient cannot be null");
 
-            bool userAttributesUpdated = false;
-            bool patientAttributesUpdated = false;
             bool userSensitiveDataChanged = false;
             bool patientSensitiveDataChanged = false;
 
             PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
             foreach (PropertyInfo property in properties)
             {   
+                // Verify if it is the id, if so continue to the other atributes
+                if(property.PropertyType == typeof(MedicalRecordNumber)) continue;
+
                 var newValue = property.GetValue(updateDto, null);
 
                 if (newValue != null)
                 {
-                    Console.WriteLine("Property name: " + property.Name);
-                    if (CheckIfExistsOnUser(property.Name) || property.PropertyType == typeof(UserId))
+                    if (CheckIfExistsOnUser(property.Name))
                     {
                         var oldValue = typeof(User).GetProperty(property.Name)?.GetValue(user);
-                        if (!Equals(oldValue, newValue))
-                        {
-                            Console.WriteLine("Old value: " + oldValue);
-                            Console.WriteLine("New value: " + newValue);
-                            typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
-                            userAttributesUpdated = true;
 
-                            if (_sensitiveAttributes.Contains(property.Name))
-                            {
-                                userSensitiveDataChanged = true;
-                            }
+                        typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
+
+                        if (_sensitiveAttributes.Contains(property.Name))
+                        {
+                            userSensitiveDataChanged = true;
                         }
                     }
 
-                    if (CheckIfExistsOnPatient(property.Name) || property.PropertyType == typeof(MedicalRecordNumber))
+                    if (CheckIfExistsOnPatient(property.Name))
                     {
                         var oldValue = typeof(Patient).GetProperty(property.Name)?.GetValue(patient);
-                        if (!Equals(oldValue, newValue))
-                        {
-                            typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
-                            patientAttributesUpdated = true;
 
-                            if (_sensitiveAttributes.Contains(property.Name))
-                            {
-                                patientSensitiveDataChanged = true;
-                            }
+                        typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
+
+                        if (_sensitiveAttributes.Contains(property.Name))
+                        {
+                            patientSensitiveDataChanged = true;
                         }
                     }
                 }
             }
 
-            if (userAttributesUpdated) await _userRepository.UpdateUserAsync(user);
-            if (patientAttributesUpdated) await _patientRepository.UpdatePatientAsync(patient);
+            await _userRepository.UpdateUserAsync(user);
+            await _patientRepository.UpdatePatientAsync(patient);
+            await _unitOfWork.CommitAsync();
 
+            Console.WriteLine("IT GETS HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+            
             if (userSensitiveDataChanged || patientSensitiveDataChanged)
             {
-                await _emailService.SendNotificationEmailAsync(updateDto, userSensitiveDataChanged, patientSensitiveDataChanged);
+                await _emailService.SendNotificationEmailAsync(updateDto);
             }
 
             return patient;
