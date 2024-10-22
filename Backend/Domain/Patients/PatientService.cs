@@ -127,8 +127,10 @@ namespace DDDSample1.Patients
 
                         typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
 
+                        Console.WriteLine("Property name User:", property.Name);
                         if (_sensitiveAttributes.Contains(property.Name))
                         {
+                            Console.WriteLine("IT GETS HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
                             userSensitiveDataChanged = true;
                         }
                     }
@@ -139,8 +141,10 @@ namespace DDDSample1.Patients
 
                         typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
 
+                        Console.WriteLine("Property name Patient:", property.Name);
                         if (_sensitiveAttributes.Contains(property.Name))
                         {
+                            Console.WriteLine("IT GETS HERE TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
                             patientSensitiveDataChanged = true;
                         }
                     }
@@ -151,7 +155,7 @@ namespace DDDSample1.Patients
             await _patientRepository.UpdatePatientAsync(patient);
             await _unitOfWork.CommitAsync();
 
-            Console.WriteLine("IT GETS HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+            Console.WriteLine("IT GETS HERE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
             
             if (userSensitiveDataChanged || patientSensitiveDataChanged)
             {

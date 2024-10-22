@@ -63,7 +63,7 @@ namespace DDDSample1.Controllers
                 return Ok("Patient updated successfully");
             }
 
-            return BadRequest(result);
+            return BadRequest("Patient not updated!");
         }
 
         [HttpDelete("{id}")]

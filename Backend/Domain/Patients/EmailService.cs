@@ -41,7 +41,7 @@ namespace DDDSample1.Domain
                 }
             }
 
-            await SendEmailAsync(dto.emailToChange.ToString(), subject, body);
+            await SendEmailAsync(dto.Email.ToString(), subject, body);
         }
 
         private async Task SendEmailAsync(string email, string subject, string body)
