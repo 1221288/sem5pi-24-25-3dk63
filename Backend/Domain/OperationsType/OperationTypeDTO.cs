@@ -8,6 +8,7 @@ namespace DDDSample1.Domain.OperationsType
         public Name Name { get; set; }
         public Duration Duration { get; set; }
         public List<StaffSpecialization> RequiredStaff { get; set; }
+        public bool Active { get; set; }
     }
 }
  

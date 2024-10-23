@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241021205024_AddUniqueConstraintToSpecializationDescription")]
-    partial class AddUniqueConstraintToSpecializationDescription
+    [Migration("20241022172812_FixOperationType2")]
+    partial class FixOperationType2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,7 +183,7 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("SpecializationId")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("SpecializationId");
 
                     b.Property<string>("UserId")
@@ -192,6 +192,8 @@ namespace DDDNetCore.Migrations
                         .HasColumnName("UserId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SpecializationId");
 
                     b.ToTable("Staffs");
                 });
@@ -399,9 +401,17 @@ namespace DDDNetCore.Migrations
                             b1.Property<string>("OperationTypeId")
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<int>("Value")
+                            b1.Property<int>("CleaningPhase")
                                 .HasColumnType("int")
-                                .HasColumnName("Duration");
+                                .HasColumnName("CleaningPhaseDuration");
+
+                            b1.Property<int>("PreparationPhase")
+                                .HasColumnType("int")
+                                .HasColumnName("PreparationPhaseDuration");
+
+                            b1.Property<int>("SurgeryPhase")
+                                .HasColumnType("int")
+                                .HasColumnName("SurgeryPhaseDuration");
 
                             b1.HasKey("OperationTypeId");
 
@@ -591,6 +601,15 @@ namespace DDDNetCore.Migrations
                         });
 
                     b.Navigation("Description")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Staff.Staff", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.Specialization.Specialization", null)
+                        .WithMany()
+                        .HasForeignKey("SpecializationId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

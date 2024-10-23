@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DDDNetCore.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUniqueConstraintToSpecializationDescription : Migration
+    public partial class FixOperationType : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -99,7 +99,9 @@ namespace DDDNetCore.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     OperationLastName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Duration = table.Column<int>(type: "int", nullable: false),
+                    PreparationPhaseDuration = table.Column<int>(type: "int", nullable: false),
+                    SurgeryPhaseDuration = table.Column<int>(type: "int", nullable: false),
+                    CleaningPhaseDuration = table.Column<int>(type: "int", nullable: false),
                     Active = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -163,26 +165,6 @@ namespace DDDNetCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Specializations", x => x.SpecializationId);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Staffs",
-                columns: table => new
-                {
-                    LicenseNumber = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserId = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    SpecializationId = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AvailabilitySlots = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Active = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Staffs", x => x.LicenseNumber);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -284,6 +266,32 @@ namespace DDDNetCore.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Staffs",
+                columns: table => new
+                {
+                    LicenseNumber = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SpecializationId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AvailabilitySlots = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Active = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Staffs", x => x.LicenseNumber);
+                    table.ForeignKey(
+                        name: "FK_Staffs_Specializations_SpecializationId",
+                        column: x => x.SpecializationId,
+                        principalTable: "Specializations",
+                        principalColumn: "SpecializationId",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Equipment",
                 columns: table => new
                 {
@@ -344,6 +352,11 @@ namespace DDDNetCore.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Staffs_SpecializationId",
+                table: "Staffs",
+                column: "SpecializationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -387,9 +400,6 @@ namespace DDDNetCore.Migrations
                 name: "RequiredStaffBySpecialization");
 
             migrationBuilder.DropTable(
-                name: "Specializations");
-
-            migrationBuilder.DropTable(
                 name: "Staffs");
 
             migrationBuilder.DropTable(
@@ -403,6 +413,9 @@ namespace DDDNetCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "OperationTypes");
+
+            migrationBuilder.DropTable(
+                name: "Specializations");
         }
     }
 }

@@ -4,6 +4,8 @@ using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
 using DDDSample1.Users;
 using DDDSample1.OperationsType;
+using Backend.Domain.Shared;
+using System.Security.Claims;
 
 namespace DDDSample1.Controllers
 {
@@ -12,6 +14,8 @@ namespace DDDSample1.Controllers
     public class OperationTypeController : ControllerBase
     {
         private readonly OperationTypeService _service;
+
+
 
         public OperationTypeController(OperationTypeService service)
         {
@@ -29,22 +33,23 @@ namespace DDDSample1.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OperationTypeDTO>> GetById(Guid id)
         {
-            var user = await _service.GetByIdAsync(new OperationTypeId(id));
+            var operation = await _service.GetByIdAsync(new OperationTypeId(id));
 
-            if (user == null)
+            if (operation == null)
             {
                 return NotFound();
             }
 
-            return user;
+            return operation;
         }
 
         // POST: api/OperationType
         [HttpPost]
         public async Task<ActionResult<OperationTypeDTO>> Create(CreatingOperationTypeDTO dto)
         {
-            var user = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            var adminEmail = User.FindFirstValue(ClaimTypes.Email);
+            var operationType = await _service.AddAsync(dto, adminEmail );
+            return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
         }
 
         // PUT: api/OperationType/5
@@ -58,14 +63,14 @@ namespace DDDSample1.Controllers
 
             try
             {
-                var user = await _service.UpdateAsync(dto);
+                var operationType = await _service.UpdateAsync(dto);
 
-                if (user == null)
+                if (operationType == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(user);
+                return Ok(operationType);
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -98,12 +103,13 @@ namespace DDDSample1.Controllers
         
         // PATCH: api/OperationType/{id}
         [HttpPatch("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDTO>> DeactivateAsync(Guid id)
         {
             try
             {
-                var operation = await _service.DeactivateAsync(new OperationTypeId(id));
+                var adminEmail = User.FindFirstValue(ClaimTypes.Email);
+
+                var operation = await _service.DeactivateAsync(new OperationTypeId(id), adminEmail);
 
                 if (operation == null)
                 {

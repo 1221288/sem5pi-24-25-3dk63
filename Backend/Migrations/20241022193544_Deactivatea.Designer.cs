@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241022122734_NomeDaMigraçao")]
-    partial class NomeDaMigraçao
+    [Migration("20241022193544_Deactivatea")]
+    partial class Deactivatea
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -401,9 +401,21 @@ namespace DDDNetCore.Migrations
                             b1.Property<string>("OperationTypeId")
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<int>("Value")
+                            b1.Property<int>("CleaningPhase")
                                 .HasColumnType("int")
-                                .HasColumnName("Duration");
+                                .HasColumnName("CleaningPhaseDuration");
+
+                            b1.Property<int>("PreparationPhase")
+                                .HasColumnType("int")
+                                .HasColumnName("PreparationPhaseDuration");
+
+                            b1.Property<int>("SurgeryPhase")
+                                .HasColumnType("int")
+                                .HasColumnName("SurgeryPhaseDuration");
+
+                            b1.Property<int>("TotalDuration")
+                                .HasColumnType("int")
+                                .HasColumnName("TotalDuration");
 
                             b1.HasKey("OperationTypeId");
 

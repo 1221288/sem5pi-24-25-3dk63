@@ -16,18 +16,11 @@ namespace DDDSample1.Infrastructure.OperationsType
             _context = context;
         }
 
-        public async Task<int> GetNextSequentialNumberAsync()
-        {
-            var lastUser = await _context.Users
-                .OrderByDescending(u => u.SequentialNumber)
-                .FirstOrDefaultAsync();
+        public async Task<OperationType> GetByNameAsync(Name name)
+{
+    return await _context.OperationsTypes
+        .FirstOrDefaultAsync(o => o.Name.FirstName == name.FirstName && o.Name.LastName == name.LastName);
+}
 
-            return lastUser != null ? lastUser.SequentialNumber + 1 : 1;
-        }
-
-        public async Task<OperationType> FindByNameAsync(Name name)
-        {
-            return await _context.OperationsTypes.FirstOrDefaultAsync(u => u.Name.Equals(name));
-        }
     }
 }

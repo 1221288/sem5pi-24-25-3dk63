@@ -4,6 +4,7 @@ using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
 using DDDSample1.OperationRequests;
 using DDDSample1.Domain.OperationRequests;
+using DDDSample1.OperationsType;
 
 namespace DDDSample1.Controllers
 {
@@ -12,6 +13,7 @@ namespace DDDSample1.Controllers
     public class OperationRequestController : ControllerBase
     {
         private readonly OperationRequestService _service;
+        private readonly OperationTypeService _2service;
 
         public OperationRequestController(OperationRequestService service)
         {
@@ -44,6 +46,14 @@ namespace DDDSample1.Controllers
         public async Task<ActionResult<OperationRequestDTO>> Create(CreatingOperationRequestDTO dto)
         {
             var user = await _service.AddAsync(dto);
+
+            var operationType = await _2service.GetByIdAsync(new OperationTypeId(dto.OperationTypeId.AsGuid()));
+
+            if (operationType.Active == false)
+            {
+                return BadRequest(new { Message = "This operation type is currently inactive" });
+            }
+
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 

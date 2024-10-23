@@ -7,8 +7,7 @@ namespace DDDSample1.Domain.OperationsType
 {
     public interface IOperationTypeRepository : IRepository<OperationType, OperationTypeId>
     {
-        Task<int> GetNextSequentialNumberAsync();
-        Task<OperationType> FindByNameAsync(Name name);
+        Task<OperationType> GetByNameAsync(Name name);
 
     }
 }

@@ -1,4 +1,5 @@
 using DDDSample1.Domain;
+using DDDSample1.Domain.OperationsType;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,14 +24,25 @@ namespace DDDSample1.Infraestructure.OperationTypes
                     .IsRequired();
             });
 
-            // Configura a propriedade Duration (associada ao Value Object Duration)
+
             builder.OwnsOne(o => o.Duration, duration =>
             {
-                duration.Property(d => d.Value)
-                    .HasColumnName("Duration")
+                duration.Property(d => d.PreparationPhase)
+                    .HasColumnName("PreparationPhaseDuration")
                     .IsRequired();
-                    
-            });
+
+                duration.Property(d => d.SurgeryPhase)
+                    .HasColumnName("SurgeryPhaseDuration")
+                    .IsRequired();
+
+                duration.Property(d => d.CleaningPhase)
+                    .HasColumnName("CleaningPhaseDuration")
+                    .IsRequired();
+
+                duration.Property(d => d.TotalDuration)
+                    .HasColumnName("TotalDuration")
+                    .IsRequired();
+            });  
 
             // Configura a coleção de RequiredStaff (associada à lista de StaffSpecialization)
             builder.OwnsMany(o => o.RequiredStaff, staff =>

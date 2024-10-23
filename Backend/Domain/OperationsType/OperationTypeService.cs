@@ -2,6 +2,7 @@ using DDDSample1.Domain;
 using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.OperationsType;
+using Backend.Domain.Shared;
 
 namespace DDDSample1.OperationsType
 {
@@ -11,12 +12,13 @@ namespace DDDSample1.OperationsType
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _operationTypeRepository;
         private readonly IConfiguration _configuration;
-
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository operationTypeRepository, IConfiguration configuration)
+       private readonly AuditService _auditService;
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository operationTypeRepository, IConfiguration configuration, AuditService auditService)
         {
             _unitOfWork = unitOfWork;
             _operationTypeRepository = operationTypeRepository;
             _configuration = configuration;
+            _auditService = auditService;
         }
 
          // Obtém todos os tipos de operações
@@ -49,18 +51,20 @@ namespace DDDSample1.OperationsType
             };
         }
 
-        public async Task<OperationTypeDTO> AddAsync(CreatingOperationTypeDTO dto)
+        public async Task<OperationTypeDTO> AddAsync(CreatingOperationTypeDTO dto, string adminEmail)
         {
-            int sequentialNumber = await this._operationTypeRepository.GetNextSequentialNumberAsync();
 
-            string domain = _configuration["DNS_DOMAIN"];
-            if (string.IsNullOrEmpty(domain))
+            var name = new Name(dto.FirstName, dto.LastName);
+
+            var operation =  await this._operationTypeRepository.GetByNameAsync(new Name(dto.FirstName, dto.LastName));
+
+            if (operation != null)
             {
-                throw new BusinessRuleValidationException("DNS_DOMAIN is not defined in the configuration file");
+                throw new BusinessRuleValidationException("Nome já existe no sistema, por favor tente novamente com outro nome.");
             }
 
-            var name =  new Name(dto.FirstName, dto.LastName);
-            var duration = new Duration(dto.duration.Value);
+            var duration = new Duration(dto.Preparation, dto.Surgery, dto.Cleaning);
+
             // Construir a lista de StaffSpecialization a partir do DTO
             var requiredStaff = new List<StaffSpecialization>();
             foreach (var staff in dto.RequiredStaff)
@@ -71,6 +75,7 @@ namespace DDDSample1.OperationsType
 
             var operationType = new OperationType(name, duration, requiredStaff);
 
+            _auditService.LogCreateOperationType(operationType, adminEmail);
             await this._operationTypeRepository.AddAsync(operationType);
             await _unitOfWork.CommitAsync();
 
@@ -125,7 +130,7 @@ namespace DDDSample1.OperationsType
          // Obtém uma operation pelo Nome
         public async Task<OperationTypeDTO> GetByNameAsync(Name name)
         {
-            var operationType = await this._operationTypeRepository.FindByNameAsync(name);
+            var operationType = await this._operationTypeRepository.GetByNameAsync(name);
             if (operationType == null) return null;
 
             return new OperationTypeDTO
@@ -138,9 +143,13 @@ namespace DDDSample1.OperationsType
 
     }
 
-    public async Task<OperationTypeDTO> DeactivateAsync (OperationTypeId id) {
+    public async Task<OperationTypeDTO> DeactivateAsync (OperationTypeId id, string adminEmail) {
         var operationType = await this._operationTypeRepository.GetByIdAsync(id);
         if (operationType == null) return null;
+
+        if (!operationType.Active) throw new BusinessRuleValidationException("O tipo de operação já se encontra inativo.");
+
+        _auditService.LogDeactivateOperationType(operationType, adminEmail);
 
         operationType.Deactivate();
 

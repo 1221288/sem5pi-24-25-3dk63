@@ -21,6 +21,20 @@ namespace Backend.Domain.Shared
             _logger.Information(logMessage);
         }
 
+        public void LogDeactivateOperationType(OperationType operationType, string adminEmail)
+        {
+            string logMessage = $"OperationType {operationType.Id} was deactivated by Admin ({adminEmail}) on {DateTime.UtcNow}";
+
+            _logger.Information(logMessage);
+        }
+
+        public void LogCreateOperationType(OperationType operationType, string adminEmail)
+        {
+            string logMessage = $"OperationType {operationType.Id} was created by Admin ({adminEmail}) on {DateTime.UtcNow}";
+
+            _logger.Information(logMessage);
+        }
+
         
     }
 }
