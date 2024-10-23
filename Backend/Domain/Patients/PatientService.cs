@@ -159,6 +159,107 @@ namespace DDDSample1.Patients
             return patient;
         }
 
+        public async Task<bool> UpdatePatientUserProfile(PatientUpdateDTO updateDto)
+        {
+            var patient = await _patientRepository.FindByMedicalRecordNumberAsync(updateDto.Id);
+            var userPatient = await _patientRepository.FindByEmailAsync(updateDto.personalEmail);
+
+            if (patient == null)
+            {
+                return false;
+            }
+
+            await UpdatePatientUserProfile(patient, userPatient, updateDto);
+
+            _logger.LogInformation($"Patient profile updated: {updateDto.Id}");
+
+            return true;
+        }
+
+        private async Task<Patient> UpdatePatientUserProfile(Patient patient, User user, PatientUpdateDTO updateDto)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user), "User cannot be null");
+            if (patient == null) throw new ArgumentNullException(nameof(patient), "Patient cannot be null");
+
+            bool userSensitiveDataChanged = false;
+            bool patientSensitiveDataChanged = false;
+            var oldEmail = user.Email;
+
+            PropertyInfo[] properties = typeof(PatientUpdateDTO).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {   
+                if(property.PropertyType == typeof(MedicalRecordNumber)) continue;
+
+                var newValue = property.GetValue(updateDto, null);
+
+                if (newValue != null)
+                {
+                    if (CheckIfExistsOnUser(property.Name))
+                    {
+                        var oldValue = typeof(User).GetProperty(property.Name)?.GetValue(user);
+
+                        typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
+
+                        if (_sensitiveAttributes.Contains(property.Name))
+                        {
+                            userSensitiveDataChanged = true;
+                        }
+                    }
+
+                    if (CheckIfExistsOnPatient(property.Name))
+                    {
+                        var oldValue = typeof(Patient).GetProperty(property.Name)?.GetValue(patient);
+
+                        typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
+
+                        if (_sensitiveAttributes.Contains(property.Name))
+                        {
+                            patientSensitiveDataChanged = true;
+                        }
+                    }
+                }
+            }
+
+            if (userSensitiveDataChanged || patientSensitiveDataChanged)
+            {
+                user.generateConfirmationToken();
+                user.ChangeActiveFalse();
+                patient.ChangeActiveFalse();
+            }
+
+            await _userRepository.UpdateUserAsync(user);
+            await _patientRepository.UpdatePatientAsync(patient);
+            await _unitOfWork.CommitAsync();
+            
+            if (userSensitiveDataChanged || patientSensitiveDataChanged)
+            {
+                await _emailService.SendUpdateEmail(oldEmail.ToString(), user.ConfirmationToken);
+            }
+
+            return patient;
+        }
+
+        public async Task ConfirmEmailAsync(string token)
+        {
+            var user = await _userRepository.GetUserByConfirmationTokenAsync(token);
+            if (user == null)
+            {
+                throw new Exception("Invalid or expired confirmation token.");
+            }
+
+            var patient = await _patientRepository.FindByUserIdAsync(user.Id);
+            if (patient == null)
+            {
+                throw new Exception("Patient not found.");
+            }
+
+            user.ChangeActiveTrue();
+            patient.ChangeActiveTrue();
+
+            await _userRepository.UpdateUserAsync(user);
+            await _patientRepository.UpdatePatientAsync(patient);
+            await _unitOfWork.CommitAsync();
+        }
         private bool CheckIfExistsOnUser(string propertyName)
         {
             PropertyInfo userProperty = typeof(User).GetProperty(propertyName);

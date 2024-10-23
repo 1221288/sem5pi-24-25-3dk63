@@ -100,5 +100,10 @@ namespace DDDSample1.Domain
             if (this.Active) throw new BusinessRuleValidationException("User is already registered. No need to confirm.");
             this.ConfirmationToken = confirmationToken;
         }
+
+        public void generateConfirmationToken()
+        {
+            this.ConfirmationToken = Guid.NewGuid().ToString("N");
+        }
     }
 }

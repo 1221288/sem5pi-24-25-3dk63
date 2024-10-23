@@ -43,6 +43,15 @@ namespace DDDSample1.Domain
             await SendEmailAsync(dto.Email.ToString(), subject, body);
         }
 
+        public async Task SendUpdateEmail(string email, string token)
+        {
+            var confirmationLink = $"https://localhost:5001/api/Patients/confirm-update?token={token}";
+            var subject = "Confirm your profile update";
+            var body = $"Please click on the following link to confirm your profile update: <a href=\"{confirmationLink}\">Confirm Update</a>";
+
+            await SendEmailAsync(email, subject, body);
+        }
+
         private async Task SendEmailAsync(string email, string subject, string body)
         {
             try

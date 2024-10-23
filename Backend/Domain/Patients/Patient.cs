@@ -15,7 +15,6 @@ namespace DDDSample1.Domain
         public List<AppointmentHistory> appointmentHistoryList { get; private set; }
         public int sequentialNumber { get; private set; }
         public bool Active { get; private set; }
-
         private Patient()
         {
             this.Active = false;
@@ -91,5 +90,6 @@ namespace DDDSample1.Domain
         {
             this.allergy = new Allergy(allergy);
         }
+
     }
 }

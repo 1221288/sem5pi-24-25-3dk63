@@ -118,28 +118,41 @@ namespace DDDSample1.Controllers
 
             var userResult = await _service.GetUserByUserIdAsync(patient.UserId);
 
-            updateDto.oldEmail = new Email(userResult.Email.ToString());
+            updateDto.personalEmail = new Email(userResult.Email.ToString());
 
             PatientUpdateDTO patientUpdate = new PatientUpdateDTO
             {
                 Id = patient.Id,
                 Name = updateDto.Name,
                 Email = updateDto.Email,
-                personalEmail = updateDto.oldEmail,
+                personalEmail = updateDto.personalEmail,
                 PhoneNumber = updateDto.PhoneNumber,
                 emergencyContact = updateDto.emergencyContact,
                 allergy = updateDto.allergy
             };
 
-            var result = await _service.UpdatePatientProfileAsync(patientUpdate);
+            var result = await _service.UpdatePatientUserProfile(patientUpdate);
 
             if (result)
             {
-                return Ok("Patient updated successfully");
+                return Ok("Patient updated successfully (please check your email to confirm the changes).");
             }
 
             return BadRequest("Patient not updated!");
         }
 
+        [HttpGet("confirm-update")]
+        public async Task<IActionResult> ConfirmEmail(string token)
+        {
+            try
+            {
+                await _service.ConfirmEmailAsync(token);
+                return Ok("Update confirmed successfully. Your changes have been applied.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Update confirmation failed: {ex.Message}");
+            }
+        }
     }
 }
