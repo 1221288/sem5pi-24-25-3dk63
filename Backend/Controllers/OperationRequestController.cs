@@ -4,11 +4,8 @@ using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
 using DDDSample1.OperationRequests;
 using DDDSample1.Domain.OperationRequests;
-<<<<<<< HEAD
 using DDDSample1.OperationsType;
-=======
 using DDDSample1.Domain.Users;
->>>>>>> d19508ccc7d8650cbde070c8a4285343ba326fb7
 
 namespace DDDSample1.Controllers
 {

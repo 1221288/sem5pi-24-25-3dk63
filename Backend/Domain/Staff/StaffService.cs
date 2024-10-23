@@ -8,6 +8,7 @@ using Backend.Domain.Users.ValueObjects;
 using Backend.Domain.Specialization.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Infrastructure;
+using Backend.Domain.Shared;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -20,10 +21,10 @@ namespace DDDSample1.Domain.Staff
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-
+private readonly AuditService _auditService;
         private readonly DDDSample1DbContext _context;
 
-        public StaffService(UserService userService, IStaffRepository staffRepository, IUserRepository userRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public StaffService(UserService userService, IStaffRepository staffRepository, IUserRepository userRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService, DDDSample1DbContext context)
         {
             _userService = userService;
             _staffRepository = staffRepository;
@@ -31,6 +32,7 @@ namespace DDDSample1.Domain.Staff
             _specializationRepository = specializationRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _auditService = auditService;
         }
 
         public async Task<List<StaffDTO>> GetAllAsync()
@@ -153,10 +155,12 @@ namespace DDDSample1.Domain.Staff
         }
 
 
-        public async Task<StaffDTO?> DeactivateAsync(LicenseNumber licenseNumber)
+        public async Task<StaffDTO?> DeactivateAsync(LicenseNumber licenseNumber, string adminEmail)
         {
             var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
             if (staff == null) return null;
+
+            _auditService.LogDeactivateStaff(staff, adminEmail);
 
             staff.Deactivate();
             await _unitOfWork.CommitAsync();

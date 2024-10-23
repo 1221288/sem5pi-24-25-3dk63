@@ -7,7 +7,6 @@ namespace DDDSample1.OperationsType
     public class CreatingOperationTypeDTO
     {
 
-<<<<<<< HEAD
     public string FirstName { get; set; }
     public string LastName { get; set; }   
     public int Preparation { get; set; }
@@ -24,16 +23,6 @@ namespace DDDSample1.OperationsType
         this.Preparation = preparation;
         this.Surgery = surgery;
         this.Duration = duration;
-=======
-    public Name name  { get; set; }
-    public Duration duration { get; set; }
-    public List<StaffSpecialization> RequiredStaff { get; set; }
-
-    public CreatingOperationTypeDTO(Name name, Duration duration,  List<StaffSpecialization> requiredStaff)
-    {
-        this.name = name;
-        this.duration = duration;
->>>>>>> d19508ccc7d8650cbde070c8a4285343ba326fb7
         this.RequiredStaff = requiredStaff ?? new List<StaffSpecialization>();
     }
     }

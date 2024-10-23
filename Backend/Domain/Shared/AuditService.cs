@@ -1,5 +1,6 @@
 using System;
 using DDDSample1.Domain;
+using DDDSample1.Domain.Staff; // Ensure this is the correct namespace for the Staff class
 using Serilog;
 
 namespace Backend.Domain.Shared
@@ -23,18 +24,24 @@ namespace Backend.Domain.Shared
 
         public void LogDeactivateOperationType(OperationType operationType, string adminEmail)
         {
-            string logMessage = $"OperationType {operationType.Id} was deactivated by Admin ({adminEmail}) on {DateTime.UtcNow}";
+            string logMessage = $"OperationType {operationType.Id.Value} was deactivated by Admin ({adminEmail}) on {DateTime.UtcNow}";
 
             _logger.Information(logMessage);
         }
 
         public void LogCreateOperationType(OperationType operationType, string adminEmail)
         {
-            string logMessage = $"OperationType {operationType.Id} was created by Admin ({adminEmail}) on {DateTime.UtcNow}";
+            string logMessage = $"OperationType {operationType.Id.Value} was created by Admin ({adminEmail}) on {DateTime.UtcNow}";
 
             _logger.Information(logMessage);
         }
 
+        public void LogDeactivateStaff(DDDSample1.Domain.Staff.Staff staff, string adminEmail)
+        {
+            string logMessage = $"Staff {staff.Id.Value} was deactivated by Admin ({adminEmail}) on {DateTime.UtcNow}";
+
+            _logger.Information(logMessage);
+        }
         
     }
 }

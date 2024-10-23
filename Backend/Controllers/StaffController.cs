@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Backend.Domain.Staff.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace DDDSample1.Controllers
 {
@@ -113,7 +114,8 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                var operation = await _staffService.DeactivateAsync(new LicenseNumber(licenseNumber));
+                var adminEmail = User.FindFirstValue(ClaimTypes.Email);
+                var operation = await _staffService.DeactivateAsync(new LicenseNumber(licenseNumber), adminEmail);
 
                 if (operation == null)
                 {

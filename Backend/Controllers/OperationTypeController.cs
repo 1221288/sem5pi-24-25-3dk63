@@ -47,9 +47,16 @@ namespace DDDSample1.Controllers
         [HttpPost]
         public async Task<ActionResult<OperationTypeDTO>> Create(CreatingOperationTypeDTO dto)
         {
+            try
+            {
             var adminEmail = User.FindFirstValue(ClaimTypes.Email);
             var operationType = await _service.AddAsync(dto, adminEmail );
             return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // PUT: api/OperationType/5
@@ -102,6 +109,7 @@ namespace DDDSample1.Controllers
         }
         
         // PATCH: api/OperationType/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<OperationTypeDTO>> DeactivateAsync(Guid id)
         {

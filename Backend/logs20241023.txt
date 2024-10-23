@@ -1,0 +1,5 @@
+2024-10-23 08:57:26.681 +01:00 [INF] OperationType DDDSample1.Domain.OperationsType.OperationTypeId was deactivated by Admin () on 23/10/2024 07:57:26
+2024-10-23 09:02:03.889 +01:00 [INF] OperationType DDDSample1.Domain.OperationsType.OperationTypeId was created by Admin () on 23/10/2024 08:02:03
+2024-10-23 09:08:55.222 +01:00 [INF] Login bem-sucedido: email encontrado.
+2024-10-23 09:14:45.197 +01:00 [INF] OperationType 1a152339-0b90-417a-b03f-f8026d738d59 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 23/10/2024 08:14:45
+2024-10-23 09:32:31.295 +01:00 [INF] Staff N200012345 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 23/10/2024 08:32:31
