@@ -2,6 +2,7 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Patients;
 using System.Collections.Generic;
 using DDDSample1.Domain.Users;
+using DDDSample1.Domain.PendingChange;
 
 namespace DDDSample1.Domain
 {
@@ -85,10 +86,22 @@ namespace DDDSample1.Domain
         {
             this.Active = false;
         }
-
         public void ChangeAllergy(string allergy)
         {
             this.allergy = new Allergy(allergy);
+        }
+
+        public void ApplyChanges(PendingChanges pendingChange)
+        {
+            if(pendingChange.Allergy != null)
+            {
+                this.allergy = pendingChange.Allergy;
+            }
+            
+            if(pendingChange.EmergencyContact != null)
+            {
+                this.emergencyContact = pendingChange.EmergencyContact;
+            }
         }
 
     }

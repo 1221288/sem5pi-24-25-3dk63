@@ -6,6 +6,10 @@ using DDDSample1.Domain.Users;
 using DDDSample1.Patients;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using DDDSample1.Domain.PendingChange;
+using DDDSample1.Domain;
+using DDDSample1.Users;
+using Backend.Domain.Shared;
 
 namespace DDDSample1.Controllers
 {
@@ -16,13 +20,19 @@ namespace DDDSample1.Controllers
 
         private readonly ILogger<PatientsController> _logger;
         private readonly PatientService _service;
+        private readonly EmailService _emailService;
+        private readonly UserService _userService;
+        private readonly AuditService _auditService;
 
-        public PatientsController(ILogger<PatientsController> logger, PatientService service)
+        public PatientsController(ILogger<PatientsController> logger, PatientService service, EmailService emailService, UserService userService, AuditService auditService)
         {
             _logger = logger;
             _service = service;
+            _emailService = emailService;
+            _userService = userService;
+            _auditService = auditService;
         }
-
+        
         // GET: api/Patients/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PatientDTO>> GetById(MedicalRecordNumber id)
@@ -90,7 +100,7 @@ namespace DDDSample1.Controllers
 
         [HttpPatch("update")]
         [Authorize(Roles = "Patient")]
-        public async Task<IActionResult> UpdateOwnPatientProfile(UserProfileUpdateDTO updateDto)
+        public async Task<IActionResult> UpdateOwnPatientProfile(PendingChangesDTO updateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +111,7 @@ namespace DDDSample1.Controllers
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                return Unauthorized("Unable to find the patient information from Google IAM.");
+                return Unauthorized("Unable to find the patient information.");
             }
 
             var patient = await _service.GetPatientByUsername(new Username(userEmail));
@@ -111,34 +121,33 @@ namespace DDDSample1.Controllers
                 return Unauthorized("Patient not found.");
             }
 
-            if (patient == null)
+            var userResult = await _userService.GetByIdAsync(patient.UserId);
+
+            bool emailChanged = updateDto.Email != null && updateDto.Email.Value != userResult.Email.Value;
+            bool emergencyContactChanged = updateDto.EmergencyContact != null && updateDto.EmergencyContact.emergencyContact != patient.emergencyContact.emergencyContact;
+
+            await _service.RemovePendingChangesAsync(patient.UserId);
+
+            if (emailChanged || emergencyContactChanged)
             {
-                return Unauthorized("Patient information is incomplete.");
+                userResult.ConfirmationToken = Guid.NewGuid().ToString("N");
+
+                await _userService.UpdateAsync(userResult);
+
+                await _service.AddPendingChangesAsync(updateDto, patient.UserId);
+
+                await _emailService.SendUpdateEmail(userEmail, userResult.ConfirmationToken);
+
+                return Ok("Sensitive changes have been submitted and require confirmation (please check your email to confirm the changes).");
             }
 
-            var userResult = await _service.GetUserByUserIdAsync(patient.UserId);
+            await _service.AddPendingChangesAsync(updateDto, patient.UserId);
 
-            updateDto.personalEmail = new Email(userResult.Email.ToString());
+            _auditService.LogProfileUpdate(patient, userResult, updateDto);
 
-            PatientUpdateDTO patientUpdate = new PatientUpdateDTO
-            {
-                Id = patient.Id,
-                Name = updateDto.Name,
-                Email = updateDto.Email,
-                personalEmail = updateDto.personalEmail,
-                PhoneNumber = updateDto.PhoneNumber,
-                emergencyContact = updateDto.emergencyContact,
-                allergy = updateDto.allergy
-            };
-
-            var result = await _service.UpdatePatientUserProfile(patientUpdate);
-
-            if (result)
-            {
-                return Ok("Patient updated successfully (please check your email to confirm the changes).");
-            }
-
-            return BadRequest("Patient not updated!");
+            await _service.ApplyPendingChangesAsync(patient.UserId);
+            
+            return Ok("Your changes have been submitted.");
         }
 
         [HttpGet("confirm-update")]
@@ -146,7 +155,7 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                await _service.ConfirmEmailAsync(token);
+                await _service.ConfirmUpdateAsync(token);
                 return Ok("Update confirmed successfully. Your changes have been applied.");
             }
             catch (Exception ex)
@@ -154,5 +163,6 @@ namespace DDDSample1.Controllers
                 return BadRequest($"Update confirmation failed: {ex.Message}");
             }
         }
+
     }
 }

@@ -1,6 +1,9 @@
 using System;
 using DDDSample1.Domain;
+using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.PendingChange;
 using DDDSample1.Domain.Staff; // Ensure this is the correct namespace for the Staff class
+using DDDSample1.Domain.Users;
 using Serilog;
 
 namespace Backend.Domain.Shared
@@ -42,6 +45,30 @@ namespace Backend.Domain.Shared
 
             _logger.Information(logMessage);
         }
+
+        public void LogProfileUpdate(PatientDTO patient, UserDTO user, PendingChangesDTO changes)
+    {
+        var updatedFields = new List<string>();
+
+        if (changes.Name != null && !changes.Name.Equals(user.Name))
+            updatedFields.Add($"Name changed to: {changes.Name.FirstName} {changes.Name.LastName}");
+
+        if (changes.Email != null && !changes.Email.Equals(user.Email))
+            updatedFields.Add($"Email changed to: {changes.Email.Value}");
+
+        if (changes.EmergencyContact != null && !changes.EmergencyContact.Equals(patient.emergencyContact))
+            updatedFields.Add($"Emergency Contact changed to: {changes.EmergencyContact.emergencyContact}");
+
+        if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
+            updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
+
+        if (changes.Allergy != null && !changes.Allergy.Equals(patient.allergy))
+            updatedFields.Add($"Allergy changed to: {changes.Allergy.allergy}");
+
+        string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
+
+        _logger.Information(logMessage);
+    }
         
     }
 }

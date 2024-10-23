@@ -2,6 +2,8 @@ using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 
+using DDDSample1.Domain.PendingChange;
+
 namespace DDDSample1.Domain
 {
     public class User : Entity<UserId>, IAggregateRoot
@@ -97,13 +99,32 @@ namespace DDDSample1.Domain
 
         public void ChangeConfirmationToken(string confirmationToken)
         {
-            if (this.Active) throw new BusinessRuleValidationException("User is already registered. No need to confirm.");
             this.ConfirmationToken = confirmationToken;
         }
 
         public void generateConfirmationToken()
         {
             this.ConfirmationToken = Guid.NewGuid().ToString("N");
+        }
+
+        public void ApplyChanges(PendingChanges pendingChange)
+        {
+            if (pendingChange == null) throw new ArgumentNullException(nameof(pendingChange));
+
+            if (pendingChange.Email != null && !string.IsNullOrEmpty(pendingChange.Email.Value))
+            {
+                this.Email = new Email(pendingChange.Email.Value);
+            }
+
+            if (pendingChange.Name != null)
+            {
+                this.Name = new Name(pendingChange.Name.FirstName, pendingChange.Name.LastName);
+            }
+
+            if (pendingChange.PhoneNumber != null && !string.IsNullOrEmpty(pendingChange.PhoneNumber.ToString()))
+            {
+                this.PhoneNumber = new PhoneNumber(pendingChange.PhoneNumber.Number);
+            }
         }
     }
 }
