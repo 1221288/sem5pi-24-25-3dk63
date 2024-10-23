@@ -120,7 +120,6 @@ namespace DDDSample1
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Log.Information("Aplicação iniciada.");
 
 
             if (env.IsDevelopment())
@@ -202,7 +201,7 @@ namespace DDDSample1
             services.AddTransient<PatientService>();
 
             services.AddTransient<RegistrationService>();
-            
+
             services.AddTransient<EmailService>();
 
             services.AddTransient<AuditService>(provider =>

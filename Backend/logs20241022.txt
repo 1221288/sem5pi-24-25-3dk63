@@ -21,6 +21,7 @@
 2024-10-22 13:23:44.351 +01:00 [INF] Aplicação iniciada.
 2024-10-22 13:25:28.893 +01:00 [INF] Aplicação iniciada.
 2024-10-22 13:27:51.210 +01:00 [INF] Aplicação iniciada.
+<<<<<<< HEAD
 2024-10-22 13:35:49.552 +01:00 [INF] Aplicação iniciada.
 2024-10-22 14:43:15.582 +01:00 [INF] Aplicação iniciada.
 2024-10-22 14:45:51.208 +01:00 [INF] Aplicação iniciada.
@@ -46,3 +47,7 @@
 2024-10-22 20:32:01.736 +01:00 [INF] Aplicação iniciada.
 2024-10-22 20:35:58.558 +01:00 [INF] Aplicação iniciada.
 2024-10-22 21:00:34.766 +01:00 [INF] Aplicação iniciada.
+=======
+2024-10-22 14:22:39.388 +01:00 [INF] Aplicação iniciada.
+2024-10-22 19:05:42.811 +01:00 [INF] Aplicação iniciada.
+>>>>>>> d19508ccc7d8650cbde070c8a4285343ba326fb7

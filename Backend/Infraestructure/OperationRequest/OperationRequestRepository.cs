@@ -3,6 +3,8 @@ using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
 using DDDSample1.Domain.OperationRequests;
+using DDDSample1.Domain.OperationsType;
+using DDDSample1.Domain.Patients;
 
 namespace DDDSample1.Infrastructure.OperationRequests
 {
@@ -30,6 +32,13 @@ namespace DDDSample1.Infrastructure.OperationRequests
                 .Where(x => x.priority == priority)
                 .ToListAsync(); 
 
+        }
+
+        public async Task<bool> IsDuplicateRequestAsync(OperationTypeId operationTypeId, MedicalRecordNumber medicalRecordNumber)
+        {
+            return await _context.OperationRequests.AnyAsync(o => o.operationTypeId == operationTypeId &&
+                                                 o.medicalRecordNumber == medicalRecordNumber &&
+                                                 o.Active);
         }
     }
 }

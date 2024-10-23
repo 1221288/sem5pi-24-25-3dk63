@@ -24,6 +24,8 @@ namespace DDDSample1.Infraestructure.OperationTypes
                     .IsRequired();
             });
 
+            builder.HasIndex(o => o.Name).IsUnique(); 
+
 
             builder.OwnsOne(o => o.Duration, duration =>
             {

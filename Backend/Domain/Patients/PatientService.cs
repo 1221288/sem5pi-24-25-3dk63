@@ -127,10 +127,8 @@ namespace DDDSample1.Patients
 
                         typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
 
-                        Console.WriteLine("Property name User:", property.Name);
                         if (_sensitiveAttributes.Contains(property.Name))
                         {
-                            Console.WriteLine("IT GETS HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
                             userSensitiveDataChanged = true;
                         }
                     }
@@ -141,10 +139,8 @@ namespace DDDSample1.Patients
 
                         typeof(Patient).GetProperty(property.Name)?.SetValue(patient, newValue);
 
-                        Console.WriteLine("Property name Patient:", property.Name);
                         if (_sensitiveAttributes.Contains(property.Name))
                         {
-                            Console.WriteLine("IT GETS HERE TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
                             patientSensitiveDataChanged = true;
                         }
                     }
@@ -154,17 +150,14 @@ namespace DDDSample1.Patients
             await _userRepository.UpdateUserAsync(user);
             await _patientRepository.UpdatePatientAsync(patient);
             await _unitOfWork.CommitAsync();
-
-            Console.WriteLine("IT GETS HERE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
             
             if (userSensitiveDataChanged || patientSensitiveDataChanged)
             {
-                await _emailService.SendNotificationEmailAsync(updateDto);
+                await _emailService.SendPatientNotificationEmailAsync(updateDto);
             }
 
             return patient;
         }
-
 
         private bool CheckIfExistsOnUser(string propertyName)
         {
@@ -177,8 +170,6 @@ namespace DDDSample1.Patients
             PropertyInfo patientProperty = typeof(Patient).GetProperty(propertyName);
             return patientProperty != null && patientProperty.CanWrite;
         }
-
-
 
         public async Task<PatientDTO> DeletePatientAsync(MedicalRecordNumber id, string adminEmail)
         {
@@ -194,6 +185,32 @@ namespace DDDSample1.Patients
             await this._unitOfWork.CommitAsync();
 
             return _mapper.Map<PatientDTO>(patientToRemove); 
+        }
+
+        public async Task<PatientDTO> GetPatientByUsername(Username email)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(email);
+
+            var patient = await _patientRepository.FindByUserIdAsync(user.Id);
+
+            if (patient == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<PatientDTO>(patient);
+        }
+
+        public async Task<UserDTO> GetUserByUserIdAsync(UserId userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<UserDTO>(user);
         }
     }
 }

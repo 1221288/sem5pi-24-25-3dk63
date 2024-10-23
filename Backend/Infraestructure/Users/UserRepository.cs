@@ -51,5 +51,19 @@ namespace DDDSample1.Infrastructure.Users
             return _context.Users.AsQueryable();
         }
 
+        public async Task<User> GetUserByUsernameAsync(Username username)
+        {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Username.Equals(username));
+
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with username '{username}' not found.");
+            }
+
+            return user;
+        }
+
+
     }
 }

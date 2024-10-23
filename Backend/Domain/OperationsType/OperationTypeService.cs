@@ -63,8 +63,13 @@ namespace DDDSample1.OperationsType
                 throw new BusinessRuleValidationException("Nome já existe no sistema, por favor tente novamente com outro nome.");
             }
 
+<<<<<<< HEAD
             var duration = new Duration(dto.Preparation, dto.Surgery, dto.Cleaning);
 
+=======
+            var name = dto.name;
+            var duration = new Duration(dto.duration.Value);
+>>>>>>> d19508ccc7d8650cbde070c8a4285343ba326fb7
             // Construir a lista de StaffSpecialization a partir do DTO
             var requiredStaff = new List<StaffSpecialization>();
             foreach (var staff in dto.RequiredStaff)
