@@ -22,6 +22,7 @@ namespace DDDSample1.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
         {
+
             return await _service.GetAllAsync();
         }
 
