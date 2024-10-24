@@ -17,6 +17,7 @@ namespace DDDSample1.Domain
         public int SequentialNumber { get; private set; }
         public string ConfirmationToken { get; set; }
 
+
         private User()
         {
             this.Active = true;
@@ -34,6 +35,7 @@ namespace DDDSample1.Domain
             this.Username = GenerateUsername(role.Value, recruitmentYear, domain, sequentialNumber);
             this.ConfirmationToken = "";
         }
+
 
         private Username GenerateUsername(RoleType roleType, int recruitmentYear, string domain, int sequentialNumber)
         {

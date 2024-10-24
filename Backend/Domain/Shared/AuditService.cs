@@ -47,28 +47,34 @@ namespace Backend.Domain.Shared
         }
 
         public void LogProfileUpdate(PatientDTO patient, UserDTO user, PendingChangesDTO changes)
-    {
-        var updatedFields = new List<string>();
+        {
+            var updatedFields = new List<string>();
 
-        if (changes.Name != null && !changes.Name.Equals(user.Name))
-            updatedFields.Add($"Name changed to: {changes.Name.FirstName} {changes.Name.LastName}");
+            if (changes.Name != null && !changes.Name.Equals(user.Name))
+                updatedFields.Add($"Name changed to: {changes.Name.FirstName} {changes.Name.LastName}");
 
-        if (changes.Email != null && !changes.Email.Equals(user.Email))
-            updatedFields.Add($"Email changed to: {changes.Email.Value}");
+            if (changes.Email != null && !changes.Email.Equals(user.Email))
+                updatedFields.Add($"Email changed to: {changes.Email.Value}");
 
-        if (changes.EmergencyContact != null && !changes.EmergencyContact.Equals(patient.emergencyContact))
-            updatedFields.Add($"Emergency Contact changed to: {changes.EmergencyContact.emergencyContact}");
+            if (changes.EmergencyContact != null && !changes.EmergencyContact.Equals(patient.emergencyContact))
+                updatedFields.Add($"Emergency Contact changed to: {changes.EmergencyContact.emergencyContact}");
 
-        if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
-            updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
+            if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
+                updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
 
-        if (changes.Allergy != null && !changes.Allergy.Equals(patient.allergy))
-            updatedFields.Add($"Allergy changed to: {changes.Allergy.allergy}");
+            if (changes.Allergy != null && !changes.Allergy.Equals(patient.allergy))
+                updatedFields.Add($"Allergy changed to: {changes.Allergy.allergy}");
 
-        string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
+            string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
 
-        _logger.Information(logMessage);
-    }
+            _logger.Information(logMessage);
+        }
+
+        public void LogEditPatientProfile(Patient patient, User user, PatientUpdateDTO dto)
+        {
+            string logMessage = $"Patient {patient.Id} profile was edited on {DateTime.UtcNow}";
+            _logger.Information(logMessage);
+        }
         
 
         public void LogEditStaff(DDDSample1.Domain.Staff.Staff staff, string adminEmail)

@@ -5,6 +5,9 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Users;
 using DDDSample1.Patients;
 using DDDSample1.Domain;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace DDDSample1.Controllers
 {
@@ -26,7 +29,25 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                await _registrationService.SelfRegisterAsync(dto);
+                var token = HttpContext.Request.Cookies[".AspNetCore.Cookies"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized("IAM token not found. Please log in again.");
+                }
+
+                // Decrypt the token to get the IAM email
+                var dataProtectionProvider = HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>();
+                var protector = dataProtectionProvider.CreateProtector("CustomCookieProtector");
+
+                var iamEmail = protector.Unprotect(token);
+
+                var user = await _registrationService.FindByEmailAsync(new Email(dto.PersonalEmail));
+
+                if(user.Role.Equals(new Role(RoleType.Patient)))
+                {
+                    await _registrationService.SelfRegisterPatientAsync(dto, iamEmail);
+                }
+
                 return Ok("Registration initiated. Please check your email for confirmation.");
             }
             catch (Exception ex)

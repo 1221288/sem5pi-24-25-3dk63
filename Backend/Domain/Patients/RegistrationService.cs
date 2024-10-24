@@ -23,7 +23,7 @@ namespace DDDSample1.Patients
             _emailService = emailService;
         }
 
-        public async Task SelfRegisterAsync(SelfRegisterPatientDTO dto)
+        public async Task SelfRegisterPatientAsync(SelfRegisterPatientDTO dto, string iamEmail)
         {
             // Verify if the Patient exists in the system registered by the Admin
             var patient = await _patientRepository.GetPatientByPersonalEmailAsync(new Email(dto.PersonalEmail));
@@ -34,12 +34,12 @@ namespace DDDSample1.Patients
             
             // Verify if the User already exists
             var user = await _userRepository.FindByEmailAsync(new Email(dto.PersonalEmail));
-            if (user.Username.ToString().Equals(dto.IamEmail.ToString()))
+            if (user.Username.ToString().Equals(iamEmail))
             {
             	throw new Exception("User already exists.");    
             }
 
-            user = await updateUser(user,dto);
+            user = await updateUser(user,dto,iamEmail);
 
             patient.ChangeActiveTrue();
             await _patientRepository.UpdatePatientAsync(patient);
@@ -49,11 +49,11 @@ namespace DDDSample1.Patients
             await _emailService.SendConfirmationEmailAsync(user.Email.ToString(), user.ConfirmationToken);
         }
 
-        private async Task<User> updateUser(User user, SelfRegisterPatientDTO dto)
+        private async Task<User> updateUser(User user, SelfRegisterPatientDTO dto, string iamEmail)
         {
             user.ChangeConfirmationToken(Guid.NewGuid().ToString("N"));
             user.ChangeActiveTrue();
-            user.ChangeUsername(new Username(dto.IamEmail));
+            user.ChangeUsername(new Username(iamEmail));
             await _userRepository.UpdateUserAsync(user);
             return user;
         }
@@ -71,6 +71,11 @@ namespace DDDSample1.Patients
             user.ChangeActiveTrue();
             user.ConfirmationToken = null;
             await _userRepository.UpdateUserAsync(user);
+        }
+
+        public async Task<User> FindByEmailAsync(Email email)
+        {
+            return await _userRepository.FindByEmailAsync(email);
         }
     }
 }
