@@ -39,16 +39,24 @@ namespace DDDSample1.OperationsType
 
         public async Task<OperationTypeDTO> GetByIdAsync(OperationTypeId id)
         {
-            var operationType = await this._operationTypeRepository.GetByIdAsync(id);
-            if (operationType == null) return null;
+            try {
+                var operationType = await this._operationTypeRepository.GetByIdAsync(id);
+                if (operationType == null) return null;
 
-            return new OperationTypeDTO
+                return new OperationTypeDTO
+                {
+                    Id = operationType.Id.AsGuid(),
+                    Name = operationType.Name,
+                    Duration = operationType.Duration,
+                    RequiredStaff = operationType.RequiredStaff,
+                    Active = operationType.Active
+                };
+
+            } catch (Exception ex)
             {
-                Id = operationType.Id.AsGuid(),
-                Name = operationType.Name,
-                Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
-            };
+                throw new Exception(ex.Message);
+            }
+            
         }
 
         public async Task<OperationTypeDTO> AddAsync(CreatingOperationTypeDTO dto, string adminEmail)
@@ -84,7 +92,8 @@ namespace DDDSample1.OperationsType
                 Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
+                RequiredStaff = operationType.RequiredStaff,
+                Active = operationType.Active
             };
         }
 
