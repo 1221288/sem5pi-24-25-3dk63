@@ -133,8 +133,6 @@ private readonly AuditService _auditService;
         if (property.PropertyType == typeof(LicenseNumber)) continue;
 
         var newValue = property.GetValue(updateDto, null);
-
-
         var atualValue = new object();
 
         if(user.GetType().GetProperty(property.Name) != null)
@@ -142,7 +140,18 @@ private readonly AuditService _auditService;
             atualValue = user.GetType().GetProperty(property.Name)?.GetValue(user, null);
         }
         else atualValue = staff.GetType().GetProperty(property.Name)?.GetValue(staff, null);
-        
+
+
+        if(property.Name == "SpecializationDescription")
+        {
+            var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(newValue.ToString()));
+            if (specialization == null){
+                throw new ArgumentException($"Specialization '{newValue.ToString()}' not found.");}
+                else{
+                    typeof(Staff).GetProperty("SpecializationId")?.SetValue(staff, specialization.Id);
+                }
+                continue;
+        }
 
         if (newValue != null && !newValue.Equals(atualValue))
         {
@@ -181,6 +190,19 @@ private readonly AuditService _auditService;
     return staff;
     
 }
+
+        private bool TratarSpecialization(Staff staff, string newValue)
+        {
+            var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(newValue));
+            if (specialization == null)
+            {
+                throw new ArgumentException($"Specialization '{newValue}' not found.");
+            }
+            else
+            {
+                typeof(Staff).GetProperty("SpecializationId")?.SetValue(staff, specialization.Id);
+            }
+        }
 
       private bool CheckIfExistsOnUser(string propertyName)
         {
