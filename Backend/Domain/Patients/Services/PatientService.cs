@@ -356,5 +356,73 @@ namespace DDDSample1.Patients
             }).ToList();
         }
 
+        public async Task RequestAccountDeletionAsync(UserId userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            user.ConfirmationToken = Guid.NewGuid().ToString("N");
+            user.MarkForDeletion();
+
+            await _userRepository.UpdateUserAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            await _emailService.SendDeletionConfirmationEmail(user.Email.ToString(), user.ConfirmationToken);
+            
+            StartDeletionTimer(user);
+        }
+        
+        public async Task ConfirmDeletionAsync(string token)
+        {
+            var user = await _userRepository.GetUserByConfirmationTokenAsync(token);
+            if (user == null)
+            {
+                throw new Exception("Invalid or expired confirmation token.");
+            }
+
+            user.ChangeActiveFalse();
+            user.ConfirmationToken = null;
+
+            await _userRepository.UpdateUserAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            await DeleteUserDataAsync(user);
+
+            _auditService.LogDeletionCompleted(user);
+        }
+
+        private async Task DeleteUserDataAsync(User user)
+        {
+            var patient = await _patientRepository.FindByUserIdAsync(user.Id);
+            if (patient != null)
+            {
+                await _patientRepository.DeletePatientAsync(patient.UserId);
+            }
+
+            await _userRepository.DeleteUserAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            _auditService.LogDeletionCompleted(user);
+
+        }
+
+        private void StartDeletionTimer(User user)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromDays(30));
+                
+                var updatedUser = await _userRepository.GetByIdAsync(user.Id);
+                if (updatedUser != null && updatedUser.MarkedForDeletionDate.HasValue)
+                {
+                    await DeleteUserDataAsync(updatedUser);
+                }
+            });
+        }
+
     }
 }

@@ -78,6 +78,17 @@ namespace DDDSample1.Infrastructure.Patients
             return await _context.Patients.FirstOrDefaultAsync(p => p.UserId == id);
         }
 
+        public async Task DeletePatientAsync (UserId id)
+        {
+            var patient = await FindByUserIdAsync(id);
+
+            if (patient != null)
+            {
+                _context.Patients.Remove(patient);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public IQueryable<Patient> GetQueryable()
         {
             return _context.Patients.AsQueryable();

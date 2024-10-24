@@ -47,25 +47,25 @@ namespace Backend.Domain.Shared
         }
 
         public void LogProfileUpdate(PatientDTO patient, UserDTO user, PendingChangesDTO changes)
-        {
-            var updatedFields = new List<string>();
+            {
+                var updatedFields = new List<string>();
 
-            if (changes.Name != null && !changes.Name.Equals(user.Name))
-                updatedFields.Add($"Name changed to: {changes.Name.FirstName} {changes.Name.LastName}");
+                if (changes.Name != null && !changes.Name.Equals(user.Name))
+                    updatedFields.Add($"Name changed to: {changes.Name.FirstName} {changes.Name.LastName}");
 
-            if (changes.Email != null && !changes.Email.Equals(user.Email))
-                updatedFields.Add($"Email changed to: {changes.Email.Value}");
+                if (changes.Email != null && !changes.Email.Equals(user.Email))
+                    updatedFields.Add($"Email changed to: {changes.Email.Value}");
 
-            if (changes.EmergencyContact != null && !changes.EmergencyContact.Equals(patient.emergencyContact))
-                updatedFields.Add($"Emergency Contact changed to: {changes.EmergencyContact.emergencyContact}");
+                if (changes.EmergencyContact != null && !changes.EmergencyContact.Equals(patient.emergencyContact))
+                    updatedFields.Add($"Emergency Contact changed to: {changes.EmergencyContact.emergencyContact}");
 
-            if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
-                updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
+                if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
+                    updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
 
-            if (changes.MedicalHistory != null && !changes.MedicalHistory.Equals(patient.medicalHistory))
-                updatedFields.Add($"Medical History changed to: {changes.MedicalHistory.medicalHistory}");
+                if (changes.MedicalHistory != null && !changes.MedicalHistory.Equals(patient.medicalHistory))
+                    updatedFields.Add($"Medical History changed to: {changes.MedicalHistory.medicalHistory}");
 
-            string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
+                string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
 
             _logger.Information(logMessage);
         }
@@ -81,8 +81,13 @@ namespace Backend.Domain.Shared
         {
             string logMessage = $"Staff {staff.Id.Value} was edited by Admin ({adminEmail}) on {DateTime.UtcNow}";
 
-            _logger.Information(logMessage);
-        }
-        
+                _logger.Information(logMessage);
+            }
+
+        public void LogDeletionCompleted(User user)
+    {
+        string logMessage = $"Deletion of patient with user id {user.Id} was completed on {DateTime.UtcNow}";
+        _logger.Information(logMessage);
+    }
     }
 }
