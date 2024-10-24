@@ -108,5 +108,27 @@ namespace DDDSample1.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<OperationRequestDTO>> DeleteOperationRequestAsync(Guid id)
+        {
+            try
+            {
+                var operation = await _service.DeleteAsync(new OperationRequestId(id));
+
+                if (operation == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(operation);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }

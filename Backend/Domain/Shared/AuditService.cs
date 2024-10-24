@@ -62,8 +62,8 @@ namespace Backend.Domain.Shared
             if (changes.PhoneNumber != null && !changes.PhoneNumber.Equals(user.phoneNumber))
                 updatedFields.Add($"Phone Number changed to: {changes.PhoneNumber.Number}");
 
-            if (changes.Allergy != null && !changes.Allergy.Equals(patient.allergy))
-                updatedFields.Add($"Allergy changed to: {changes.Allergy.allergy}");
+            if (changes.MedicalHistory != null && !changes.MedicalHistory.Equals(patient.medicalHistory))
+                updatedFields.Add($"Medical History changed to: {changes.MedicalHistory.medicalHistory}");
 
             string logMessage = $"Patient {patient.Id}'s profile was updated by {user.Email.Value} on {DateTime.UtcNow}. Changes: {string.Join(", ", updatedFields)}";
 

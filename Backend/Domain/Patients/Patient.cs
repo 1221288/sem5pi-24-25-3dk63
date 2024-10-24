@@ -11,7 +11,7 @@ namespace DDDSample1.Domain
         public UserId UserId { get; set; }
         public DateOfBirth dateOfBirth { get; private set; }
         public Gender gender { get; private set; }
-        public Allergy allergy { get; private set; }
+        public MedicalHistory medicalHistory { get; private set; }
         public EmergencyContact emergencyContact { get; private set; }
         public List<AppointmentHistory> appointmentHistoryList { get; private set; }
         public int sequentialNumber { get; private set; }
@@ -28,19 +28,19 @@ namespace DDDSample1.Domain
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergy = new Allergy("");
+            this.medicalHistory = new MedicalHistory("");
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
             this.sequentialNumber = sequentialNumber;
         }
 
-        public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
+        public Patient(DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, MedicalHistory medicalHistory, int sequentialNumber)
         {
             this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergy = allergy;
+            this.medicalHistory = medicalHistory;
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
             this.sequentialNumber = sequentialNumber;
@@ -53,20 +53,20 @@ namespace DDDSample1.Domain
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergy = new Allergy("");
+            this.medicalHistory = new MedicalHistory("");
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
             this.sequentialNumber = sequentialNumber;
         }
 
-        public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, Allergy allergy, int sequentialNumber)
+        public Patient(UserId userId, DateOfBirth dateOfBirth, Gender gender, EmergencyContact emergencyContact, MedicalHistory medicalHistory, int sequentialNumber)
         {
             this.Id = new MedicalRecordNumber(MedicalRecordNumber.GenerateNewRecordNumber(dateOfBirth.date, sequentialNumber));
             this.UserId = userId;
             this.Active = false;
             this.dateOfBirth = dateOfBirth;
             this.gender = gender;
-            this.allergy = allergy;
+            this.medicalHistory = medicalHistory;
             this.emergencyContact = emergencyContact;
             this.appointmentHistoryList = new List<AppointmentHistory>();
             this.sequentialNumber = sequentialNumber;
@@ -86,16 +86,16 @@ namespace DDDSample1.Domain
         {
             this.Active = false;
         }
-        public void ChangeAllergy(string allergy)
+        public void ChangeMedicalHistory(string medicalHistory)
         {
-            this.allergy = new Allergy(allergy);
+            this.medicalHistory = new MedicalHistory(medicalHistory);
         }
 
         public void ApplyChanges(PendingChanges pendingChange)
         {
-            if(pendingChange.Allergy != null)
+            if(pendingChange.MedicalHistory != null)
             {
-                this.allergy = pendingChange.Allergy;
+                this.medicalHistory = pendingChange.MedicalHistory;
             }
             
             if(pendingChange.EmergencyContact != null)

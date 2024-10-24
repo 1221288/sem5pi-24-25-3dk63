@@ -54,10 +54,10 @@ namespace DDDSample1.Infrastructure.PendingChange
                        .IsRequired();
             });
 
-            builder.OwnsOne(p => p.Allergy, contact =>
+            builder.OwnsOne(p => p.MedicalHistory, contact =>
             {
-                contact.Property(c => c.allergy)
-                       .HasColumnName("Allergy");
+                contact.Property(c => c.medicalHistory)
+                       .HasColumnName("MedicalHistory");
             });
         }
     }

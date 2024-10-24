@@ -10,6 +10,6 @@ namespace DDDSample1.Domain.PendingChange
         public Email? Email { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
-        public Allergy? Allergy { get; set; }
+        public MedicalHistory? MedicalHistory { get; set; }
     }
 }

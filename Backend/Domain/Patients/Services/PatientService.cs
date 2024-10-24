@@ -60,7 +60,7 @@ namespace DDDSample1.Patients
                 var user = await createUser(registerDto);
 
                 // Register the patient
-                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.allergy, _patientRepository.GetNextSequentialNumberAsync().Result);
+                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.medicalHistory, _patientRepository.GetNextSequentialNumberAsync().Result);
                 patient = await _patientRepository.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
 
@@ -272,7 +272,7 @@ namespace DDDSample1.Patients
                 Email = pendingChangesDto.Email,
                 EmergencyContact = pendingChangesDto.EmergencyContact,
                 PhoneNumber = pendingChangesDto.PhoneNumber,
-                Allergy = pendingChangesDto.Allergy,
+                MedicalHistory = pendingChangesDto.MedicalHistory,
             };
 
             await _pendingChangesRepository.AddPendingChangesAsync(pendingChanges);

@@ -39,10 +39,10 @@ namespace DDDSample1.Infraestructure.Patients
             });
 
             // Configure Allergies as an owned collection
-            builder.OwnsOne(p => p.allergy, contact =>
+            builder.OwnsOne(p => p.medicalHistory, contact =>
             {
-                contact.Property(c => c.allergy)
-                       .HasColumnName("Allergy");
+                contact.Property(c => c.medicalHistory)
+                       .HasColumnName("MedicalHistory");
             });
 
             // Similarly, configure AppointmentHistory if it's also a value object

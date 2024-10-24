@@ -11,7 +11,7 @@ namespace DDDSample1.Domain.PendingChange
         public Email? Email { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
-        public Allergy? Allergy { get; set; }
+        public MedicalHistory? MedicalHistory { get; set; }
 
         public PendingChanges(UserId userId)
         {
@@ -38,9 +38,9 @@ namespace DDDSample1.Domain.PendingChange
             EmergencyContact = newEmergencyContact;
         }
 
-        public void UpdateAllergy(Allergy newAllergy)
+        public void UpdateMedicalHistory(MedicalHistory newMedicalHistory)
         {
-            Allergy = newAllergy;
+            MedicalHistory = newMedicalHistory;
         }
 
         public void ResetChanges()
@@ -49,7 +49,7 @@ namespace DDDSample1.Domain.PendingChange
             Name = null;
             PhoneNumber = null;
             EmergencyContact = null;
-            Allergy = null;
+            MedicalHistory = null;
         }
     }
 }
