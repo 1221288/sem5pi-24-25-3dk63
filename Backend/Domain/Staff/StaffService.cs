@@ -146,7 +146,7 @@ private readonly AuditService _auditService;
         {
             var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(newValue.ToString()));
             if (specialization == null){
-                throw new ArgumentException($"Specialization '{newValue.ToString()}' not found.");}
+                throw new BusinessRuleValidationException($"Specialization '{newValue.ToString()}' not found.");}
                 else{
                     typeof(Staff).GetProperty("SpecializationId")?.SetValue(staff, specialization.Id);
                 }
