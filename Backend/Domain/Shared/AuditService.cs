@@ -70,8 +70,6 @@ namespace Backend.Domain.Shared
         _logger.Information(logMessage);
     }
         
-            _logger.Information(logMessage);
-        }
 
         public void LogEditStaff(DDDSample1.Domain.Staff.Staff staff, string adminEmail)
         {

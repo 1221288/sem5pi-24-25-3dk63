@@ -179,6 +179,7 @@ private readonly AuditService _auditService;
     }
 
     return staff;
+    
 }
 
       private bool CheckIfExistsOnUser(string propertyName)
