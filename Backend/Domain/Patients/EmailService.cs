@@ -3,6 +3,7 @@ using System.Net.Mail;
 using System.Reflection;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staff;
 using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain
@@ -14,7 +15,7 @@ namespace DDDSample1.Domain
             // Compose the email content
             var confirmationLink = $"https://localhost:5001/api/Registrations/confirm-email?token={token}";
             var subject = "Confirm your registration";
-            var body = $"Please click on the following link to confirm your registration: {confirmationLink}";
+            var body = $"Please click on the following link to confirm your registration: <a href=\"{confirmationLink}\">Confirm Registration</a>";
 
             // Code to send the email (using SMTP or other email service)
             await SendEmailAsync(email, subject, body);
@@ -43,6 +44,27 @@ namespace DDDSample1.Domain
             await SendEmailAsync(dto.Email.ToString(), subject, body);
         }
 
+public async Task SendStaffNotificationEmailAsync(List<string> changedProperties, StaffUpdateDTO dto)
+{
+    var subject = "Staff Profile Updated";
+    var body = "<p>Your profile has been updated with changes to sensitive data. Please review the changes below:</p>";
+    
+    body += "<p>Updated Attributes:</p><ul>";
+
+    // Adicionar cada mudança formatada da lista 'changedProperties'
+    foreach (string change in changedProperties)
+    {
+        body += $"<li>{change}</li>";
+    }
+
+    body += "</ul>";
+
+    // Envia o e-mail
+    await SendEmailAsync(dto.Email.ToString(), subject, body);
+}
+
+
+
         public async Task SendUpdateEmail(string email, string token)
         {
             var confirmationLink = $"https://localhost:5001/api/Patients/confirm-update?token={token}";
@@ -51,6 +73,7 @@ namespace DDDSample1.Domain
 
             await SendEmailAsync(email, subject, body);
         }
+
 
         private async Task SendEmailAsync(string email, string subject, string body)
         {
@@ -80,5 +103,6 @@ namespace DDDSample1.Domain
                 throw;
             }
         }
+
     }
 }

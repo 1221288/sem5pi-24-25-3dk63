@@ -47,6 +47,8 @@ using Serilog;
 using Backend.Domain.Shared;
 using DDDSample1.Domain.PendingChange;
 using DDDSample1.Infrastructure.PendingChange;
+using System.Text;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace DDDSample1
 {
@@ -67,6 +69,8 @@ namespace DDDSample1
           .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
           .CreateLogger();
 
+
+            services.AddDataProtection();
 
             services.AddDbContext<DDDSample1DbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MySqlConnection"),
@@ -97,8 +101,23 @@ namespace DDDSample1
 
                         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                         context.Fail("Este email não está registrado no sistema.");
+
+
+                        // Encrypt the email using Data Protection
+                        var dataProtectionProvider = context.HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>();
+                        var protector = dataProtectionProvider.CreateProtector("CustomCookieProtector");
+                        var encryptedEmail = protector.Protect(email);
+
+                        // Create cookie
+                        context.HttpContext.Response.Cookies.Append(".AspNetCore.Cookies", encryptedEmail, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+                        });
+
                         context.Response.StatusCode = 302;
-                        context.Response.Headers["Location"] = "/api/self-register";
+                        context.Response.Headers["Location"] = "/api/Registrations/self-register";
                         await context.Response.CompleteAsync();
 
                         return;

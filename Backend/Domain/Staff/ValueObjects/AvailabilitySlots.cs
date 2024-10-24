@@ -43,5 +43,6 @@ namespace Backend.Domain.Staff.ValueObjects
             Start = start;
             End = end;
         }
+
     }
 }

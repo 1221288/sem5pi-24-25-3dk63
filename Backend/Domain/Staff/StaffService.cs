@@ -9,6 +9,8 @@ using Backend.Domain.Specialization.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Infrastructure;
 using Backend.Domain.Shared;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace DDDSample1.Domain.Staff
 {
@@ -16,16 +18,21 @@ namespace DDDSample1.Domain.Staff
     {
         private readonly UserService _userService;
         private readonly IStaffRepository _staffRepository;
+        private readonly EmailService _emailService;
         private readonly IUserRepository _userRepository;
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly List<string> _sensitiveAttributes = new List<string> { "Email", "emergencyContact"};
+        private readonly List<string> _sensitiveAttributesStaff = new List<string> { "Email", "PhoneNumber"};
+
 
 private readonly AuditService _auditService;
         private readonly DDDSample1DbContext _context;
 
-        public StaffService(UserService userService, IStaffRepository staffRepository, IUserRepository userRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService, DDDSample1DbContext context)
+        public StaffService(UserService userService,EmailService emailService ,IStaffRepository staffRepository, IUserRepository userRepository, ISpecializationRepository specializationRepository, IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService, DDDSample1DbContext context)
         {
+            _emailService = emailService;
             _userService = userService;
             _staffRepository = staffRepository;
             _userRepository = userRepository;
@@ -92,22 +99,106 @@ private readonly AuditService _auditService;
             }
         }
 
-        public async Task<StaffDTO?> UpdateAsync(StaffDTO dto)
+        public async Task<bool?> UpdateAsync(StaffUpdateDTO updateDto, string adminEmail, string licenseNumber)
         {
-            var licenseNumber = new LicenseNumber(dto.LicenseNumber.ToString());
-            var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
+            var staff = await _staffRepository.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
+            var userStaff = await _userRepository.GetByIdAsync(staff.UserId);
             if (staff == null) return null;
+            
+             // Atualizar informações do staff
+            await UpdateStaffInfo(staff, userStaff, updateDto);
+             // Logar alterações METER ADMIN
+            _auditService.LogEditStaff(staff, adminEmail);
 
-            var updatedAvailabilitySlots = new AvailabilitySlots();
-            foreach (var slot in dto.AvailabilitySlots)
+             return true;
+                }
+
+        private async Task<Staff> UpdateStaffInfo(Staff staff, User user, StaffUpdateDTO updateDto)
+{
+    if (user == null) throw new ArgumentNullException(nameof(user), "User cannot be null");
+
+    if (staff == null) throw new ArgumentNullException(nameof(staff), "Staff cannot be null");
+
+    bool userSensitiveDataChanged = false;
+
+    // Obter propriedades do DTO
+    PropertyInfo[] properties = typeof(StaffUpdateDTO).GetProperties();
+
+    //criar lista para armaazenar propriedades alteradas e as mudanças tipo: email de "a" para "b"
+    List<string> changedProperties = new List<string>();
+
+    foreach (PropertyInfo property in properties)
+    {
+        //ignorr caso tentem alterar o id
+        if (property.PropertyType == typeof(LicenseNumber)) continue;
+
+        var newValue = property.GetValue(updateDto, null);
+
+
+        var atualValue = new object();
+
+        if(user.GetType().GetProperty(property.Name) != null)
+        {
+            atualValue = user.GetType().GetProperty(property.Name)?.GetValue(user, null);
+        }
+        else atualValue = staff.GetType().GetProperty(property.Name)?.GetValue(staff, null);
+        
+
+        if (newValue != null && !newValue.Equals(atualValue))
+        {
+            // Verificar se a propriedade existe na entidade User
+            if (CheckIfExistsOnUser(property.Name))
             {
-                updatedAvailabilitySlots.AddSlot(slot.Start, slot.End);
+                // Atualizar valor na entidade User
+                typeof(User).GetProperty(property.Name)?.SetValue(user, newValue);
+
+                if (_sensitiveAttributesStaff.Contains(property.Name))
+                {
+                    changedProperties.Add($"{property.Name}: Valor alterado: {atualValue} -> Valor atual: {newValue}");
+                    userSensitiveDataChanged = true;
+                }
+            }
+            // Verificar se a propriedade existe na entidade Staff
+            else if (CheckIfExistsOnStaff(property.Name)){
+                // Atualizar valor na entidade Staff
+                typeof(Staff).GetProperty(property.Name)?.SetValue(staff, newValue);
             }
 
-            staff.UpdateAvailabilitySlots(updatedAvailabilitySlots);
-            await _unitOfWork.CommitAsync();
+        }
+    }
 
-            return _mapper.Map<StaffDTO>(staff);
+    // Atualizar entidades no repositório
+    await _userRepository.UpdateUserAsync(user);
+    await _staffRepository.UpdateStaffAsync(staff);
+    await _unitOfWork.CommitAsync();
+
+    // Enviar notificação se dados sensíveis forem alterados
+    if (userSensitiveDataChanged )
+    {
+        await _emailService.SendStaffNotificationEmailAsync(changedProperties, updateDto);
+    }
+
+    return staff;
+    
+}
+
+      private bool CheckIfExistsOnUser(string propertyName)
+        {
+            PropertyInfo userProperty = typeof(User).GetProperty(propertyName);
+            return userProperty != null && userProperty.CanWrite;
+        }
+
+        private bool CheckIfExistsOnStaff(string propertyName)
+        {
+            foreach (PropertyInfo property in typeof(Staff).GetProperties())
+            {
+                Console.WriteLine("Property name EM STAFF: " + property.Name);
+            }
+
+            PropertyInfo staffProperty = typeof(Staff).GetProperty(propertyName);
+            Console.WriteLine("PROCUREI Property name: " + propertyName);
+
+            return staffProperty != null && staffProperty.CanWrite;
         }
 
         public async Task<StaffDTO?> DeleteAsync(LicenseNumber licenseNumber)
@@ -163,6 +254,24 @@ private readonly AuditService _auditService;
             _auditService.LogDeactivateStaff(staff, adminEmail);
 
             staff.Deactivate();
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.Map<StaffDTO>(staff);
+        }
+
+        public async Task<StaffDTO?> EditAsync(StaffDTO dto)
+        {
+            var licenseNumber = new LicenseNumber(dto.LicenseNumber.ToString());
+            var staff = await _staffRepository.GetByLicenseNumberAsync(licenseNumber);
+            if (staff == null) return null;
+
+            var updatedAvailabilitySlots = new AvailabilitySlots();
+            foreach (var slot in dto.AvailabilitySlots)
+            {
+                updatedAvailabilitySlots.AddSlot(slot.Start, slot.End);
+            }
+
+            staff.UpdateAvailabilitySlots(updatedAvailabilitySlots);
             await _unitOfWork.CommitAsync();
 
             return _mapper.Map<StaffDTO>(staff);

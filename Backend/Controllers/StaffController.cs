@@ -55,18 +55,15 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpPut("{licenseNumber}")]
-        public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffDTO dto)
+        //https://localhost:5001/api/Staff/update/N200012345
+        [HttpPatch("update/{licenseNumber}")]
+        [Authorize(Roles="Admin")]
+        public async Task<ActionResult<StaffDTO>> UpdateStaff(string licenseNumber, StaffUpdateDTO dto)
         {
-            if (licenseNumber != dto.LicenseNumber.ToString())
-            {
-                return BadRequest("License number mismatch.");
-            }
-
             try
             {
-                var updatedStaff = await _staffService.UpdateAsync(dto);
-
+                var adminEmail = User.FindFirstValue(ClaimTypes.Email);
+                var updatedStaff = await _staffService.UpdateAsync(dto, adminEmail, licenseNumber);
                 if (updatedStaff == null)
                 {
                     return NotFound();
@@ -108,8 +105,9 @@ namespace DDDSample1.Controllers
             return Ok(staffList);
         }
 
+        //https://localhost:5001/api/Staff/deactivate/N200012345
         [Authorize(Roles = "Admin")]
-        [HttpPatch("{licenseNumber}")]
+        [HttpPatch("deactivate/{licenseNumber}")]
         public async Task<ActionResult<StaffDTO>> DeactivateAsync(string licenseNumber)
         {
             try
