@@ -34,11 +34,11 @@ namespace DDDSample1.Infraestructure.Patients
             builder.OwnsOne(p => p.emergencyContact, contact =>
             {
                 contact.Property(c => c.emergencyContact)
-                       .HasColumnName("EmergencyContactName")
+                       .HasColumnName("EmergencyContactInfo")
                        .IsRequired();
             });
 
-            // Configure Allergies as an owned collection
+        // Configure Allergies as an owned collection
             builder.OwnsOne(p => p.medicalHistory, contact =>
             {
                 contact.Property(c => c.medicalHistory)
