@@ -58,9 +58,10 @@ namespace DDDSample1.Patients
             {
                 //Register the initial user
                 var user = await createUser(registerDto);
+                
 
                 // Register the patient
-                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, registerDto.medicalHistory, _patientRepository.GetNextSequentialNumberAsync().Result);
+                var patient = new Patient(user.Id, registerDto.dateOfBirth, registerDto.gender, registerDto.emergencyContact, _patientRepository.GetNextSequentialNumberAsync().Result);
                 patient = await _patientRepository.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
 

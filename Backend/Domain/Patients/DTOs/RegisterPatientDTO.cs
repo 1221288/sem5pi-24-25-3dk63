@@ -8,7 +8,6 @@ namespace DDDSample1.Domain.Patients
         public Guid MedicalRecordNumber { get; set; }
         public DateOfBirth dateOfBirth { get; set; }
         public Gender gender { get; set; }
-        public MedicalHistory medicalHistory { get; set; }
         public EmergencyContact emergencyContact { get; set; }
         public List<AppointmentHistory> appointmentHistoryList { get; set; }
         public Email personalEmail { get; set; }

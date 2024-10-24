@@ -72,6 +72,7 @@ namespace DDDSample1.Domain
             this.sequentialNumber = sequentialNumber;
         }
 
+
         public void AddAppointment(AppointmentHistory appointment)
         {
             appointmentHistoryList.Add(appointment);
