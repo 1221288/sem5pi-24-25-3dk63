@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using Backend.Domain.Specialization.ValueObjects;
 using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.Staff;
 
 namespace DDDSample1.Domain.Specialization
 {
@@ -7,6 +9,7 @@ namespace DDDSample1.Domain.Specialization
     {
         Task<Specialization> FindByIdAsync(SpecializationId specializationId);
         Task<int> GetNextSequentialNumberAsync();
-        Task<Specialization?> GetByDescriptionAsync(Description description);
+        Task<Specialization> GetByDescriptionAsync(Description description);
+
     }
 }

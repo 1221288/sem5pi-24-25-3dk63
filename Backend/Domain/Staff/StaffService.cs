@@ -253,6 +253,71 @@ private readonly AuditService _auditService;
             return _mapper.Map<List<StaffDTO>>(paginatedStaff);
         }
 
+public async Task<StaffDTO?> DeactivateStaffAsync(String adminEmail,string? name = null, string? licenseNumber = null, string? phoneNumber = null, string? userId = null, string? specialization = null)
+        {
+            var query = from staff in _staffRepository.GetQueryable()
+                        join user in _userRepository.GetQueryable() on staff.UserId equals user.Id
+                        select new { staff, user };
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.user.Name.FirstName.Contains(name) || s.user.Name.LastName.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                string phoneNumber2 = "+" + phoneNumber;
+
+                query = query.Where(s => s.user.PhoneNumber.Number == phoneNumber2);
+            }
+
+            var results = await query.ToListAsync();
+
+
+            if (!string.IsNullOrEmpty(licenseNumber))
+            {
+                var license = await _staffRepository.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
+
+                if (license != null)
+                {
+                    results = results.Where(s => s.staff.Id == license.Id).ToList();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var user = await _userRepository.GetByIdAsync(new UserId(Guid.Parse(userId)));
+
+                if (user != null)
+                {
+                    results = results.Where(s => s.user.Id == user.Id).ToList();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(specialization))
+            {
+                var spec = await _specializationRepository.GetByDescriptionAsync(new Description(specialization));
+
+                if (spec != null)
+                {
+                    results = results.Where(s => s.staff.SpecializationId == spec.Id).ToList();
+                }
+            }
+
+    // Depois de obter os resultados, podemos aplicar qualquer lógica adicional, se necessário
+    var staffResult = results.FirstOrDefault();
+
+
+    if (staffResult == null) return null;
+
+    // Log e desativação
+    _auditService.LogDeactivateStaff(staffResult.staff, adminEmail);
+    staffResult.staff.Deactivate();
+    await _unitOfWork.CommitAsync();
+
+    return _mapper.Map<StaffDTO>(staffResult.staff);
+}
+
 
         public async Task<StaffDTO?> DeactivateAsync(LicenseNumber licenseNumber, string adminEmail)
         {
@@ -266,6 +331,8 @@ private readonly AuditService _auditService;
 
             return _mapper.Map<StaffDTO>(staff);
         }
+
+
 
         public async Task<StaffDTO?> EditAsync(StaffDTO dto)
         {
