@@ -7,10 +7,9 @@ namespace DDDSample1.Domain.Staff
 {
     public class StaffUpdateDTO
     {
-        public LicenseNumber Id { get; set; }
-        public string SpecializationDescription { get; set; }
+        public LicenseNumber? Id { get; set; }
+        public string? SpecializationDescription { get; set; }
         public Email? Email { get; set; }
-        public Name? Name { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
         public AvailabilitySlot? AvailabilitySlots { get; set; }      
     }

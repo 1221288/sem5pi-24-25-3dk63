@@ -133,8 +133,6 @@ private readonly AuditService _auditService;
         if (property.PropertyType == typeof(LicenseNumber)) continue;
 
         var newValue = property.GetValue(updateDto, null);
-
-
         var atualValue = new object();
 
         if(user.GetType().GetProperty(property.Name) != null)
@@ -143,6 +141,17 @@ private readonly AuditService _auditService;
         }
         else atualValue = staff.GetType().GetProperty(property.Name)?.GetValue(staff, null);
 
+
+        if(property.Name == "SpecializationDescription")
+        {
+            var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(newValue.ToString()));
+            if (specialization == null){
+                throw new BusinessRuleValidationException($"Specialization '{newValue.ToString()}' not found.");}
+                else{
+                    typeof(Staff).GetProperty("SpecializationId")?.SetValue(staff, specialization.Id);
+                }
+                continue;
+        }
 
         if (newValue != null && !newValue.Equals(atualValue))
         {
@@ -179,6 +188,7 @@ private readonly AuditService _auditService;
     return staff;
 
 }
+    
 
       private bool CheckIfExistsOnUser(string propertyName)
         {
