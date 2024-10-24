@@ -42,6 +42,13 @@ namespace Backend.Domain.Shared
 
             _logger.Information(logMessage);
         }
+
+        public void LogEditStaff(DDDSample1.Domain.Staff.Staff staff, string adminEmail)
+        {
+            string logMessage = $"Staff {staff.Id.Value} was edited by Admin ({adminEmail}) on {DateTime.UtcNow}";
+
+            _logger.Information(logMessage);
+        }
         
     }
 }

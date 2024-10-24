@@ -63,5 +63,11 @@ namespace DDDSample1.Infrastructure.Staffs
         {
             return await _context.Staffs.ToListAsync();
         }
+
+        public async Task UpdateStaffAsync(Staff staff)
+        {
+            _context.Staffs.Update(staff);
+            await _context.SaveChangesAsync();
+        }
     }
 }

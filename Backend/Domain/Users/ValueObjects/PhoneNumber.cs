@@ -40,5 +40,10 @@ namespace Backend.Domain.Users.ValueObjects
         {
             yield return Number;
         }
+
+        public override string ToString()
+        {
+            return Number;
+        }
     }
 }

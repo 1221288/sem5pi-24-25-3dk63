@@ -10,5 +10,6 @@ namespace DDDSample1.Domain.Staff
         Task<List<Staff>> SearchStaffAsync(string? name, string? email, string? specialization, int page, int pageSize);
         IQueryable<Staff> GetQueryable();
         Task<List<Staff>> GetAllAsync();
+        Task UpdateStaffAsync(Staff staff);
     }
 }

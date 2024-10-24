@@ -3,6 +3,7 @@ using System.Net.Mail;
 using System.Reflection;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staff;
 using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain
@@ -43,6 +44,27 @@ namespace DDDSample1.Domain
             await SendEmailAsync(dto.Email.ToString(), subject, body);
         }
 
+public async Task SendStaffNotificationEmailAsync(List<string> changedProperties, StaffUpdateDTO dto)
+{
+    var subject = "Staff Profile Updated";
+    var body = "<p>Your profile has been updated with changes to sensitive data. Please review the changes below:</p>";
+    
+    body += "<p>Updated Attributes:</p><ul>";
+
+    // Adicionar cada mudança formatada da lista 'changedProperties'
+    foreach (string change in changedProperties)
+    {
+        body += $"<li>{change}</li>";
+    }
+
+    body += "</ul>";
+
+    // Envia o e-mail
+    await SendEmailAsync(dto.Email.ToString(), subject, body);
+}
+
+
+
         private async Task SendEmailAsync(string email, string subject, string body)
         {
             try
@@ -71,5 +93,6 @@ namespace DDDSample1.Domain
                 throw;
             }
         }
+
     }
 }
