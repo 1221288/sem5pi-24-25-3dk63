@@ -99,10 +99,10 @@ namespace DDDSample1.Patients
             }
 
             // Update patient profile
-            await UpdatePatientInfo(patient, userPatient, updateDto);
+            patient = await UpdatePatientInfo(patient, userPatient, updateDto);
 
             // Log changes
-            _logger.LogInformation($"Patient profile updated: {updateDto.Id}");
+            // _auditService.LogEditPatientProfile(patient, userPatient, updateDto);
 
             return true;
         }

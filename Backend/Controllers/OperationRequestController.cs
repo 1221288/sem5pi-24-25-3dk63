@@ -16,9 +16,10 @@ namespace DDDSample1.Controllers
         private readonly OperationRequestService _service;
         private readonly OperationTypeService _2service;
 
-        public OperationRequestController(OperationRequestService service)
+        public OperationRequestController(OperationRequestService service, OperationTypeService service2)
         {
             _service = service;
+            _2service = service2;
         }
 
         // GET: api/OperationRequest
@@ -42,21 +43,21 @@ namespace DDDSample1.Controllers
             return user;
         }
 
-        // POST: api/OperationRequest
+         // POST: api/OperationRequest
         [HttpPost]
         //[Authorize(Roles="Doctor")]
         public async Task<ActionResult<OperationRequestDTO>> Create(CreatingOperationRequestDTO dto)
         {
-            var user = await _service.AddAsync(dto);
+            var operationType = await _2service.GetByIdAsync(dto.OperationTypeId);
 
-            var operationType = await _2service.GetByIdAsync(new OperationTypeId(dto.OperationTypeId.AsGuid()));
-
-            if (operationType.Active == false)
+            if (!operationType.Active)
             {
                 return BadRequest(new { Message = "This operation type is currently inactive" });
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            var operationRequest = await _service.AddAsync(dto);
+
+            return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
         }
 
         // PUT: api/OperationRequest/5

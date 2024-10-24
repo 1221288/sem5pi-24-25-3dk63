@@ -15,7 +15,7 @@ namespace DDDSample1.Domain
             // Compose the email content
             var confirmationLink = $"https://localhost:5001/api/Registrations/confirm-email?token={token}";
             var subject = "Confirm your registration";
-            var body = $"Please click on the following link to confirm your registration: {confirmationLink}";
+            var body = $"Please click on the following link to confirm your registration: <a href=\"{confirmationLink}\">Confirm Registration</a>";
 
             // Code to send the email (using SMTP or other email service)
             await SendEmailAsync(email, subject, body);
