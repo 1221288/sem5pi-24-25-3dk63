@@ -32,6 +32,19 @@ namespace DDDSample1.Controllers
             _userService = userService;
             _auditService = auditService;
         }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<SearchPatientDTO>>> SearchPatientAsync([FromQuery] string? name = null, [FromQuery] string? email = null, [FromQuery] string? dateOfBirth = null, [FromQuery] string? medicalRecordNumber = null)
+        {
+            var patientList = await _service.SearchPatientAsync(name, email, dateOfBirth, medicalRecordNumber);
+            
+            if (patientList == null || patientList.Count == 0)
+            {
+                return NotFound("No patients found.");
+            }
+            
+            return Ok(patientList);
+        }
         
         // GET: api/Patients/5
         [HttpGet("{id}")]

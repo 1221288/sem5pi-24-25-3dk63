@@ -78,5 +78,10 @@ namespace DDDSample1.Infrastructure.Patients
             return await _context.Patients.FirstOrDefaultAsync(p => p.UserId == id);
         }
 
+        public IQueryable<Patient> GetQueryable()
+        {
+            return _context.Patients.AsQueryable();
+        }
+
     }
 }

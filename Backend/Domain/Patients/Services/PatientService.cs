@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using Backend.Domain.Users.ValueObjects;
 using Backend.Domain.Shared;
 using DDDSample1.Domain.PendingChange;
+using Microsoft.EntityFrameworkCore;
 
 namespace DDDSample1.Patients
 {
@@ -298,6 +299,60 @@ namespace DDDSample1.Patients
             }
             await _pendingChangesRepository.RemovePendingChangesAsync(userId);
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<List<SearchPatientDTO>> SearchPatientAsync(string? name = null, string? email = null, string? dateOfBirth = null, string? medicalRecordNumber = null)
+        {
+            var query = from patient in _patientRepository.GetQueryable()
+                        join user in _userRepository.GetQueryable() on patient.UserId equals user.Id
+                        select new { patient, user };
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                // Check if the name contains an underscore and split it
+                var nameParts = name.Split('_', StringSplitOptions.RemoveEmptyEntries);
+
+                // Verify that we have two parts for first and last name
+                if (nameParts.Length == 2)
+                {
+                    // Trim spaces from both parts
+                    var firstName = nameParts[0].Trim();
+                    var lastName = nameParts[1].Trim();
+
+                    query = query.Where(p => 
+                        p.user.Name.FirstName.Contains(firstName) && 
+                        p.user.Name.LastName.Contains(lastName));
+                }
+                else
+                {
+                    throw new ArgumentException("Name must be in the format <firstName>_<lastName>.");
+                }
+            }
+
+            var results = await query.ToListAsync();
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                results = results.Where(p => p.user.Email.Value == email).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(dateOfBirth))
+            {
+                results = results.Where(p => p.patient.dateOfBirth.date.Equals(DateTime.Parse(dateOfBirth))).ToList();
+
+            }
+
+            if (!string.IsNullOrEmpty(medicalRecordNumber))
+            {
+                results = results.Where(p => p.patient.Id.Value == medicalRecordNumber).ToList();
+            }
+
+            return results.Select(p => new SearchPatientDTO
+            {
+                Name = p.user.Name,
+                Email = p.user.Email,
+                dateOfBirth = p.patient.dateOfBirth,
+            }).ToList();
         }
 
     }

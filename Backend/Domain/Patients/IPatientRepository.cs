@@ -15,5 +15,6 @@ namespace DDDSample1.Domain.Patients
         Task<Patient?> GetPatientByPersonalEmailAsync(Email personalEmail);
         void Remove(Patient patient);
         Task<Patient> FindByUserIdAsync(UserId id);
+        IQueryable<Patient> GetQueryable();
     }
 }
