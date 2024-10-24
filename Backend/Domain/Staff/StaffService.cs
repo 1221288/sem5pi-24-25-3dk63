@@ -104,7 +104,7 @@ private readonly AuditService _auditService;
             var staff = await _staffRepository.GetByLicenseNumberAsync(new LicenseNumber(licenseNumber));
             var userStaff = await _userRepository.GetByIdAsync(staff.UserId);
             if (staff == null) return null;
-            
+
              // Atualizar informações do staff
             await UpdateStaffInfo(staff, userStaff, updateDto);
              // Logar alterações METER ADMIN
@@ -142,11 +142,10 @@ private readonly AuditService _auditService;
             atualValue = user.GetType().GetProperty(property.Name)?.GetValue(user, null);
         }
         else atualValue = staff.GetType().GetProperty(property.Name)?.GetValue(staff, null);
-        
+
 
         if (newValue != null && !newValue.Equals(atualValue))
         {
-            // Verificar se a propriedade existe na entidade User
             if (CheckIfExistsOnUser(property.Name))
             {
                 // Atualizar valor na entidade User
@@ -158,7 +157,6 @@ private readonly AuditService _auditService;
                     userSensitiveDataChanged = true;
                 }
             }
-            // Verificar se a propriedade existe na entidade Staff
             else if (CheckIfExistsOnStaff(property.Name)){
                 // Atualizar valor na entidade Staff
                 typeof(Staff).GetProperty(property.Name)?.SetValue(staff, newValue);
@@ -179,7 +177,7 @@ private readonly AuditService _auditService;
     }
 
     return staff;
-    
+
 }
 
       private bool CheckIfExistsOnUser(string propertyName)

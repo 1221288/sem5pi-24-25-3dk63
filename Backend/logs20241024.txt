@@ -34,3 +34,4 @@
 2024-10-24 15:19:25.708 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 14:19:25
 2024-10-24 15:19:35.938 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 14:19:35
 2024-10-24 15:19:46.502 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 14:19:46
+2024-10-24 17:14:53.433 +01:00 [INF] Login falhou: email não encontrado.
