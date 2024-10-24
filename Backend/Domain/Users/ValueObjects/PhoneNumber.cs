@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
 namespace Backend.Domain.Users.ValueObjects
@@ -19,8 +20,14 @@ namespace Backend.Domain.Users.ValueObjects
 
         private bool IsValidPhoneNumber(string number)
         {
-            return number.StartsWith("+") && number.Length > 9 && number.Length <= 15;
+            // Verificar se começa com '+' e se o resto contém apenas dígitos
+            if (!number.StartsWith("+") || number.Length < 10 || number.Length > 15)
+                return false;
+
+            // Verificar se os caracteres depois do '+' são todos dígitos
+            return long.TryParse(number.Substring(1), out _);
         }
+
 
         public override bool Equals(object obj)
         {
