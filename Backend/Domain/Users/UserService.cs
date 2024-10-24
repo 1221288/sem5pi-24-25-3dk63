@@ -74,6 +74,7 @@ namespace DDDSample1.Users
             user.ChangeUsername(dto.Username);
             user.ChangeEmail(dto.Email);
             user.ChangeName(dto.Name);
+            user.ChangeConfirmationToken(dto.ConfirmationToken);
 
             await this._unitOfWork.CommitAsync();
 
@@ -110,6 +111,12 @@ namespace DDDSample1.Users
         public async Task<UserDTO> FindByEmailAsync(string email)
         {
             var user = await this._userRepository.FindByEmailAsync(new Email(email));
+            return user == null ? null : _mapper.Map<UserDTO>(user);
+        }
+
+        public async Task<UserDTO> FindByConfirmationTokenAsync(string token)
+        {
+            var user = await this._userRepository.GetUserByConfirmationTokenAsync(token);
             return user == null ? null : _mapper.Map<UserDTO>(user);
         }
     }

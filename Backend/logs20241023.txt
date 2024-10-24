@@ -22,3 +22,8 @@
 2024-10-23 22:03:18.624 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 23/10/2024 21:03:18
 2024-10-23 22:04:33.583 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 23/10/2024 21:04:33
 2024-10-23 22:07:16.387 +01:00 [INF] Staff D200012348 was edited by Admin (lapr3dkg69sup@gmail.com) on 23/10/2024 21:07:16
+2024-10-23 23:28:33.403 +01:00 [INF] Patient 199005000001's profile was updated by rodrigomartinsbotelho@gmail.com on 23/10/2024 22:28:33. Changes: Name changed to: AAAAA EEL MUDOU, Email changed to: testing@mudoucerto.com, Emergency Contact changed to: It changed Doe, Phone Number changed to: +1234567894, Allergy changed to: MORANGOS
+2024-10-23 23:47:12.636 +01:00 [INF] Patient 199005000001's profile was updated by testing@mudoucerto.com on 23/10/2024 22:47:12. Changes: Email changed to: testing@mudoucerto.com, Emergency Contact changed to: It changed Doe, Phone Number changed to: +1234567854, Allergy changed to: MORANGOS
+2024-10-23 23:50:53.060 +01:00 [INF] Patient 199005000001's profile was updated by testing@mudoucerto.com on 23/10/2024 22:50:53. Changes: 
+2024-10-23 23:51:14.613 +01:00 [INF] Patient 199005000001's profile was updated by testing@mudoucerto.com on 23/10/2024 22:51:14. Changes: Phone Number changed to: +1234567844
+2024-10-23 23:51:52.852 +01:00 [INF] Patient 199005000001's profile was updated by testing@mudoucerto.com on 23/10/2024 22:51:52. Changes: 

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using Backend.Domain.Users.ValueObjects;
 using Backend.Domain.Shared;
+using DDDSample1.Domain.PendingChange;
 
 namespace DDDSample1.Patients
 {
@@ -15,6 +16,7 @@ namespace DDDSample1.Patients
     {
         private readonly IPatientRepository _patientRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IPendingChangesRepository _pendingChangesRepository;
         private readonly EmailService _emailService;
         private readonly AuditService _auditService;
         private readonly IUnitOfWork _unitOfWork;
@@ -24,12 +26,13 @@ namespace DDDSample1.Patients
         private readonly IMapper _mapper;
         private readonly List<string> _sensitiveAttributes = new List<string> { "Email", "emergencyContact"};
 
-        public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, EmailService emailService,
+        public PatientService(IPatientRepository patientRepository, IUserRepository userRepository, IPendingChangesRepository pendingChangesRepository, EmailService emailService,
                                 IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PatientService> logger,
                                 IUnitOfWork unitOfWork, IMapper mapper, AuditService auditService)
         {
             _patientRepository = patientRepository;
             _userRepository = userRepository;
+            _pendingChangesRepository = pendingChangesRepository;
             _emailService = emailService;
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
@@ -44,6 +47,8 @@ namespace DDDSample1.Patients
             var patient = await this._patientRepository.GetByIdAsync(id);
             return patient == null ? null : _mapper.Map<PatientDTO>(patient);
         }
+
+        
 
         public async Task<PatientDTO> RegisterPatientAsync(RegisterPatientDTO registerDto)
         {
@@ -158,6 +163,63 @@ namespace DDDSample1.Patients
 
             return patient;
         }
+        public async Task ConfirmUpdateAsync(string token)
+        {
+            var user = await _userRepository.GetUserByConfirmationTokenAsync(token);
+            if (user == null)
+            {
+                throw new Exception("Invalid or expired confirmation token.");
+            }
+
+            var patient = await _patientRepository.FindByUserIdAsync(user.Id);
+            if (patient == null)
+            {
+                throw new Exception("Patient not found.");
+            }
+
+            try
+            {
+                var pendingChange = await _pendingChangesRepository.GetPendingChangesByUserIdAsync(user.Id);
+                var pendingChangeDto = _mapper.Map<PendingChangesDTO>(pendingChange);
+                var patientDto = _mapper.Map<PatientDTO>(patient);
+                var userDto = _mapper.Map<UserDTO>(user);
+                _auditService.LogProfileUpdate(patientDto, userDto, pendingChangeDto);
+                await ApplyPendingChangesAsync(new UserId(user.Id.Value));
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Update confirmation failed: {ex.Message}");
+            }
+        }
+        
+            public async Task ApplyPendingChangesAsync(UserId userId)
+        {
+            var pendingChange = await _pendingChangesRepository.GetPendingChangesByUserIdAsync(userId);
+
+            if (pendingChange == null)
+            {
+                throw new Exception("No pending changes found for this user.");
+            }
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            var patient = await _patientRepository.FindByUserIdAsync(userId);
+
+            if (user == null || patient == null)
+            {
+                throw new Exception("User or patient not found.");
+            }
+
+            user.ApplyChanges(pendingChange);
+            patient.ApplyChanges(pendingChange);
+
+            await _userRepository.UpdateUserAsync(user);
+            await _patientRepository.UpdatePatientAsync(patient);
+
+            await _pendingChangesRepository.RemovePendingChangesAsync(userId);
+
+            await _unitOfWork.CommitAsync();
+        }
 
         private bool CheckIfExistsOnUser(string propertyName)
         {
@@ -201,16 +263,42 @@ namespace DDDSample1.Patients
             return _mapper.Map<PatientDTO>(patient);
         }
 
-        public async Task<UserDTO> GetUserByUserIdAsync(UserId userId)
+        public async Task AddPendingChangesAsync(PendingChangesDTO pendingChangesDto, UserId userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            if (user == null)
+            var pendingChanges = new PendingChanges(userId)
             {
-                return null;
-            }
+                Name = pendingChangesDto.Name,
+                Email = pendingChangesDto.Email,
+                EmergencyContact = pendingChangesDto.EmergencyContact,
+                PhoneNumber = pendingChangesDto.PhoneNumber,
+                Allergy = pendingChangesDto.Allergy,
+            };
 
-            return _mapper.Map<UserDTO>(user);
+            await _pendingChangesRepository.AddPendingChangesAsync(pendingChanges);
+            
+            await _unitOfWork.CommitAsync();
         }
+
+        public async Task<PendingChanges> GetPendingChangesByUserIdAsync(UserId userId)
+        {
+            var pendingChanges = await _pendingChangesRepository.GetPendingChangesByUserIdAsync(userId);
+            if (pendingChanges == null)
+            {
+                throw new InvalidOperationException("Pending changes not found for the given user ID.");
+            }
+            return pendingChanges;
+        }
+
+        public async Task RemovePendingChangesAsync(UserId userId)
+        {
+            var pendingChanges = await _pendingChangesRepository.GetPendingChangesByUserIdAsync(userId);
+            if (pendingChanges == null)
+            {
+                return;
+            }
+            await _pendingChangesRepository.RemovePendingChangesAsync(userId);
+            await _unitOfWork.CommitAsync();
+        }
+
     }
 }

@@ -45,6 +45,8 @@ using DDDSample1.Domain;
 using DDDSample1.Infrastructure.Patients;
 using Serilog;
 using Backend.Domain.Shared;
+using DDDSample1.Domain.PendingChange;
+using DDDSample1.Infrastructure.PendingChange;
 
 namespace DDDSample1
 {
@@ -204,6 +206,10 @@ namespace DDDSample1
 
             services.AddTransient<EmailService>();
 
+
+            // Temporary table to save pending changes
+            services.AddTransient<IPendingChangesRepository, PendingChangesRepository>();
+            
             services.AddTransient<AuditService>(provider =>
             {
                 var logger = Log.ForContext<AuditService>();
