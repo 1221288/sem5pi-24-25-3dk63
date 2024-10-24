@@ -189,20 +189,6 @@ private readonly AuditService _auditService;
 
 }
     
-}
-
-        private bool TratarSpecialization(Staff staff, string newValue)
-        {
-            var specialization = await _specializationRepository.GetByDescriptionAsync(new Description(newValue));
-            if (specialization == null)
-            {
-                throw new ArgumentException($"Specialization '{newValue}' not found.");
-            }
-            else
-            {
-                typeof(Staff).GetProperty("SpecializationId")?.SetValue(staff, specialization.Id);
-            }
-        }
 
       private bool CheckIfExistsOnUser(string propertyName)
         {
