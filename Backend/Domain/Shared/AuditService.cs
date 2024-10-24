@@ -70,7 +70,11 @@ namespace Backend.Domain.Shared
             _logger.Information(logMessage);
         }
 
-        // public void LogEditPatientProfile(Patient patient, User user, PatientUpdateDTO dto);
+        public void LogEditPatientProfile(Patient patient, User user, PatientUpdateDTO dto)
+        {
+            string logMessage = $"Patient {patient.Id} profile was edited on {DateTime.UtcNow}";
+            _logger.Information(logMessage);
+        }
         
 
         public void LogEditStaff(DDDSample1.Domain.Staff.Staff staff, string adminEmail)

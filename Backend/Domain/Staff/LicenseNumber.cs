@@ -9,7 +9,7 @@ namespace DDDSample1.Domain.Staff
     {
         private static readonly Regex LicenseNumberPattern = new Regex(@"^[A-Za-z0-9\-]+$", RegexOptions.Compiled);
 
-        public string Number { get; private set; }
+        private readonly string Number;
 
         public LicenseNumber(string value) : base(value)
         {

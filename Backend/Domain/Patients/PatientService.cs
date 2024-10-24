@@ -102,7 +102,7 @@ namespace DDDSample1.Patients
             patient = await UpdatePatientInfo(patient, userPatient, updateDto);
 
             // Log changes
-            // _auditService.LogEditPatientProfile(patient, userPatient, updateDto);
+            _auditService.LogEditPatientProfile(patient, userPatient, updateDto);
 
             return true;
         }
