@@ -58,3 +58,4 @@
 2024-10-24 23:55:09.812 +01:00 [INF] Staff D200012348 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 22:55:09
 2024-10-24 23:55:40.816 +01:00 [INF] Staff D200012348 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 22:55:40
 2024-10-24 23:57:58.131 +01:00 [INF] Staff D200012348 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 22:57:58
+2024-10-24 23:59:03.947 +01:00 [INF] Staff D200012348 was deactivated by Admin (lapr3dkg69sup@gmail.com) on 24/10/2024 22:59:03

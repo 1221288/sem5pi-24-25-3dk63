@@ -1,0 +1,6 @@
+2024-10-25 01:06:11.317 +01:00 [INF] OperationType bcaf1fd0-c0ff-49e5-b8e7-7aebc118cb08 was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:06:11
+2024-10-25 01:20:50.343 +01:00 [INF] OperationType a915fabd-3d26-47db-954d-3e9a9c462dca was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:20:50
+2024-10-25 01:21:29.885 +01:00 [INF] OperationType db522d25-28f6-492a-a9eb-6c9780ec03e6 was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:21:29
+2024-10-25 01:45:06.055 +01:00 [INF] OperationType 87fd4ec3-0fb4-4c6b-ba99-fc024a16bc3f was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:45:06
+2024-10-25 01:46:40.913 +01:00 [INF] OperationType DDDSample1.Domain.OperationsType.OperationName (a5543649-3639-4675-bd0f-e1e416fcfc49) was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:46:40
+2024-10-25 01:47:14.501 +01:00 [INF] OperationType Operaçao0 C (eedebcd1-a98f-4aea-b5d7-de119dcba05e) was created by Admin (lapr3dkg69sup@gmail.com) on 25/10/2024 00:47:14

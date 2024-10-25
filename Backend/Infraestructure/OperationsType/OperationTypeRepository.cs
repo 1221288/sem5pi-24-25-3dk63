@@ -16,10 +16,10 @@ namespace DDDSample1.Infrastructure.OperationsType
             _context = context;
         }
 
-        public async Task<OperationType> GetByNameAsync(Name name)
+        public async Task<OperationType> GetByNameAsync(String name)
 {
     return await _context.OperationsTypes
-        .FirstOrDefaultAsync(o => o.Name.FirstName == name.FirstName && o.Name.LastName == name.LastName);
+        .FirstOrDefaultAsync(o => o.Name.Description == name);
 }
 
     }

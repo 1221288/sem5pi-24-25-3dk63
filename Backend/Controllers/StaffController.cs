@@ -106,7 +106,7 @@ namespace DDDSample1.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPatch("deactivate")]
 public async Task<ActionResult<IEnumerable<StaffDTO>>> DeactivateStaffAsync(
     [FromQuery] string? name = null, 

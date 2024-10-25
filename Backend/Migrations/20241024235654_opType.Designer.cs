@@ -4,6 +4,7 @@ using DDDSample1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    partial class DDDSample1DbContextModelSnapshot : ModelSnapshot
+    [Migration("20241024235654_opType")]
+    partial class opType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,6 +338,28 @@ namespace DDDNetCore.Migrations
 
             modelBuilder.Entity("DDDSample1.Domain.OperationType", b =>
                 {
+                    b.OwnsOne("Backend.Domain.Users.ValueObjects.Name", "Name", b1 =>
+                        {
+                            b1.Property<string>("OperationTypeId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("OperationName");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("OperationTypeId");
+
+                            b1.ToTable("OperationTypes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OperationTypeId");
+                        });
+
                     b.OwnsOne("DDDSample1.Domain.OperationsType.Duration", "Duration", b1 =>
                         {
                             b1.Property<string>("OperationTypeId")
@@ -355,24 +380,6 @@ namespace DDDNetCore.Migrations
                             b1.Property<int>("TotalDuration")
                                 .HasColumnType("int")
                                 .HasColumnName("TotalDuration");
-
-                            b1.HasKey("OperationTypeId");
-
-                            b1.ToTable("OperationTypes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OperationTypeId");
-                        });
-
-                    b.OwnsOne("DDDSample1.Domain.OperationsType.OperationName", "Name", b1 =>
-                        {
-                            b1.Property<string>("OperationTypeId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("Name");
 
                             b1.HasKey("OperationTypeId");
 

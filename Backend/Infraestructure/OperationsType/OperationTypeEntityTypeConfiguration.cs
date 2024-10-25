@@ -1,5 +1,6 @@
 using DDDSample1.Domain;
 using DDDSample1.Domain.OperationsType;
+using DDDSample1.Domain.Specialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,12 +16,8 @@ namespace DDDSample1.Infraestructure.OperationTypes
             // Configura a propriedade Name (associada ao Value Object Name)
             builder.OwnsOne(o => o.Name, name =>
             {
-                name.Property(n => n.FirstName)
-                    .HasColumnName("OperationFirstName")
-                    .IsRequired();
-
-                name.Property(n => n.LastName)
-                    .HasColumnName("OperationLastName")
+                name.Property(n => n.Description)
+                    .HasColumnName("Name")
                     .IsRequired();
             });
 
@@ -44,20 +41,19 @@ namespace DDDSample1.Infraestructure.OperationTypes
                     .IsRequired();
             });  
 
-            // Configura a coleção de RequiredStaff (associada à lista de StaffSpecialization)
-            builder.OwnsMany(o => o.RequiredStaff, staff =>
+            builder.OwnsOne(o => o.RequiredStaff, requiredStaff =>
             {
-                staff.WithOwner().HasForeignKey("OperationTypeId"); // Configura a chave estrangeira
-                staff.Property(s => s.Specialization)
-                    .HasColumnName("Specialization")
-                    .IsRequired();
-
-                staff.Property(s => s.RequiredNumber)
+                requiredStaff.Property(rs => rs.RequiredNumber)
                     .HasColumnName("RequiredNumber")
                     .IsRequired();
-
-                staff.ToTable("RequiredStaffBySpecialization"); // Define a tabela para a coleção
             });
+
+            builder.Property(s => s.SpecializationId)
+                .HasColumnName("SpecializationId")
+                .HasConversion(
+                    specializationId => specializationId.AsString(),
+                    specializationIdString => new SpecializationId(specializationIdString))
+                .IsRequired();
 
             // Configura o campo Active
             builder.Property(o => o.Active)

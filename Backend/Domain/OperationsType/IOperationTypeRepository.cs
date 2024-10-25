@@ -7,7 +7,7 @@ namespace DDDSample1.Domain.OperationsType
 {
     public interface IOperationTypeRepository : IRepository<OperationType, OperationTypeId>
     {
-        Task<OperationType> GetByNameAsync(Name name);
+        Task<OperationType> GetByNameAsync(String name);
 
     }
 }

@@ -34,7 +34,7 @@ namespace Backend.Domain.Shared
 
         public void LogCreateOperationType(OperationType operationType, string adminEmail)
         {
-            string logMessage = $"OperationType {operationType.Id.Value} was created by Admin ({adminEmail}) on {DateTime.UtcNow}";
+            string logMessage = $"OperationType {operationType.Name.Description} ({operationType.Id.Value}) was created by Admin ({adminEmail}) on {DateTime.UtcNow}";
 
             _logger.Information(logMessage);
         }

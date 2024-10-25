@@ -3,6 +3,8 @@ using Backend.Domain.Users.ValueObjects;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.OperationsType;
 using Backend.Domain.Shared;
+using Backend.Domain.Specialization.ValueObjects;
+using DDDSample1.Domain.Specialization;
 
 namespace DDDSample1.OperationsType
 {
@@ -11,14 +13,16 @@ namespace DDDSample1.OperationsType
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _operationTypeRepository;
+        private readonly ISpecializationRepository _specializationRepository;
         private readonly IConfiguration _configuration;
        private readonly AuditService _auditService;
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository operationTypeRepository, IConfiguration configuration, AuditService auditService)
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository operationTypeRepository, IConfiguration configuration, AuditService auditService, ISpecializationRepository specializationRepository)
         {
             _unitOfWork = unitOfWork;
             _operationTypeRepository = operationTypeRepository;
             _configuration = configuration;
             _auditService = auditService;
+            _specializationRepository = specializationRepository;
         }
 
          // Obtém todos os tipos de operações
@@ -30,7 +34,8 @@ namespace DDDSample1.OperationsType
                 Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
+                RequiredStaff = operationType.RequiredStaff,
+                SpecializationId = operationType.SpecializationId
             });
             return listDto;
         }
@@ -49,6 +54,7 @@ namespace DDDSample1.OperationsType
                     Name = operationType.Name,
                     Duration = operationType.Duration,
                     RequiredStaff = operationType.RequiredStaff,
+                    SpecializationId = operationType.SpecializationId,
                     Active = operationType.Active
                 };
 
@@ -62,9 +68,9 @@ namespace DDDSample1.OperationsType
         public async Task<OperationTypeDTO> AddAsync(CreatingOperationTypeDTO dto, string adminEmail)
         {
 
-            var name = new Name(dto.FirstName, dto.LastName);
+            var name = new OperationName(dto.Name);
 
-            var operation =  await this._operationTypeRepository.GetByNameAsync(new Name(dto.FirstName, dto.LastName));
+            var operation =  await this._operationTypeRepository.GetByNameAsync(dto.Name);
 
             if (operation != null)
             {
@@ -73,15 +79,13 @@ namespace DDDSample1.OperationsType
 
             var duration = new Duration(dto.Preparation, dto.Surgery, dto.Cleaning);
 
-            // Construir a lista de StaffSpecialization a partir do DTO
-            var requiredStaff = new List<StaffSpecialization>();
-            foreach (var staff in dto.RequiredStaff)
-            {
-                requiredStaff.Add(new StaffSpecialization(staff.Specialization, staff.RequiredNumber));
-            }
+            var requiredStaff = new RequiredStaff(dto.RequiredStaff);
 
+            var specialization = await this._specializationRepository.GetByDescriptionAsync(new Description(dto.speciality));
 
-            var operationType = new OperationType(name, duration, requiredStaff);
+            if (specialization == null) throw new BusinessRuleValidationException("A especialização não existe.");
+
+            var operationType = new OperationType(name, duration, requiredStaff, specialization.Id);
 
             _auditService.LogCreateOperationType(operationType, adminEmail);
             await this._operationTypeRepository.AddAsync(operationType);
@@ -93,6 +97,7 @@ namespace DDDSample1.OperationsType
                 Name = operationType.Name,
                 Duration = operationType.Duration,
                 RequiredStaff = operationType.RequiredStaff,
+                SpecializationId = operationType.SpecializationId,
                 Active = operationType.Active
             };
         }
@@ -111,7 +116,8 @@ namespace DDDSample1.OperationsType
                 Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
+                RequiredStaff = operationType.RequiredStaff,
+                SpecializationId = operationType.SpecializationId
             };
         }
 
@@ -131,13 +137,14 @@ namespace DDDSample1.OperationsType
                 Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
+                RequiredStaff = operationType.RequiredStaff,
+                SpecializationId = operationType.SpecializationId
             };
 
         }
 
          // Obtém uma operation pelo Nome
-        public async Task<OperationTypeDTO> GetByNameAsync(Name name)
+        public async Task<OperationTypeDTO> GetByNameAsync(String name)
         {
             var operationType = await this._operationTypeRepository.GetByNameAsync(name);
             if (operationType == null) return null;
@@ -147,7 +154,8 @@ namespace DDDSample1.OperationsType
                 Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Duration = operationType.Duration,
-                RequiredStaff = operationType.RequiredStaff
+                RequiredStaff = operationType.RequiredStaff,
+                SpecializationId = operationType.SpecializationId
             };
 
     }
@@ -169,7 +177,8 @@ namespace DDDSample1.OperationsType
             Id = operationType.Id.AsGuid(),
             Name = operationType.Name,
             Duration = operationType.Duration,
-            RequiredStaff = operationType.RequiredStaff
+            RequiredStaff = operationType.RequiredStaff,
+            SpecializationId = operationType.SpecializationId
         };
     }
     }

@@ -44,14 +44,16 @@ namespace DDDSample1.Controllers
         }
 
         // POST: api/OperationType
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDTO>> Create(CreatingOperationTypeDTO dto)
+        public async Task<ActionResult<String>> Create(CreatingOperationTypeDTO dto)
         {
             try
             {
             var adminEmail = User.FindFirstValue(ClaimTypes.Email);
             var operationType = await _service.AddAsync(dto, adminEmail );
-            return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
+
+            return "OperationType created successfully!";
             }
             catch (BusinessRuleValidationException ex)
             {
