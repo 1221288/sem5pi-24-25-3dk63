@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241024161418_FixLicenseNumber")]
-    partial class FixLicenseNumber
+    [Migration("20241025002608_MissingDeletionDateAdded")]
+    partial class MissingDeletionDateAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,40 +44,6 @@ namespace DDDNetCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Appointments", (string)null);
-                });
-
-            modelBuilder.Entity("DDDSample1.Domain.Categories.Category", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("DDDSample1.Domain.Families.Family", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Families");
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.OperationRequest", b =>
@@ -150,27 +116,6 @@ namespace DDDNetCore.Migrations
                         .IsUnique();
 
                     b.ToTable("PendingChanges");
-                });
-
-            modelBuilder.Entity("DDDSample1.Domain.Products.Product", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.Specialization.Specialization", b =>
@@ -256,6 +201,9 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("MarkedForDeletionDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -479,15 +427,15 @@ namespace DDDNetCore.Migrations
 
             modelBuilder.Entity("DDDSample1.Domain.Patient", b =>
                 {
-                    b.OwnsOne("DDDSample1.Domain.Patients.Allergy", "allergy", b1 =>
+                    b.OwnsOne("DDDSample1.Domain.Patients.EmergencyContact", "emergencyContact", b1 =>
                         {
                             b1.Property<string>("PatientId")
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<string>("allergy")
+                            b1.Property<string>("emergencyContact")
                                 .IsRequired()
                                 .HasColumnType("longtext")
-                                .HasColumnName("Allergy");
+                                .HasColumnName("EmergencyContactInfo");
 
                             b1.HasKey("PatientId");
 
@@ -497,15 +445,15 @@ namespace DDDNetCore.Migrations
                                 .HasForeignKey("PatientId");
                         });
 
-                    b.OwnsOne("DDDSample1.Domain.Patients.EmergencyContact", "emergencyContact", b1 =>
+                    b.OwnsOne("DDDSample1.Domain.Patients.MedicalHistory", "medicalHistory", b1 =>
                         {
                             b1.Property<string>("PatientId")
                                 .HasColumnType("varchar(255)");
 
-                            b1.Property<string>("emergencyContact")
+                            b1.Property<string>("medicalHistory")
                                 .IsRequired()
                                 .HasColumnType("longtext")
-                                .HasColumnName("EmergencyContactName");
+                                .HasColumnName("MedicalHistory");
 
                             b1.HasKey("PatientId");
 
@@ -579,9 +527,6 @@ namespace DDDNetCore.Migrations
                                 .HasForeignKey("PatientId");
                         });
 
-                    b.Navigation("allergy")
-                        .IsRequired();
-
                     b.Navigation("appointmentHistoryList");
 
                     b.Navigation("dateOfBirth")
@@ -592,28 +537,13 @@ namespace DDDNetCore.Migrations
 
                     b.Navigation("gender")
                         .IsRequired();
+
+                    b.Navigation("medicalHistory")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.PendingChange.PendingChanges", b =>
                 {
-                    b.OwnsOne("DDDSample1.Domain.Patients.Allergy", "Allergy", b1 =>
-                        {
-                            b1.Property<string>("PendingChangesUserId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<string>("allergy")
-                                .IsRequired()
-                                .HasColumnType("longtext")
-                                .HasColumnName("Allergy");
-
-                            b1.HasKey("PendingChangesUserId");
-
-                            b1.ToTable("PendingChanges");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PendingChangesUserId");
-                        });
-
                     b.OwnsOne("DDDSample1.Domain.Patients.EmergencyContact", "EmergencyContact", b1 =>
                         {
                             b1.Property<string>("PendingChangesUserId")
@@ -623,6 +553,24 @@ namespace DDDNetCore.Migrations
                                 .IsRequired()
                                 .HasColumnType("longtext")
                                 .HasColumnName("EmergencyContactName");
+
+                            b1.HasKey("PendingChangesUserId");
+
+                            b1.ToTable("PendingChanges");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PendingChangesUserId");
+                        });
+
+                    b.OwnsOne("DDDSample1.Domain.Patients.MedicalHistory", "MedicalHistory", b1 =>
+                        {
+                            b1.Property<string>("PendingChangesUserId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<string>("medicalHistory")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("MedicalHistory");
 
                             b1.HasKey("PendingChangesUserId");
 
@@ -674,9 +622,9 @@ namespace DDDNetCore.Migrations
                                 .HasForeignKey("PendingChangesUserId");
                         });
 
-                    b.Navigation("Allergy");
-
                     b.Navigation("EmergencyContact");
+
+                    b.Navigation("MedicalHistory");
 
                     b.Navigation("Name");
 

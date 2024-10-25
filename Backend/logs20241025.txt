@@ -1,0 +1,2 @@
+2024-10-25 01:10:48.277 +01:00 [INF] Login bem-sucedido: email encontrado.
+2024-10-25 01:13:41.259 +01:00 [INF] Login bem-sucedido: email encontrado.
