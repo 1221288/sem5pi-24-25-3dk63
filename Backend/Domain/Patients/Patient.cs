@@ -110,7 +110,6 @@ namespace DDDSample1.Domain
 
             this.dateOfBirth = new DateOfBirth(DateTime.Now);
             this.gender = new Gender("N/A");
-            this.allergy = new Allergy("N/A");
             this.emergencyContact = new EmergencyContact("N/A");
             this.Active = false;
 
