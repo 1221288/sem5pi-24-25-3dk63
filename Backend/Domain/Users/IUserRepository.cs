@@ -17,5 +17,6 @@ namespace DDDSample1.Domain.Users
         Task UpdateUserAsync(User user);
         Task<User> GetUserByUsernameAsync(Username username);
         IQueryable<User> GetQueryable();
+        Task DeleteUserAsync(User user);
     }
 }

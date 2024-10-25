@@ -74,6 +74,15 @@ public async Task SendStaffNotificationEmailAsync(List<string> changedProperties
             await SendEmailAsync(email, subject, body);
         }
 
+        public async Task SendDeletionConfirmationEmail(string email, string token)
+        {
+            var confirmationLink = $"https://localhost:5001/api/Patients/confirm-account-deletion?token={token}";
+            var subject = "Confirm your account deletion";
+            var body = $"Please click on the following link to confirm your account deletion: <a href=\"{confirmationLink}\">Confirm Deletion</a>";
+
+            await SendEmailAsync(email, subject, body);
+        }
+
 
         private async Task SendEmailAsync(string email, string subject, string body)
         {

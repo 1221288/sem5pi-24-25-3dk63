@@ -64,6 +64,12 @@ namespace DDDSample1.Infrastructure.Users
             return user;
         }
 
+        public async Task DeleteUserAsync(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
+
 
     }
 }

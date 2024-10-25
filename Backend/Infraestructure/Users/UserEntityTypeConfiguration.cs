@@ -14,8 +14,6 @@ namespace DDDSample1.Infraestructure.Users
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
-
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Username)
@@ -65,6 +63,9 @@ namespace DDDSample1.Infraestructure.Users
             builder.Property(u => u.SequentialNumber).IsRequired();
 
             builder.Property(u => u.ConfirmationToken)
+                .IsRequired(false);
+
+            builder.Property(u => u.MarkedForDeletionDate)
                 .IsRequired(false);
         }
     }

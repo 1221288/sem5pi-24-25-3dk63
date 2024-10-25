@@ -16,7 +16,7 @@ namespace DDDSample1.Domain
         public bool Active { get; private set; }
         public int SequentialNumber { get; private set; }
         public string ConfirmationToken { get; set; }
-
+        public DateTime? MarkedForDeletionDate { get; private set; }
 
         private User()
         {
@@ -128,5 +128,24 @@ namespace DDDSample1.Domain
                 this.PhoneNumber = new PhoneNumber(pendingChange.PhoneNumber.Number);
             }
         }
+
+        public void MarkForDeletion()
+        {
+            this.MarkedForDeletionDate = DateTime.UtcNow;
+        }
+
+        public void Anonymize()
+        {
+            string unique = Guid.NewGuid().ToString("N").Substring(0, 8);
+
+            this.Username = new Username($"anonymous_{unique}");
+            this.Email = new Email($"anonymous_{unique}@example.com");
+            this.Name = new Name("Anonymous", "User");
+            string anonymizedPhoneNumber = $"+0000000{unique.Substring(0, 6)}";
+            this.PhoneNumber = new PhoneNumber(anonymizedPhoneNumber);
+
+            this.ConfirmationToken = null;
+        
+    }
     }
 }

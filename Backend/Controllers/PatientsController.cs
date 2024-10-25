@@ -137,11 +137,11 @@ namespace DDDSample1.Controllers
             var userResult = await _userService.GetByIdAsync(patient.UserId);
 
             bool emailChanged = updateDto.Email != null && updateDto.Email.Value != userResult.Email.Value;
-            bool emergencyContactChanged = updateDto.EmergencyContact != null && updateDto.EmergencyContact.emergencyContact != patient.emergencyContact.emergencyContact;
+            bool phoneChanged = updateDto.PhoneNumber != null && updateDto.PhoneNumber != userResult.phoneNumber;
 
             await _service.RemovePendingChangesAsync(patient.UserId);
 
-            if (emailChanged || emergencyContactChanged)
+            if (emailChanged || phoneChanged)
             {
                 userResult.ConfirmationToken = Guid.NewGuid().ToString("N");
 
@@ -174,6 +174,39 @@ namespace DDDSample1.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Update confirmation failed: {ex.Message}");
+            }
+        }
+
+        [HttpPost("request-account-deletion")]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> RequestAccountDeletion()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User not found.");
+            }
+
+            await _service.RequestAccountDeletionAsync(new UserId(userId));
+
+            return Ok("Account deletion requested. Please check your email to confirm.");
+        }
+    
+
+        [HttpPost("confirm-account-deletion")]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> ConfirmAccountDeletion(string token)
+        {
+
+            try
+            {
+                await _service.ConfirmDeletionAsync(token);
+                return Ok("Account deletion confirmed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error confirming deletion: {ex.Message}");
             }
         }
 
